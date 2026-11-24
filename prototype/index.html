@@ -3,12 +3,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout: one-screen app. Header + board (7 day columns in landscape, one day in portrait) + demo clock bar. */
+/* Layout: one-screen app. Header + board (7 day columns in landscape, one day in portrait) + demo clock bar.
+   Card color = what the card needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey). */
 :root{
   --bg:#ECEFF5; --surface:#FFFFFF; --surface-2:#F4F6FA; --ink:#172033; --muted:#5D667A; --line:#D8DDE7;
   --accent:#3B55F0; --accent-soft:#E3E8FE; --accent-ink:#FFFFFF;
-  --work:#2E6BE6; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A;
-  --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45);
+  --work:#0F8B8D; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A; --rest:#1E9E6A;
+  --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45); --flare:rgba(255,255,255,.75);
   --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --font-body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
@@ -17,13 +18,13 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
-  --work:#6A9BFF; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70;
-  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
+  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F;
+  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare:rgba(255,255,255,.22); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
-  --work:#6A9BFF; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70;
-  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); color-scheme:dark}
+  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F;
+  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare:rgba(255,255,255,.22); color-scheme:dark}
 
 html,body{height:100%}
 [hidden]{display:none!important}
@@ -31,6 +32,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-siz
 *{box-sizing:border-box}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.5}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .app{display:flex;flex-direction:column;height:100%}
 
@@ -46,45 +48,68 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .btn{border:1px solid var(--line);background:var(--surface);padding:8px 12px;border-radius:10px;font-weight:600;font-size:14px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.rest{background:var(--rest);color:#fff;border-color:transparent}
 .btn.ghost{background:transparent}
 .btn.small{padding:5px 9px;font-size:13px}
 .iconbtn{border:1px solid var(--line);background:var(--surface);width:36px;height:36px;border-radius:10px;display:grid;place-items:center}
 .iconbtn svg{width:18px;height:18px}
 
-/* Banner */
 .banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-block:8px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   background:color-mix(in srgb,var(--warn) 18%,var(--surface));border-bottom:1px solid var(--line);font-size:14px}
-.banner strong{font-weight:700}
 
 /* Board */
 .board{flex:1;min-height:0;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding-block:12px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .col{flex:1 0 230px;min-width:0;display:flex;flex-direction:column;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;min-height:0}
+.col.today{flex-basis:320px;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .board.single .col{flex:1 1 auto;max-width:640px;margin-inline:auto}
-.col.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
-.col.past{opacity:.7}
+.col.past{opacity:.75}
 .colhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
 .colhead h2{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:-.01em}
 .colhead .date{color:var(--muted);font-size:13px;font-weight:500}
 .colhead .count{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .colhead .nav{display:flex;gap:4px}
 .colbody{flex:1;min-height:0;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.colbody > *{flex-shrink:0}
 .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.dayprog{margin-top:auto;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 11px;text-align:left;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.dayprog .row{display:flex;justify-content:space-between;color:var(--muted)}
+.dayprog .row b{color:var(--ink)}
 
-/* Now panel */
-.now{background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
-.now .pie{width:84px;height:84px}
-.now h3{margin:0 0 2px;font-family:var(--font-display);font-size:17px}
-.now .sub{font-size:13px;color:var(--muted)}
-.now .nextstep{font-weight:600;margin:6px 0}
-.now .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.checkin{grid-column:1/-1;background:color-mix(in srgb,var(--warn) 16%,var(--surface));border-radius:10px;padding:8px 10px;font-size:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Progress bars */
+.bar{height:8px;border-radius:999px;background:var(--pie-track);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:999px;transition:width .5s ease}
+.bar.thin{height:4px}
+
+/* Big panels: Now / Break / Start my day */
+.panel{border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;border:1.5px solid var(--accent);
+  background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.panel.restp{border-color:var(--rest);background:color-mix(in srgb,var(--rest) 10%,var(--surface))}
+.panel.latep{border-color:var(--hot);background:color-mix(in srgb,var(--hot) 7%,var(--surface))}
+.panel .ph{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.panel .tag{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:11px;color:var(--accent)}
+.panel.restp .tag{color:var(--rest)} .panel.latep .tag{color:var(--hot)}
+.panel h3{margin:0;font-family:var(--font-display);font-size:21px;line-height:1.15;letter-spacing:-.01em;text-wrap:balance}
+.panel .main{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.panel .words{font-weight:600}
+.panel .sub{font-size:13px;color:var(--muted);line-height:1.4}
+.panel .row{display:flex;gap:6px;flex-wrap:wrap}
+.panel .steps li{padding:4px 2px}
+.panel .steps li.nextup{background:var(--surface);border-radius:8px;padding:6px 6px;font-weight:600}
+.checkin{background:color-mix(in srgb,var(--warn) 18%,var(--surface));border-radius:10px;padding:8px 10px;font-size:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.brkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.brkopt{border:1px solid color-mix(in srgb,var(--rest) 40%,var(--line));background:var(--surface);border-radius:12px;padding:9px 10px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.brkopt b{font-size:14px} .brkopt span{font-size:12px;color:var(--muted)}
+.brkopt.star{border-color:var(--rest);box-shadow:0 0 0 2px color-mix(in srgb,var(--rest) 30%,transparent)}
 
 /* Cards */
-.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 10px 9px 12px;cursor:pointer;
+.card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 10px 0 12px;cursor:pointer;
   transition:opacity .6s ease, box-shadow .3s ease;display:grid;grid-template-columns:1fr auto;gap:2px 8px}
 .card:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.card.s-due{background:color-mix(in srgb,var(--warn) 12%,var(--surface))}
+.card.s-late{background:color-mix(in srgb,var(--hot) 10%,var(--surface))}
+.card.s-wait{background:var(--surface-2);border-style:dashed}
 .card .top{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
 .card .time{font-family:var(--font-mono);font-size:11px;font-variant-numeric:tabular-nums}
 .ctx{display:inline-flex;align-items:center;gap:4px;font-weight:600}
@@ -98,6 +123,8 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .card .next b{color:var(--ink);font-weight:600}
 .card .meta{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--muted)}
 .card .meta svg{width:14px;height:14px}
+.card .prog{grid-column:1/-1;margin:8px -10px 0 -12px;height:4px;background:var(--pie-track)}
+.card .prog i{display:block;height:100%;background:var(--ok);transition:width .5s ease}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:12px;font-weight:600;white-space:nowrap}
 .chip.hot{color:var(--hot);border-color:color-mix(in srgb,var(--hot) 40%,var(--line))}
 .chip.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
@@ -105,37 +132,47 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .check:hover{border-color:var(--ok);transform:scale(1.08)}
 .check svg{width:16px;height:16px;color:var(--ok);opacity:0}
 .check:hover svg{opacity:.6}
-.card.current{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
-.card.waiting{border-style:dashed}
-.card.donecard{opacity:.6;cursor:default}
-.card.donecard .title{text-decoration:line-through;text-decoration-thickness:1px}
+.locked .check{border-style:dashed}
 .card.pop{animation:pop .5s ease}
 @keyframes pop{0%{transform:scale(.92);opacity:.2}60%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
 
 /* Pie timer */
-.pie{--p:0;width:18px;height:18px;border-radius:50%;background:conic-gradient(var(--hot) calc(var(--p)*1turn),var(--pie-track) 0);flex:none;position:relative}
-.pie.over{box-shadow:0 0 0 2px color-mix(in srgb,var(--hot) 50%,transparent)}
+.pie{--p:0;--fill:var(--hot);width:18px;height:18px;border-radius:50%;background:conic-gradient(var(--fill) calc(var(--p)*1turn),var(--pie-track) 0);flex:none}
+.pie.big{width:96px;height:96px}
+.pie.rest{--fill:var(--rest)}
+.pie.over{box-shadow:0 0 0 3px color-mix(in srgb,var(--hot) 45%,transparent)}
 .pie.off{display:none}
 
-/* Event + prep + break */
-.event{background:var(--event-bg);color:var(--event-ink);border-radius:12px;padding:8px 10px;font-size:13.5px;cursor:pointer;border:1px solid transparent}
+/* Event + prep + planned break */
+.event{background:var(--event-bg);color:var(--event-ink);border-radius:12px;padding:8px 10px;font-size:13.5px;cursor:pointer}
 .event .time{font-family:var(--font-mono);font-size:11px}
 .event b{display:block;color:var(--ink);font-weight:600}
 .event.pastev{opacity:.55}
 .prep{background:transparent;border:1.5px dashed color-mix(in srgb,var(--accent) 55%,var(--line));color:var(--ink)}
 .prep .tag{color:var(--accent);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-.brk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;align-self:flex-start}
-.brk svg{width:14px;height:14px;color:var(--ok)}
+.brkcard{display:flex;align-items:center;gap:10px;border-radius:12px;padding:10px 12px;cursor:pointer;
+  background:color-mix(in srgb,var(--rest) 14%,var(--surface));border:1.5px solid color-mix(in srgb,var(--rest) 55%,var(--line));text-align:left}
+.brkcard svg{width:20px;height:20px;color:var(--rest);flex:none}
+.brkcard b{display:block;font-size:14px}
+.brkcard span{font-size:12.5px;color:var(--muted)}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:16px 8px}
 
-/* Cue levels: glow + periodic shake */
+/* Cue levels: glow, periodic shake, light flare sweep */
 .card.lvl-1{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 35%,transparent)}
-.card.lvl-2{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 60%,transparent)}
-.card.lvl-3{box-shadow:0 0 0 2px color-mix(in srgb,var(--hot) 60%,transparent)}
+.card.lvl-2{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 65%,transparent)}
+.card.lvl-3{box-shadow:0 0 0 2px color-mix(in srgb,var(--hot) 65%,transparent)}
 .card.lvl-4{box-shadow:0 0 0 3px var(--hot)}
 .motion .card.lvl-2{animation:shake 5s ease-in-out infinite}
 .motion .card.lvl-3{animation:shake 3s ease-in-out infinite;--k:1.6}
 .motion .card.lvl-4{animation:shake 1.8s ease-in-out infinite;--k:2.4}
+.card::after,.panel.flare::after{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:45%;pointer-events:none;opacity:0;
+  background:linear-gradient(105deg,transparent 0%,var(--flare) 45%,rgba(255,255,255,0) 55%,transparent 100%);transform:translateX(-150%) skewX(-12deg)}
+.flare-on .card.lvl-2::after{opacity:1;animation:flare 5s ease-in-out .9s infinite}
+.flare-on .card.lvl-3::after{opacity:1;animation:flare 3s ease-in-out .7s infinite}
+.flare-on .card.lvl-4::after{opacity:1;animation:flare 1.8s ease-in-out .5s infinite}
+.panel{position:relative;overflow:hidden}
+.flare-on .panel.flare::after{opacity:1;animation:flare 4s ease-in-out infinite}
+@keyframes flare{0%{transform:translateX(-150%) skewX(-12deg)}22%,100%{transform:translateX(330%) skewX(-12deg)}}
 @keyframes shake{
   0%,14%,100%{transform:translateX(0) rotate(0)}
   2%{transform:translateX(calc(var(--amp)*var(--k,1)*-1)) rotate(-.6deg)}
@@ -154,36 +191,51 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 
 /* Sheets */
 .scrim{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;z-index:40}
-.sheet{background:var(--surface);width:100%;max-width:620px;max-height:88%;overflow-y:auto;border-radius:18px 18px 0 0;
-  padding:18px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));
-  animation:up .25s ease}
+.sheet{background:var(--surface);width:100%;max-width:640px;max-height:88%;overflow-y:auto;border-radius:18px 18px 0 0;
+  padding:18px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));animation:up .25s ease}
 @media (min-width:700px){.scrim{align-items:center}.sheet{border-radius:18px;max-height:86%}}
 @keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
 .sheet h2{font-family:var(--font-display);font-size:22px;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
-.crumb{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.crumb{font-size:12.5px;color:var(--muted);margin-bottom:6px;background:none;border:0;padding:0;text-align:left}
+button.crumb:hover{color:var(--accent);text-decoration:underline}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
 .sec{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
 .sec h4{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .steps li{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px}
-.steps li.done span.t{color:var(--muted);text-decoration:line-through}
+.steps li.done .t{color:var(--muted);text-decoration:line-through}
 .steps input[type=checkbox]{width:22px;height:22px;accent-color:var(--ok);flex:none}
-.steps .t{flex:1;min-width:0}
-.steps .stype{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
-.steps .when{font-size:11px;color:var(--muted);font-family:var(--font-mono)}
+.steps label{flex:1;min-width:0;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.stype{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+.when{font-size:11px;color:var(--muted);font-family:var(--font-mono)}
+details.donesteps{margin-top:8px}
+details.donesteps summary{cursor:pointer;font-size:13px;color:var(--muted);font-weight:600;padding:4px 0}
 .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .field label{font-size:12.5px;font-weight:600;color:var(--muted)}
-.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 10px;width:100%}
+.field input,.field select,.field textarea,.inp{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 10px;width:100%}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
 @media (max-width:420px){.grid2{grid-template-columns:1fr}}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
 .note{font-size:13px;color:var(--muted);line-height:1.45}
 .quote{background:var(--surface-2);border-left:3px solid var(--line);padding:8px 10px;border-radius:6px;font-size:13.5px}
-.bar{height:8px;border-radius:999px;background:var(--pie-track);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--ok);border-radius:999px}
 .kv{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:3px 0}
 .kv span:first-child{color:var(--muted)}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;font-size:13.5px}
+.sw{width:28px;height:18px;border-radius:6px;border:1px solid var(--line)}
 a{color:var(--accent)}
+
+/* Goals tree */
+.goal{border-left:2px solid var(--line);padding-left:10px;margin:6px 0}
+.goal > summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr 80px 38px;gap:8px;align-items:center;padding:6px 0}
+.goal > summary::-webkit-details-marker{display:none}
+.goal > summary::before{content:"▸";color:var(--muted);transition:transform .2s}
+.goal[open] > summary::before{transform:rotate(90deg)}
+.goal .gt{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.goal .pct{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.gbody{padding-left:14px}
+.gtask{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:7px 10px;margin:4px 0;font-size:14px}
+.gtask span{color:var(--muted);font-size:12px;white-space:nowrap}
+.gtask.isdone{opacity:.65}
 
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
@@ -203,6 +255,7 @@ a{color:var(--accent)}
       <button data-view="auto">Auto</button><button data-view="week">Week</button><button data-view="day">Today</button>
     </div>
     <div class="spacer"></div>
+    <button class="btn" id="goalsBtn">Goals</button>
     <button class="btn primary" id="addBtn">+ Add task</button>
     <button class="iconbtn" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
@@ -233,8 +286,16 @@ const SPANS = {quick:['Quick',15], short:['Short',30], standard:['Standard',60],
 const DIFF = ['', 'Light', 'Medium', 'Heavy'];
 const PRIO = ['', 'Low', 'Medium', 'High', 'Urgent'];
 const MILESTONES = [10, 25, 50, 100, 250, 500, 1000];
-const BREAKS = ['Water + stretch', 'Short walk', 'Desk yoga', 'Water break'];
 const DAY_START = 8*60, DAY_END = 21*60;
+const BREAKS = [
+  {k:'water', label:'Water', min:3, tip:'Drink a full glass and refill your bottle.'},
+  {k:'bathroom', label:'Bathroom', min:5, tip:'Go now so it doesn\'t pull you out of a task later.'},
+  {k:'meditation', label:'Meditation', min:10, tip:'Breathe in for 4, hold for 4, out for 6. Repeat.', link:'https://www.youtube.com/results?search_query=10+minute+guided+meditation'},
+  {k:'yoga', label:'Yoga / stretch', min:15, tip:'Neck rolls, shoulder opener, forward fold.', link:'https://www.youtube.com/results?search_query=15+minute+desk+yoga'},
+  {k:'walk', label:'Walk', min:10, tip:'Step outside if you can. Movement helps attention.'},
+  {k:'social', label:'Social', min:15, tip:'Chat with a coworker or text a friend.'},
+  {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'}
+];
 const ICON = {
   repeat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
   mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
@@ -242,6 +303,7 @@ const ICON = {
   pause:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5v14M15 5v14"/></svg>',
   check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg>',
   leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"/><path d="M5 19l7-7"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>',
   right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>'
 };
@@ -249,29 +311,44 @@ const ICON = {
 /* ---------- sample data ---------- */
 function seed(){
   return {
-    day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, currentId:null, nextId:100,
-    settings:{cue:2, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true,
+    day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
+    currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
+    settings:{cue:2, flare:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
+    goals:[
+      {id:'g1', title:'Close November billing gaps', parent:null, why:'Every missing hour is revenue we can\'t bill.'},
+      {id:'g2', title:'Acme Staffing', parent:'g1'},
+      {id:'g3', title:'Riverside Clinic', parent:'g1'},
+      {id:'g4', title:'Onboard nurse Jordan Lee', parent:null, why:'Jordan starts shifts Dec 7.'},
+      {id:'g5', title:'Credentialing', parent:'g4'},
+      {id:'g5a', title:'Background check', parent:'g5'},
+      {id:'g6', title:'Orientation', parent:'g4'},
+      {id:'g7', title:'Renew Riverside contract', parent:null},
+      {id:'g8', title:'Run a 5K by spring', parent:null, why:'More energy and a clearer head in the afternoons.'},
+      {id:'g9', title:'Walk daily (weeks 1-4)', parent:'g8'}
+    ],
     tasks:[
       {id:'t1', title:'Follow up: Acme vendor record update', ctx:'work', diff:1, span:'quick', est:null, aiEst:15, aiRuns:11, prio:3, due:2,
-        cadence:{every:2,label:'Every 2 days until done'}, day:1, source:'email', person:'dana',
+        cadence:{every:2,label:'Every 2 days until done'}, day:1, source:'email', person:'dana', goalId:'g2',
         sourceText:'From Priya (AR): "Still missing 6.5 hrs for Acme, week of 11/9. Can you confirm their vendor record is fixed?"',
-        goal:'Close November billing gaps › Acme Staffing', doneWhen:'AR has a screenshot of the corrected vendor record', proof:true,
+        doneWhen:'AR has a screenshot of the corrected vendor record', proof:true,
         notes:'Dana says their IT owns the fix. Ask for a screenshot, not just "done".',
         steps:[{t:'Email Dana at Acme about the missing 6.5 hrs', type:'contact', done:true, at:'Mon 2:14 PM'},
                {t:'Call Dana if no reply by noon', type:'contact'},{t:'Get screenshot of corrected record', type:'proof'},
                {t:'Forward confirmation to Priya in AR', type:'contact', who:'priya'}],
         completions:12, contacts:[{who:'Dana Ortiz', how:'Email', when:'Mon 2:14 PM'}]},
       {id:'t2', title:'Draft Q4 service agreement: Riverside Clinic', ctx:'work', diff:3, span:'long', est:120, prio:4, due:1, day:1, source:'manual',
-        person:'mara', goal:'Renew Riverside contract', doneWhen:'Agreement sent and signed by Riverside', proof:true, split:true,
+        person:'mara', goalId:'g7', doneWhen:'Agreement sent and signed by Riverside', proof:true, split:true,
         notes:'Start from the 2025 agreement. Rates go up 3%.',
         steps:[{t:'Copy the 2025 agreement template'},{t:'Update rates and term dates'},{t:'Run the legal review checklist'},
                {t:'Send to Mara for signature', type:'contact'},{t:'Upload the signed copy', type:'proof'}]},
       {id:'t3', title:'Onboard Jordan Lee: credentialing', ctx:'work', diff:2, span:'standard', est:null, aiEst:50, aiRuns:4, prio:3, due:4, day:1, source:'template',
-        goal:'Onboard nurse Jordan Lee › Credentialing', doneWhen:'All credential documents verified in the HR system', proof:true,
-        notes:'Orientation target is Dec 7.',
-        steps:[{t:'Collect RN license copy', done:true, at:'Mon 10:02 AM'},{t:'Submit background check'},{t:'Verify TB test and immunizations'},{t:'Confirm I-9 documents'}]},
+        goalId:'g5', doneWhen:'All credential documents verified in the HR system', proof:true, notes:'Orientation target is Dec 7.',
+        steps:[{t:'Collect RN license copy', done:true, at:'Mon 10:02 AM'},{t:'Verify TB test and immunizations'},{t:'Confirm I-9 documents'}]},
+      {id:'t3b', title:'Submit Jordan\'s background check', ctx:'work', diff:1, span:'quick', est:20, prio:3, due:2, day:2, source:'template',
+        goalId:'g5a', doneWhen:'Background check submitted and confirmation saved', proof:true,
+        steps:[{t:'Fill out the vendor form'},{t:'Save the confirmation number', type:'proof'}]},
       {id:'t4', title:'Reconcile payroll exceptions', ctx:'work', diff:3, span:'standard', est:90, prio:2, due:3, day:1, source:'manual',
         doneWhen:'Exception report shows 0 open items', proof:true,
         steps:[{t:'Export the exception report'},{t:'Match missing punches to timesheets'},{t:'Email managers for approvals', type:'contact'},{t:'Re-run the report'}]},
@@ -283,21 +360,24 @@ function seed(){
       {id:'t7', title:'Laundry', ctx:'home', diff:1, span:'short', est:null, aiEst:35, aiRuns:18, prio:2, cadence:{every:3,label:'Every 3 days'}, day:1, missed:2, rolled:2, source:'manual',
         doneWhen:'Washed, dried and put away', proof:false, steps:[{t:'Start a load'},{t:'Move it to the dryer'},{t:'Fold and put away'}], completions:18},
       {id:'t8', title:'20-minute walk', ctx:'home', diff:1, span:'short', est:20, prio:2, cadence:{every:1,label:'Daily'}, day:1, source:'manual',
-        goal:'Run a 5K by spring', doneWhen:'Walked for 20 minutes', proof:false, evidence:true,
+        goalId:'g9', doneWhen:'Walked for 20 minutes', proof:false, evidence:true,
         steps:[{t:'Shoes on, step outside'},{t:'Walk for 20 minutes'}], completions:9},
       {id:'t10', title:'Follow up: Riverside timesheets', ctx:'work', diff:1, span:'quick', est:null, aiEst:15, aiRuns:6, prio:3, due:3, day:2, source:'email',
-        cadence:{every:2,label:'Every 2 days until done'}, person:'mara', doneWhen:'Corrected timesheets received from Riverside', proof:true,
+        cadence:{every:2,label:'Every 2 days until done'}, person:'mara', goalId:'g3', doneWhen:'Corrected timesheets received from Riverside', proof:true,
         sourceText:'From Mara (Riverside): "We\'ll send corrected sheets by Wednesday."',
         steps:[{t:'Text Mara for status', type:'contact'},{t:'Save corrected timesheets', type:'proof'},{t:'Send to payroll'}], completions:7},
       {id:'t11', title:'Prepare onboarding packet for Jordan', ctx:'work', diff:2, span:'standard', est:60, prio:2, due:3, day:3, source:'template',
-        goal:'Onboard nurse Jordan Lee › Orientation', doneWhen:'Packet emailed to Jordan', proof:true,
+        goalId:'g6', doneWhen:'Packet emailed to Jordan', proof:true,
         steps:[{t:'Fill in the welcome letter'},{t:'Add the shift schedule'},{t:'Email packet to Jordan', type:'contact'}]},
       {id:'t12', title:'Expense report', ctx:'work', diff:2, span:'short', est:40, prio:2, due:4, day:4, source:'manual', doneWhen:'Report submitted', proof:false,
         steps:[{t:'Gather receipts'},{t:'Enter in expense system'},{t:'Submit'}]},
       {id:'t13', title:'Grocery run', ctx:'home', diff:1, span:'standard', est:60, prio:2, day:5, source:'manual', doneWhen:'Groceries put away', proof:false,
         steps:[{t:'Check the meal plan'},{t:'Shop'},{t:'Put away'}]},
       {id:'t9', title:'Plan meals for next week', ctx:'home', diff:2, span:'short', est:30, prio:2, due:6, day:6, source:'manual', doneWhen:'Meal plan and grocery list ready', proof:false,
-        steps:[{t:'Pick 5 dinners'},{t:'Write the grocery list'}]}
+        steps:[{t:'Pick 5 dinners'},{t:'Write the grocery list'}]},
+      {id:'t0', title:'Send November timesheet reminders', ctx:'work', diff:1, span:'quick', est:15, prio:3, day:0, done:true, doneDay:0, source:'manual',
+        doneWhen:'Reminder sent to all nurses', proof:true, resolution:'Sent through the scheduling app to 24 nurses.',
+        steps:[{t:'Draft the reminder', done:true, at:'Mon 9:10 AM'},{t:'Send to all nurses', done:true, at:'Mon 9:18 AM'}]}
     ],
     events:[
       {id:'e1', day:1, start:11*60, end:11*60+30, title:'Billing sync with AR', who:['Priya Shah'], prep:true,
@@ -309,13 +389,15 @@ function seed(){
       {id:'e5', day:4, start:9*60+30, end:10*60, title:'1:1 with manager', who:['Manager'], prep:true, desc:'Onboarding pipeline, billing gaps.'},
       {id:'e6', day:5, start:10*60, end:11*60, title:'Kids soccer', who:[], prep:false, desc:''}
     ],
-    log:[{title:'Inbox triage', day:0},{title:'Collect RN license copy (step)', day:0},{title:'20-minute walk', day:0},{title:'Email Dana at Acme (step)', day:0}]
+    log:[{title:'Send November timesheet reminders', day:0, taskId:'t0', kind:'task'},{title:'Inbox triage', day:0, taskId:'t5', kind:'task'},
+         {title:'20-minute walk', day:0, taskId:'t8', kind:'task'},{title:'Collect RN license copy', day:0, taskId:'t3', kind:'step'},
+         {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'},{title:'Break: Walk', day:0, kind:'break'}]
   };
 }
-const STORE = 'cueue-proto-v1';
+const STORE = 'cueue-proto-v2';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
-if (!S.tasks) S = seed();
+if (!S.tasks || !S.goals) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 
 /* ---------- helpers ---------- */
@@ -328,10 +410,24 @@ function stamp(){ return DAYS[S.day]+' '+fmt(S.now); }
 function estOf(t){ return t.est ?? t.aiEst ?? SPANS[t.span][1]; }
 function nextStep(t){ return t.steps.find(s => !s.done); }
 function stepsDone(t){ return t.steps.filter(s => s.done).length; }
+function frac(t){ return t.done ? 1 : stepsDone(t) / Math.max(1, t.steps.length); }
 function isWeek(){ if (S.view==='week') return true; if (S.view==='day') return false; return innerWidth > innerHeight && innerWidth >= 700; }
+function locked(){ return S.settings.breakLock && (S.breakDue || S.brk); }
+function motionOK(){ return !S.settings.reduce && !matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+/* goals */
+const goalById = id => S.goals.find(g => g.id === id);
+function goalPath(id){ const out = []; let g = goalById(id); while (g){ out.unshift(g.title); g = goalById(g.parent); } return out.join(' › '); }
+const goalKids = id => S.goals.filter(g => g.parent === id);
+const goalTasks = id => S.tasks.filter(t => t.goalId === id);
+function goalProgress(id){ const fr = []; (function walk(gid){ goalTasks(gid).forEach(t => fr.push(frac(t))); goalKids(gid).forEach(k => walk(k.id)); })(id);
+  return fr.length ? fr.reduce((a,b) => a+b, 0) / fr.length : 0; }
+function goalOptions(sel){ const out = ['<option value="">No goal</option>'];
+  (function walk(pid, d){ goalKids(pid).forEach(g => { out.push(`<option value="${g.id}" ${g.id===sel?'selected':''}>${'— '.repeat(d)}${esc(g.title)}</option>`); walk(g.id, d+1); }); })(null, 0);
+  return out.join(''); }
 
 function level(t, dayIdx){
-  if (t.status === 'waiting') return 0;
+  if (t.status === 'waiting' || t.done) return 0;
   let l = 0;
   if (t.due != null){ const d = t.due - S.day; l = d < 0 ? 3 : d === 0 ? 2 : d === 1 ? 1 : 0; }
   if (t.cadence && t.missed) l = Math.max(l, Math.min(4, 1 + t.missed));
@@ -339,6 +435,7 @@ function level(t, dayIdx){
   if (dayIdx !== S.day) l = Math.min(l, 1);
   return l;
 }
+function stateOf(t, lvl){ if (t.status === 'waiting') return 'wait'; if (lvl >= 3) return 'late'; if (lvl === 2) return 'due'; return ''; }
 
 /* ---------- scheduling engine ---------- */
 function eventsFor(day){
@@ -368,32 +465,30 @@ function schedule(day){
   let t = isToday ? Math.max(DAY_START, Math.ceil(S.now/5)*5) : DAY_START;
   const pool = S.tasks.filter(x => x.day === day && !x.done && x.status !== 'waiting')
     .map(x => ({task:x, rem:Math.max(5, estOf(x) - (x.spent||0))}));
-  const blocks = []; let sinceBreak = 0, breakN = 0;
-  // current task always first, never moved
+  const blocks = []; let sinceBreak = isToday ? S.workSince : 0, breakN = 0;
   const curIdx = pool.findIndex(p => p.task.id === S.currentId);
+  if (isToday && S.brk){ const left = Math.max(1, S.brk.min - S.brk.spent); t += left; }
   if (isToday && curIdx > -1){
     const p = pool.splice(curIdx,1)[0];
-    blocks.push({kind:'task', task:p.task, start:t, dur:p.rem});
+    blocks.push({kind:'task', task:p.task, start:t, dur:p.rem, current:true});
     t += p.rem + st.buffer; sinceBreak += p.rem;
   }
   let guard = 0;
-  while (pool.length && t < DAY_END && guard++ < 200){
+  while (pool.length && t < DAY_END && guard++ < 300){
     const inEv = fixed.find(f => f.start <= t && f.end > t);
     if (inEv){ t = inEv.end; continue; }
     const nextEv = fixed.find(f => f.start > t);
     const gapEnd = nextEv ? nextEv.start : DAY_END, gap = gapEnd - t;
     if (gap < 10){ t = nextEv ? nextEv.end : DAY_END; continue; }
     if (sinceBreak >= st.breakEvery && gap >= 20){
-      blocks.push({kind:'break', start:t, dur:10, label:BREAKS[breakN++ % BREAKS.length]});
-      t += 10; sinceBreak = 0; continue;
+      const b = BREAKS[[0,4,3,2][breakN++ % 4]];
+      blocks.push({kind:'break', start:t, dur:b.min, b}); t += b.min; sinceBreak = 0; continue;
     }
     const inWork = t >= st.workStart && t < st.workEnd;
     const cands = pool.filter(p => (p.rem <= gap || (p.task.split && gap >= 25))
         && (p.task.ctx !== 'work' || inWork || (t >= st.workEnd && p.task.due != null && p.task.due <= day)))
       .sort((a,b) => score(b.task,t) - score(a.task,t));
-    if (!cands.length){
-      const nextBoundary = [st.workStart, st.workEnd].filter(b => b > t).concat([nextEv ? nextEv.end : DAY_END]);
-      t = Math.min(...nextBoundary); continue; }
+    if (!cands.length){ t = Math.min(...[st.workStart, st.workEnd].filter(b => b > t).concat([nextEv ? nextEv.end : DAY_END])); continue; }
     const p = cands[0];
     const dur = Math.min(p.rem, gap, p.task.split ? 60 : Infinity);
     const chunk = dur < p.rem || p.chunks;
@@ -404,58 +499,103 @@ function schedule(day){
   const items = blocks.concat(fixed).sort((a,b) => a.start - b.start);
   return {items, overflow: pool.map(p => p.task)};
 }
+function firstUp(){ const it = schedule(S.day).items.find(i => i.kind === 'task' && !i.current); return it ? it.task : null; }
 
 /* ---------- rendering ---------- */
 function pieHTML(t, big){
   const e = estOf(t), p = Math.min(1, (t.spent||0)/e);
-  return `<span class="pie ${(t.spent||0) > e ? 'over':''} ${S.settings.pies ? '' : 'off'}" data-pie="${t.id}" style="--p:${p.toFixed(3)}${big?';width:84px;height:84px':''}" aria-label="Time used"></span>`;
+  return `<span class="pie ${big?'big':''} ${(t.spent||0) > e ? 'over':''} ${S.settings.pies ? '' : 'off'}" data-pie="${t.id}" style="--p:${p.toFixed(3)}" aria-label="Time used"></span>`;
 }
 function dueChip(t){
-  if (t.due == null) return '';
+  if (t.due == null || t.done) return '';
   const d = t.due - S.day;
   if (d < 0) return `<span class="chip hot">Overdue</span>`;
   if (d === 0) return `<span class="chip warn">Due today</span>`;
   if (d === 1) return `<span class="chip">Due tomorrow</span>`;
   return `<span class="chip">Due ${DAYS[t.due] || 'later'}</span>`;
 }
+function stepLI(t, s, i, extra){
+  return `<li class="${s.done?'done':''} ${extra||''}"><input type="checkbox" id="st-${t.id}-${i}-${extra?'n':'d'}" data-task="${t.id}" data-step="${i}" ${s.done?'checked':''}>
+    <label for="st-${t.id}-${i}-${extra?'n':'d'}">${s.type&&s.type!=='plain'?`<span class="stype">${s.type==='contact'?'Contact':'Proof'}</span>`:''}<span class="t">${esc(s.t)}</span></label>${s.at?`<span class="when">${esc(s.at)}</span>`:''}</li>`;
+}
 function cardHTML(t, start, dayIdx, chunk){
-  const ns = nextStep(t), lvl = level(t, dayIdx);
+  const ns = nextStep(t), lvl = level(t, dayIdx), st = stateOf(t, lvl);
   const diff = [1,2,3].map(i => `<i class="${i<=t.diff?'on':''}"></i>`).join('');
   const src = t.source === 'email' ? `<span title="From email">${ICON.mail}</span>` : t.source === 'template' ? `<span title="From template">${ICON.tmpl}</span>` : '';
   const timeTxt = S.settings.times && start != null ? `<span class="time">~${fmt(start)}</span>` : '';
-  return `<div class="card lvl-${lvl} ${S.currentId===t.id?'current':''} ${t.status==='waiting'?'waiting':''}" data-id="${t.id}" data-ctx="${t.ctx}" tabindex="0" role="button" aria-label="${esc(t.title)}">
+  return `<div class="card lvl-${lvl} ${st?'s-'+st:''}" data-id="${t.id}" data-ctx="${t.ctx}" tabindex="0" role="button" aria-label="${esc(t.title)}">
     <div class="top">${timeTxt}<span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span>${chunk?`<span>· part ${chunk}</span>`:''}<span class="diff" title="${DIFF[t.diff]}">${diff}</span></div>
     <div class="title">${esc(t.title)}</div>
     ${t.status==='waiting' ? `<div class="next">Waiting on <b>${esc(t.waitingOn)}</b></div>` : `<div class="next">${ns ? '→ <b>'+esc(ns.t)+'</b>' : 'All steps done. Confirm it\'s done'}</div>`}
-    ${t.status==='waiting' ? '' : `<button class="check" data-check="${t.id}" aria-label="Check off next step">${ICON.check}</button>`}
-    <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}<span style="margin-left:auto">${stepsDone(t)}/${t.steps.length}</span></div>
+    ${t.status==='waiting' ? '' : `<button class="check" data-check="${t.id}" aria-label="Check off next step">${locked()?ICON.lock:ICON.check}</button>`}
+    <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}</div>
+    <div class="prog" aria-label="${stepsDone(t)} of ${t.steps.length} steps"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
   </div>`;
 }
-function nowPanel(){
-  const t = byId(S.currentId); if (!t) return '';
-  const e = estOf(t), r = (t.spent||0)/e, ns = nextStep(t);
-  const words = r < .5 ? 'Plenty of time' : r < .8 ? 'About half left' : r < 1 ? 'Almost at your estimate' : r < 2 ? 'Past your estimate' : 'Running long';
-  return `<div class="now" id="nowPanel">${pieHTML(t,true)}<div style="min-width:0">
-    <div class="label" style="margin:0">Now</div><h3>${esc(t.title)}</h3>
-    <div class="sub" id="nowWords">${words}</div>
-    <div class="nextstep">${ns ? '→ '+esc(ns.t) : 'All steps done'}</div>
-    <div class="row"><button class="btn small primary" data-check="${t.id}">Check step</button><button class="btn small" data-open="${t.id}">Details</button><button class="btn small ghost" data-act="stop">Switch task</button></div></div>
-    ${t.warned1 && !t.ack1 ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="stop">Switch</button></div>`:''}
-  </div>`;
+function nowWords(r){ return r < .5 ? 'Plenty of time' : r < .8 ? 'About half left' : r < 1 ? 'Almost at your estimate' : r < 2 ? 'Past your estimate' : 'Running long'; }
+function breakOptions(star){
+  return `<div class="brkgrid">${BREAKS.map(b => `<button class="brkopt ${b.k===star?'star':''}" data-brk="${b.k}"><b>${b.label}</b><span>${b.min} min</span></button>`).join('')}</div>`;
+}
+function topPanel(){
+  // 1. Break in progress
+  if (S.brk){
+    const b = BREAKS.find(x => x.k === S.brk.k), p = Math.min(1, S.brk.spent / S.brk.min), ready = S.brk.spent >= S.brk.min;
+    return `<div class="panel restp ${ready?'flare':''}" id="brkPanel"><div class="ph"><span class="tag">On a break</span></div>
+      <div class="main"><span class="pie big rest" id="brkPie" style="--p:${p.toFixed(3)}"></span><div style="min-width:0"><h3>${b.label}</h3>
+      <div class="sub">${esc(b.tip)}</div>${b.link?`<div class="sub"><a href="${b.link}" target="_blank" rel="noopener">Find a ${b.min}-minute video</a></div>`:''}
+      <div class="words" id="brkWords" style="margin-top:6px">${ready ? 'Break complete. Welcome back.' : 'Enjoy it. The timer is running.'}</div></div></div>
+      <div class="row"><button class="btn rest" data-act="endbrk" id="endBrkBtn" ${!ready && S.settings.breakLock ? 'disabled' : ''}>I'm back</button><button class="btn small" data-act="brkmore">+5 min</button></div>
+      ${!ready && S.settings.breakLock ? '<div class="sub">Break lock is on, so "I\'m back" unlocks when the timer finishes.</div>' : ''}</div>`;
+  }
+  // 2. Break due
+  if (S.breakDue){
+    return `<div class="panel restp flare"><div class="ph"><span class="tag">Break time</span>${S.settings.breakLock?`<span style="margin-left:auto;display:inline-flex;gap:4px;align-items:center">${ICON.lock.replace('<svg','<svg width="14" height="14"')} Check-offs paused</span>`:''}</div>
+      <h3>${esc(S.breakDue.reason)}</h3><div class="sub">Pick a break. The timer starts right away.</div>
+      ${breakOptions(S.breakDue.reward ? 'reward' : 'water')}
+      ${S.settings.breakLock ? '' : '<div class="row"><button class="btn small ghost" data-act="snooze">Remind me in 15 min</button></div>'}</div>`;
+  }
+  // 3. Current task
+  const t = byId(S.currentId);
+  if (t){
+    const e = estOf(t), r = (t.spent||0)/e, open = t.steps.map((s,i) => [s,i]).filter(([s]) => !s.done);
+    const lvl = level(t, S.day);
+    return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel">
+      <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
+      <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
+        <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
+      ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="stop">Switch</button></div>`:''}
+      <ul class="steps">${open.slice(0,4).map(([s,i],k) => stepLI(t, s, i, k===0?'nextup':'')).join('')}</ul>
+      ${open.length > 4 ? `<div class="sub">+${open.length-4} more steps</div>` : ''}
+      ${t.notes ? `<div class="sub">${esc(t.notes)}</div>` : ''}
+      <div class="bar thin"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
+      <div class="row"><button class="btn small primary" data-check="${t.id}">${locked()?'Break first':'Check next step'}</button>
+        <button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
+        <button class="btn small rest" data-act="brkpick">Take a break</button>
+        <button class="btn small" data-open="${t.id}">Details</button>
+        <button class="btn small ghost" data-act="stop">Switch task</button></div></div>`;
+  }
+  // 4. Start my day / next
+  const up = firstUp();
+  if (!up) return '';
+  return `<div class="panel"><div class="ph"><span class="tag">${S.dayMode?'Ready for the next one':'Good morning'}</span></div>
+    <h3>${S.dayMode?'Up next: ':'First up: '}${esc(up.title)}</h3>
+    <div class="sub">${S.settings.autoNext?'When you finish a task, the next one starts on its own. Turn this off in Settings.':'Tasks start when you tap them.'}</div>
+    <div class="row"><button class="btn primary" data-act="startday">${S.dayMode?'Start next task':'Start my day'}</button><button class="btn small rest" data-act="brkpick">Take a break first</button></div></div>`;
 }
 function columnHTML(day, single){
   const L = dayLabel(day), isToday = day === S.day, past = day < S.day;
   let body = '', count = '';
+  const doneHere = S.log.filter(l => l.day === day);
+  const doneTasks = doneHere.filter(l => l.kind === 'task').length, doneSteps = doneHere.filter(l => l.kind === 'step').length, breaks = doneHere.filter(l => l.kind === 'break').length;
   if (past){
-    const done = S.log.filter(l => l.day === day);
-    body = done.length ? '<div class="label">Done</div>' + done.map(l => `<div class="card donecard"><div class="title">${esc(l.title)}</div></div>`).join('') : '<div class="empty">Nothing logged.</div>';
-    count = done.length + ' done';
+    body = '<div class="empty">Day wrapped up.</div>';
+    count = doneTasks + ' done';
   } else {
     const {items, overflow} = schedule(day);
-    if (isToday) body += nowPanel();
+    if (isToday) body += topPanel();
     body += items.map(it => {
-      if (it.kind === 'task') return cardHTML(it.task, it.start, day, it.chunk);
-      if (it.kind === 'break') return `<div class="brk" data-break="1">${ICON.leaf}<span>${S.settings.times?fmt(it.start)+' · ':''}${it.label} · 10 min</span></div>`;
+      if (it.kind === 'task') return (isToday && it.task.id === S.currentId) ? '' : cardHTML(it.task, it.start, day, it.chunk);
+      if (it.kind === 'break') return `<button class="brkcard" data-act="brkpick">${ICON.leaf}<div><b>Break · ${it.b.label} · ${it.b.min} min</b><span>${S.settings.times?'~'+fmt(it.start)+' · ':''}${S.settings.breakLock?'Locks check-offs until taken':'Tap to start'}</span></div></button>`;
       const e = it.ev, pastEv = isToday && it.end <= S.now;
       if (it.kind === 'prep') return `<div class="event prep ${pastEv?'pastev':''}" data-ev="${e.id}"><span class="tag">Prep · 15 min</span><b>${esc(e.title)}</b><span>${relatedTasks(e).length} related tasks · notes ready</span></div>`;
       return `<div class="event ${pastEv?'pastev':''}" data-ev="${e.id}"><span class="time">${fmt(e.start)}–${fmt(e.end)}</span><b>${esc(e.title)}</b></div>`;
@@ -464,18 +604,22 @@ function columnHTML(day, single){
     if (isToday){
       const waiting = S.tasks.filter(t => t.status === 'waiting' && !t.done);
       if (waiting.length) body += '<div class="label">Waiting on others</div>' + waiting.map(t => cardHTML(t, null, day)).join('');
-      const done = S.log.filter(l => l.day === day);
-      if (done.length) body += `<div class="label">Done today · ${done.length}</div>` + done.map(l => `<div class="card donecard"><div class="title">${esc(l.title)}</div></div>`).join('');
     }
     const n = S.tasks.filter(t => t.day === day && !t.done).length;
     count = n + (n === 1 ? ' task' : ' tasks');
   }
+  if (isToday || past){
+    const left = past ? 0 : S.tasks.filter(t => t.day === day && !t.done).length, total = doneTasks + left;
+    body += `<button class="dayprog" data-donelist="${day}"><div class="row"><span><b>${doneTasks}</b> tasks · <b>${doneSteps}</b> steps · <b>${breaks}</b> breaks</span><span>View done ›</span></div><div class="bar"><i style="width:${total?Math.round(100*doneTasks/total):0}%"></i></div></button>`;
+  }
   const nav = single ? `<div class="nav"><button class="iconbtn" data-nav="-1" aria-label="Previous day">${ICON.left}</button><button class="iconbtn" data-nav="1" aria-label="Next day">${ICON.right}</button></div>` : '';
-  return `<section class="col ${isToday?'today':''} ${past?'past':''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span></div><div class="colbody">${body}</div></section>`;
+  return `<section class="col ${isToday?'today':''} ${past?'past':''} ${isToday&&locked()?'locked':''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span></div><div class="colbody">${body}</div></section>`;
 }
 function render(){
-  document.documentElement.classList.toggle('motion', !S.settings.reduce && S.settings.cue > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches);
-  document.documentElement.style.setProperty('--amp', (S.settings.cue * 1.2) + 'px');
+  const root = document.documentElement;
+  root.classList.toggle('motion', motionOK() && S.settings.cue > 0);
+  root.classList.toggle('flare-on', motionOK() && S.settings.flare && S.settings.cue > 0);
+  root.style.setProperty('--amp', (S.settings.cue * 1.2) + 'px');
   document.querySelectorAll('[data-focus]').forEach(b => b.setAttribute('aria-pressed', b.dataset.focus === S.focus));
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === S.view));
   document.querySelectorAll('[data-speed]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.speed === S.speed));
@@ -487,77 +631,70 @@ function render(){
   board.innerHTML = week ? [0,1,2,3,4,5,6].map(d => columnHTML(d,false)).join('') : columnHTML(S.viewDay, true);
   board.querySelectorAll('.colbody').forEach((c,i) => c.scrollTop = scrollPos[i] || 0);
   if (week && !render.scrolled){ render.scrolled = true; const tc = board.querySelector('.col.today'); if (tc) board.scrollLeft = Math.max(0, tc.offsetLeft - 16); }
-  // overbooked banner
-  const {overflow} = schedule(S.day);
-  const ban = $('#banner');
+  const {overflow} = schedule(S.day), ban = $('#banner');
   if (overflow.length){ ban.hidden = false; ban.innerHTML = `<strong>Today is overbooked.</strong> ${overflow.length} task${overflow.length>1?'s don\'t':' doesn\'t'} fit. <button class="btn small" data-act="pushlater">Move later-due tasks to tomorrow</button>`; }
   else ban.hidden = true;
   live(); save();
 }
 
-/* ---------- live updates (clock, pies, focus fade) ---------- */
+/* ---------- live updates ---------- */
 function focusOpacity(ctx){
   const st = S.settings;
   if (S.focus === 'all' || S.focus === ctx) return 1;
-  if (S.focus === 'work'){ // home items fade back in as the work day ends
-    const ramp = st.workEnd - 180;
-    if (S.now <= ramp) return .22; if (S.now >= st.workEnd) return 1;
-    return .22 + .78 * (S.now - ramp) / 180;
-  }
+  if (S.focus === 'work'){ const ramp = st.workEnd - 180;
+    if (S.now <= ramp) return .22; if (S.now >= st.workEnd) return 1; return .22 + .78 * (S.now - ramp) / 180; }
   return .22;
 }
 function live(){
   $('#clock').textContent = DAYS[S.day] + ' ' + fmt(S.now);
   document.querySelectorAll('.card[data-ctx]').forEach(c => c.style.opacity = focusOpacity(c.dataset.ctx));
   const t = byId(S.currentId);
-  if (t){
-    const e = estOf(t), p = Math.min(1, (t.spent||0)/e);
+  if (t){ const e = estOf(t), p = Math.min(1, (t.spent||0)/e);
     document.querySelectorAll(`[data-pie="${t.id}"]`).forEach(el => { el.style.setProperty('--p', p.toFixed(3)); el.classList.toggle('over', t.spent > e); });
-    const card = document.querySelector(`.card[data-id="${t.id}"]`);
-    if (card){ const want = 'lvl-' + level(t, S.day); if (!card.classList.contains(want)){ card.classList.remove('lvl-0','lvl-1','lvl-2','lvl-3','lvl-4'); card.classList.add(want); } }
-    const r = (t.spent||0)/e, w = $('#nowWords');
-    if (w) w.textContent = r < .5 ? 'Plenty of time' : r < .8 ? 'About half left' : r < 1 ? 'Almost at your estimate' : r < 2 ? 'Past your estimate' : 'Running long';
-  }
+    const w = $('#nowWords'); if (w) w.textContent = nowWords((t.spent||0)/e); }
+  if (S.brk){ const bp = $('#brkPie'); if (bp) bp.style.setProperty('--p', Math.min(1, S.brk.spent/S.brk.min).toFixed(3)); }
 }
 let last = performance.now();
 function tick(){
-  const nowMs = performance.now(), dtSec = (nowMs - last)/1000; last = nowMs;
+  const nowMs = performance.now(), dtSec = Math.min(1, (nowMs - last)/1000); last = nowMs;
   if (S.running && S.now < DAY_END){
     const dMin = dtSec * S.speed / 60;
     S.now = Math.min(DAY_END, S.now + dMin);
-    const t = byId(S.currentId);
-    if (t){
-      t.spent = (t.spent||0) + dMin; const e = estOf(t);
-      if (t.spent >= e && !t.warned1){ t.warned1 = true; cue(3); toast('Still on "' + t.title + '"?', 'You\'ve reached your estimate. Take a look at the Now card.'); render(); }
-      if (t.spent >= 2*e && !t.warned2){ t.warned2 = true; cue(4); toast('Re-planned the rest of today', 'This task hit twice its estimate, so later tasks moved.'); render(); }
-    }
-    // crossing work-hour boundaries changes placement, so re-plan on those events
     const st = S.settings;
+    if (S.brk){
+      S.brk.spent += dMin;
+      if (S.brk.spent >= S.brk.min && !S.brk.ready){ S.brk.ready = true; chime(true); cue(2); toast('Break complete', 'Tap "I\'m back" when you\'re ready.'); render(); }
+    } else {
+      const t = byId(S.currentId);
+      if (t && !S.paused){
+        t.spent = (t.spent||0) + dMin; S.workSince += dMin; const e = estOf(t);
+        if (t.spent >= e && !t.warned1){ t.warned1 = true; cue(3); toast('Still on "' + t.title + '"?', 'You\'ve reached your estimate.'); render(); }
+        if (t.spent >= 2*e && !t.warned2){ t.warned2 = true; cue(4); toast('Re-planned the rest of today', 'This task hit twice its estimate, so later tasks moved.'); render(); }
+        if (S.workSince >= st.breakEvery && !S.breakDue){ S.breakDue = {reason:'You\'ve been working for ' + Math.round(st.breakEvery) + ' minutes'}; cue(3); toast('Break time', st.breakLock ? 'Check-offs are paused until you take it.' : 'Pick a break when you reach a stopping point.'); render(); }
+      }
+    }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
     live();
   }
   requestAnimationFrame(tick);
 }
 
-/* ---------- feedback: sound, haptics, confetti, toasts ---------- */
+/* ---------- feedback ---------- */
 let actx;
-function chime(big){
-  if (!S.settings.sound) return;
-  try {
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    const notes = big ? [523.25, 659.25, 783.99, 1046.5] : [783.99, 1046.5];
-    notes.forEach((f,i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f;
-      const t0 = actx.currentTime + i*.08; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.12, t0+.02); g.gain.exponentialRampToValueAtTime(.001, t0+.35);
-      o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0+.4); });
-  } catch(e) {}
+function tone(freqs, gap, vol){
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    freqs.forEach((f,i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f;
+      const t0 = actx.currentTime + i*gap; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0+.02); g.gain.exponentialRampToValueAtTime(.001, t0+.35);
+      o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0+.4); }); } catch(e) {}
 }
+function chime(big){ if (S.settings.sound) tone(big ? [523.25,659.25,783.99,1046.5] : [783.99,1046.5], .08, .12); }
 function cue(lvl){
   if (S.settings.haptics && navigator.vibrate){ try { navigator.vibrate(lvl >= 4 ? [60,40,60,40,120] : lvl >= 3 ? [40,40,40] : 20); } catch(e) {} }
-  if (S.settings.sound && lvl >= 3){ try { actx = actx || new (window.AudioContext||window.webkitAudioContext)(); const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = 440; g.gain.setValueAtTime(.08, actx.currentTime); g.gain.exponentialRampToValueAtTime(.001, actx.currentTime+.3); o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime+.3);} catch(e) {} }
+  if (S.settings.sound && lvl >= 3) tone([440, 440], .18, .08);
 }
 const cv = $('#confetti'), cx = cv.getContext('2d'); let parts = [], animating = false;
 function confetti(x, y, n, spread){
-  if (S.settings.reduce || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!motionOK()) return;
   cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
   const cs = getComputedStyle(document.documentElement);
   const cols = ['--accent','--ok','--warn','--home','--work','--hot'].map(v => cs.getPropertyValue(v).trim());
@@ -578,40 +715,76 @@ function toast(msg, sub){
 }
 
 /* ---------- actions ---------- */
+function lockedToast(){ toast('Break first', 'Check-offs unlock after your break. Pick one at the top of Today.'); cue(2); }
 function checkStep(t, idx, originEl){
+  if (locked()){ lockedToast(); render(); return false; }
   const i = idx ?? t.steps.findIndex(s => !s.done);
-  if (i < 0){ openComplete(t); return; }
-  const s = t.steps[i]; s.done = true; s.at = stamp();
+  if (i < 0){ openComplete(t); return false; }
+  const s = t.steps[i]; if (s.done) return false;
+  s.done = true; s.at = stamp();
   if (s.type === 'contact'){ const p = S.people[s.who || t.person]; t.contacts = t.contacts || []; t.contacts.unshift({who: p ? p.name : 'Contact', how:'Logged', when:s.at}); }
-  S.log.push({title: s.t + ' (step)', day: S.day});
+  S.log.push({title: s.t, day: S.day, taskId: t.id, kind:'step'});
   const r = originEl ? originEl.getBoundingClientRect() : {left:innerWidth/2, top:innerHeight/2, width:0, height:0};
   confetti(r.left + r.width/2, r.top + r.height/2, 22, 5); chime(false); cue(1);
-  const d = stepsDone(t);
-  toast('Nice. Step ' + d + ' of ' + t.steps.length + ' done', s.type === 'contact' ? 'Contact logged at ' + s.at : nextStep(t) ? 'Next: ' + nextStep(t).t : 'All steps done. Confirm it\'s done.');
+  toast('Nice. Step ' + stepsDone(t) + ' of ' + t.steps.length + ' done', s.type === 'contact' ? 'Contact logged at ' + s.at : nextStep(t) ? 'Next: ' + nextStep(t).t : 'All steps done. Confirm it\'s done.');
   render();
   if (!nextStep(t)) setTimeout(() => openComplete(t), 500);
+  return true;
+}
+function uncheckStep(t, i){
+  const s = t.steps[i]; if (!s.done) return;
+  s.done = false; delete s.at;
+  const li = S.log.map(l => l.taskId === t.id && l.kind === 'step' && l.title === s.t).lastIndexOf(true); if (li > -1) S.log.splice(li, 1);
+  toast('Step reopened', s.t); render();
+}
+function startTask(t){
+  S.currentId = t.id; S.paused = false; t.status = 'in progress'; if (t.day !== S.day) t.day = S.day;
+  toast('Started: ' + t.title, 'The pie fills as time passes.'); render();
+}
+function startNext(){
+  const up = firstUp();
+  if (up){ S.dayMode = true; startTask(up); }
+  else { S.dayMode = false; confetti(innerWidth/2, innerHeight*.4, 220, 10); chime(true); toast('That\'s everything for today', 'You cleared the board.'); render(); }
 }
 function completeTask(t, note, files){
   t.completions = (t.completions||0) + 1;
   t.resolution = note; t.proofFiles = files;
-  S.log.push({title: t.title, day: S.day});
-  if (S.currentId === t.id){
-    // learning: blend actual time into the AI estimate for next time
+  S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task'});
+  const wasCurrent = S.currentId === t.id;
+  if (wasCurrent){
     if (t.est == null && t.spent){ t.aiEst = Math.round((t.aiEst*(t.aiRuns||1) + t.spent) / ((t.aiRuns||1)+1)); t.aiRuns = (t.aiRuns||1)+1; }
-    S.currentId = null;
+    S.currentId = null; S.paused = false;
   }
   const m = MILESTONES.find(x => x === t.completions);
   confetti(innerWidth/2, innerHeight*.45, m ? 260 : 140, m ? 11 : 8); chime(true); cue(2);
   if (t.cadence){
     let nd = t.day + t.cadence.every; if (t.cadence.label === 'Weekdays') while (nd % 7 >= 5) nd++;
-    t.day = nd; t.steps.forEach(s => { s.done = false; delete s.at; }); t.spent = 0; t.missed = 0; t.rolled = 0; t.warned1 = t.warned2 = t.ack1 = false;
+    t.history = (t.history||[]).concat([{day:S.day, note, steps:t.steps.map(s => ({...s}))}]);
+    t.day = nd; t.steps.forEach(s => { s.done = false; delete s.at; }); t.spent = 0; t.missed = 0; t.rolled = 0; t.warned1 = t.warned2 = false; t.status = null;
     if (t.due != null) t.due = nd;
     toast(m ? 'Milestone: ' + m + ' times!' : 'Done! Completed ' + t.completions + ' times', nd <= 6 ? 'Comes back ' + DAYS[nd] + '. Next badge at ' + MILESTONES.find(x => x > t.completions) + '.' : 'Comes back next week.');
   } else {
-    t.done = true;
+    t.done = true; t.doneDay = S.day; t.status = null;
     toast(m ? 'Milestone: ' + m + '!' : 'Task complete!', 'Resolution saved' + (files && files.length ? ' with ' + files.length + ' proof file' + (files.length>1?'s':'') : '') + '.');
   }
+  if (t.diff === 3) S.breakDue = {reason:'You finished a heavy task. Take a reward break.', reward:true};
+  else if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for a while'};
   closeSheet(); render();
+  if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId) setTimeout(startNext, 900);
+}
+function startBreak(k){
+  const b = BREAKS.find(x => x.k === k);
+  S.brk = {k, min:b.min, spent:0}; S.breakDue = null;
+  closeSheet(); toast('Break: ' + b.label, b.min + ' minutes. The timer is running.'); render();
+}
+function endBreak(){
+  const b = BREAKS.find(x => x.k === S.brk.k);
+  S.log.push({title:'Break: ' + b.label, day:S.day, kind:'break'});
+  S.brk = null; S.workSince = 0;
+  confetti(innerWidth/2, innerHeight/3, 50, 6); chime(false);
+  toast('Welcome back', 'Breaks count as wins too.');
+  render();
+  if (S.dayMode && S.settings.autoNext && !S.currentId) setTimeout(startNext, 600);
 }
 function endDay(){
   if (S.day >= 6) return;
@@ -621,59 +794,86 @@ function endDay(){
     t.day = today + 1; t.rolled = (t.rolled||0) + 1; moved++;
     if (t.cadence) t.missed = (t.missed||0) + 1;
   });
-  S.day = today + 1; S.viewDay = S.day; S.now = 8*60+45; S.currentId = null;
+  Object.assign(S, {day:today+1, viewDay:today+1, now:8*60+45, currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0});
   toast('Good morning, ' + DAYS[S.day] + '!', moved ? moved + ' unfinished task' + (moved>1?'s':'') + ' rolled over. Missed routines got more urgent.' : 'Fresh start.');
   render();
 }
 
 /* ---------- sheets ---------- */
-function openSheet(html){ $('#sheetRoot').innerHTML = `<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; const f = $('#sheetRoot').querySelector('input,textarea,button'); }
-function closeSheet(){ $('#sheetRoot').innerHTML = ''; }
+function openSheet(html, kind, taskId){ const r = $('#sheetRoot'); r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
+function closeSheet(){ const r = $('#sheetRoot'); r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; }
 function relatedTasks(e){
   const words = (e.title + ' ' + e.desc + ' ' + e.who.join(' ')).match(/\b[A-Z][a-z]{3,}\b/g) || [];
   const keys = [...new Set(words)].filter(w => !['Review','Bring','Questions','Check','Team','Client','Yesterday','Credentialing'].includes(w));
-  return S.tasks.filter(t => !t.done && keys.some(k => (t.title + ' ' + (t.goal||'')).includes(k)));
+  return S.tasks.filter(t => !t.done && keys.some(k => (t.title + ' ' + goalPath(t.goalId)).includes(k)));
 }
 function openTask(t){
-  const st = S.settings, e = estOf(t), m = MILESTONES.find(x => x > (t.completions||0));
+  const e = estOf(t), m = MILESTONES.find(x => x > (t.completions||0));
   const person = t.person && S.people[t.person];
-  const steps = t.steps.map((s,i) => `<li class="${s.done?'done':''}"><input type="checkbox" id="st-${t.id}-${i}" data-step="${i}" ${s.done?'checked disabled':''}><label for="st-${t.id}-${i}" class="t">${s.type&&s.type!=='plain'?`<span class="stype">${s.type==='contact'?'Contact':'Proof'}</span> `:''}<span class="t">${esc(s.t)}</span></label>${s.at?`<span class="when">${esc(s.at)}</span>`:''}</li>`).join('');
+  const openSteps = t.steps.map((s,i) => [s,i]).filter(([s]) => !s.done), doneSteps = t.steps.map((s,i) => [s,i]).filter(([s]) => s.done);
   const prev = t.completions ? `<div class="sec"><h4>Milestones</h4><div class="kv"><span>Completed</span><span>${t.completions} times</span></div><div class="bar"><i style="width:${Math.round(100*t.completions/m)}%"></i></div><p class="note">${m - t.completions} more to your ${m} badge.</p></div>` : '';
-  const stuck = (t.rolled||0) >= 3 ? `<div class="sec"><div class="quote"><b>This has moved ${t.rolled} times.</b> That's normal. Want to make it easier?<div class="actions"><button class="btn small" data-act="breakdown">Break it down</button><button class="btn small" data-act="delegate">Hand it off</button><button class="btn small" data-act="resched">Pick a day</button><button class="btn small ghost" data-act="drop">Drop it</button></div></div></div>` : '';
+  const stuck = (t.rolled||0) >= 3 && !t.done ? `<div class="sec"><div class="quote"><b>This has moved ${t.rolled} times.</b> That's normal. Want to make it easier?<div class="actions"><button class="btn small" data-act="breakdown">Break it down</button><button class="btn small" data-act="delegate">Hand it off</button><button class="btn small" data-act="resched">Pick a day</button><button class="btn small ghost" data-act="drop">Drop it</button></div></div></div>` : '';
+  const hist = (t.history||[]).length ? `<div class="sec"><h4>Past completions</h4>${t.history.slice(-5).reverse().map(h => `<div class="kv"><span>${DAYS[h.day]}${h.note?' · '+esc(h.note):''}</span><span>${h.steps.filter(s=>s.done).length}/${h.steps.length} steps</span></div>`).join('')}</div>` : '';
   openSheet(`
-    ${t.goal ? `<div class="crumb">${esc(t.goal)}</div>` : ''}
+    ${t.goalId ? `<button class="crumb" data-act="goals">${esc(goalPath(t.goalId))}</button>` : ''}
     <h2>${esc(t.title)}</h2>
-    <div class="chips"><span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
+    <div class="chips">${t.done?'<span class="chip" style="color:var(--ok)">Completed</span>':''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
+    ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
     <div class="field"><label for="estInput">Time estimate (minutes) ${t.est==null?`· AI estimate, learned from ${t.aiRuns||1} past run${(t.aiRuns||1)>1?'s':''}`:'· set by you'}</label><input id="estInput" type="number" min="5" step="5" value="${e}"></div>
+    <div class="field"><label for="goalSel">Goal</label><select id="goalSel">${goalOptions(t.goalId)}</select></div>
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}${t.proof?' · <i>proof required</i>':''}</div>
-    <div class="sec"><h4>Steps · ${stepsDone(t)} of ${t.steps.length}</h4><ul class="steps">${steps}</ul>
-      <div class="actions"><input id="newStep" placeholder="Add a step" style="flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:8px 10px"><button class="btn small" data-act="addstep">Add</button><button class="btn small ghost" data-act="aisteps">Suggest steps</button></div></div>
-    <div class="sec"><h4>Notes</h4><textarea id="notesInput" rows="2" style="width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:8px 10px">${esc(t.notes||'')}</textarea></div>
+    <div class="sec"><h4>Steps</h4>
+      <div class="bar" style="margin-bottom:8px"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
+      <ul class="steps">${openSteps.map(([s,i]) => stepLI(t,s,i)).join('') || '<li class="note">All steps are done.</li>'}</ul>
+      ${doneSteps.length ? `<details class="donesteps"><summary>Completed steps (${doneSteps.length}). Uncheck any to reopen.</summary><ul class="steps">${doneSteps.map(([s,i]) => stepLI(t,s,i)).join('')}</ul></details>` : ''}
+      <div class="actions"><input id="newStep" class="inp" placeholder="Add a step" style="flex:1;min-width:0;width:auto"><button class="btn small" data-act="addstep">Add</button><button class="btn small ghost" data-act="aisteps">Suggest steps</button></div></div>
+    <div class="sec"><h4>Notes</h4><textarea id="notesInput" class="inp" rows="2">${esc(t.notes||'')}</textarea></div>
     ${t.sourceText ? `<div class="sec"><h4>Source · ${t.source==='email'?'Email':'Text'}</h4><div class="quote">${esc(t.sourceText)}</div></div>` : ''}
     ${person || (t.contacts&&t.contacts.length) ? `<div class="sec"><h4>Contact log${person?' · '+esc(person.name)+', '+esc(person.org):''}</h4>${(t.contacts||[]).map(c => `<div class="kv"><span>${esc(c.how)} · ${esc(c.who)}</span><span>${esc(c.when)}</span></div>`).join('') || '<p class="note">No contacts yet. Checking a Contact step logs one.</p>'}</div>` : ''}
     <div class="sec"><h4>Attachments</h4><input type="file" id="attachInput" multiple><p class="note" id="attachList">${(t.files||[]).map(esc).join(', ') || 'No files yet.'}</p></div>
     ${t.evidence ? `<div class="sec"><h4>Why this routine works</h4><p class="note">In a study of 96 adults, a new daily habit took about 66 days on average to feel automatic, and missing a single day didn't undo progress (Lally et al., 2010, <i>European Journal of Social Psychology</i>). A meta-analysis of 8 trials found aerobic exercise improved attention in children with ADHD (Cerrillo-Urbina et al., 2015). <a href="https://pubmed.ncbi.nlm.nih.gov/25988743/" target="_blank" rel="noopener">Read the study</a></p></div>` : ''}
-    ${prev}${stuck}
+    ${prev}${hist}${stuck}
     <div class="actions">
-      ${S.currentId===t.id ? `<button class="btn" data-act="stop">Pause task</button>` : `<button class="btn primary" data-act="start">Start now</button>`}
-      ${t.status==='waiting' ? `<button class="btn" data-act="unblock">Unblock</button>` : `<button class="btn" data-act="wait">Waiting on someone</button>`}
-      <button class="btn" data-act="complete">Mark done</button>
+      ${t.done ? `<button class="btn primary" data-act="reopen">Reopen task</button>` :
+        `${S.currentId===t.id ? `<button class="btn" data-act="stop">Stop working on it</button>` : `<button class="btn primary" data-act="start">Start now</button>`}
+         ${t.status==='waiting' ? `<button class="btn" data-act="unblock">Unblock</button>` : `<button class="btn" data-act="wait">Waiting on someone</button>`}
+         <button class="btn" data-act="complete">Mark done</button>`}
       <div class="spacer"></div><button class="btn ghost" data-close="1">Close</button>
-    </div>`);
-  const sh = $('#sheetRoot');
-  sh.dataset.task = t.id;
+    </div>`, 'task', t.id);
   $('#estInput').addEventListener('change', ev => { const v = +ev.target.value; if (v >= 5){ t.est = v; t.warned1 = t.warned2 = false; toast('Estimate updated', 'Re-planned today.'); render(); } });
+  $('#goalSel').addEventListener('change', ev => { t.goalId = ev.target.value || null; openTask(t); render(); });
   $('#notesInput').addEventListener('input', ev => { t.notes = ev.target.value; save(); });
   $('#attachInput').addEventListener('change', ev => { t.files = (t.files||[]).concat([...ev.target.files].map(f => f.name)); $('#attachList').textContent = t.files.join(', '); save(); });
 }
 function openComplete(t){
+  if (locked()){ lockedToast(); return; }
   openSheet(`<h2>Finish: ${esc(t.title)}</h2>
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}</div>
     <div class="field" style="margin-top:12px"><label for="resNote">What happened? ${t.proof?'(required)':'(optional)'}</label><textarea id="resNote" rows="3" placeholder="e.g. Dana confirmed the record is fixed and sent a screenshot of the timekeeping system">${esc(t.resolution||'')}</textarea></div>
     <div class="field"><label for="proofFile">Proof ${t.proof?'(photo, file or forwarded email)':'(optional)'}</label><input type="file" id="proofFile" multiple></div>
     <p class="note" id="resErr" hidden style="color:var(--hot)">Add a short note so future you (and your team) knows how this got resolved.</p>
-    <div class="actions"><button class="btn primary" data-act="confirmdone">Complete</button><button class="btn ghost" data-close="1">Not yet</button></div>`);
-  $('#sheetRoot').dataset.task = t.id;
+    <div class="actions"><button class="btn primary" data-act="confirmdone">Complete</button><button class="btn ghost" data-close="1">Not yet</button></div>`, 'complete', t.id);
+}
+function openDoneList(day){
+  const items = S.log.filter(l => l.day === day);
+  const row = l => `<button class="gtask" ${l.taskId?`data-open="${l.taskId}"`:''}>${esc(l.title)}<span>${l.kind==='task'?'Task':l.kind==='step'?'Step · '+esc((byId(l.taskId)||{}).title||''):'Break'}</span></button>`;
+  openSheet(`<h2>Done ${day===S.day?'today':'on '+DAYS[day]}</h2><p class="note">Tap a task or step to see its details, add notes, or uncheck something done by mistake.</p>
+    ${['task','step','break'].map(k => { const g = items.filter(l => l.kind === k); return g.length ? `<div class="sec"><h4>${k==='task'?'Tasks':k==='step'?'Steps':'Breaks'} · ${g.length}</h4>${g.map(row).join('')}</div>` : ''; }).join('') || '<p class="empty">Nothing yet. Your first check-off shows up here.</p>'}
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'done');
+}
+function goalNode(g, depth){
+  const pct = Math.round(goalProgress(g.id)*100), kids = goalKids(g.id), tasks = goalTasks(g.id);
+  return `<details class="goal" open><summary><span class="gt">${esc(g.title)}</span><span class="bar thin"><i style="width:${pct}%"></i></span><span class="pct">${pct}%</span></summary>
+    <div class="gbody">${g.why?`<p class="note" style="margin:0 0 4px">Why: ${esc(g.why)}</p>`:''}
+    ${tasks.map(t => `<button class="gtask ${t.done?'isdone':''}" data-open="${t.id}">${esc(t.title)}<span>${t.done?'Done':stepsDone(t)+'/'+t.steps.length+' steps'}${t.cadence?' · '+esc(t.cadence.label):''}</span></button>`).join('')}
+    ${kids.map(k => goalNode(k, depth+1)).join('')}
+    <div class="actions" style="margin-top:6px" id="ga-${g.id}"><button class="btn small" data-act="addsub" data-goal="${g.id}">+ Sub-goal</button><button class="btn small" data-act="addgtask" data-goal="${g.id}">+ Task</button></div></div></details>`;
+}
+function openGoals(){
+  openSheet(`<h2>Goals</h2><p class="note">Goals can hold sub-goals as deep as you need. Progress rolls up from every task underneath.</p>
+    <div class="actions" style="margin-top:8px"><input id="newGoal" class="inp" placeholder="New goal, e.g. Launch the onboarding SOP" style="flex:1;min-width:0;width:auto"><button class="btn small primary" data-act="savegoal">Add goal</button></div>
+    <div class="sec">${goalKids(null).map(g => goalNode(g, 0)).join('')}</div>
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'goals');
 }
 function openEvent(e){
   const rel = relatedTasks(e);
@@ -684,16 +884,15 @@ function openEvent(e){
       <li>Purpose: ${esc(e.desc.split('.')[0] || e.title)}.</li>
       ${rel.map(t => `<li>${esc(t.title)}: ${stepsDone(t)}/${t.steps.length} steps done${nextStep(t)?', next is "'+esc(nextStep(t).t)+'"':''}.</li>`).join('')}
       <li>Bring: open questions and any proof you've collected.</li></ul></div>
-      <div class="sec"><h4>Related tasks</h4>${rel.map(t => `<button class="btn small" data-open="${t.id}" style="margin:0 6px 6px 0">${esc(t.title)}</button>`).join('') || '<p class="note">None found.</p>'}</div>
+      <div class="sec"><h4>Related tasks</h4>${rel.map(t => `<button class="gtask" data-open="${t.id}">${esc(t.title)}<span>${stepsDone(t)}/${t.steps.length}</span></button>`).join('') || '<p class="note">None found.</p>'}</div>
       <div class="sec"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="prepToggle" ${e.prep?'checked':''}> Add a 15-minute prep block before this meeting</label></div>`:''}
-    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`);
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'event');
   const pt = $('#prepToggle'); if (pt) pt.addEventListener('change', ev => { e.prep = ev.target.checked; render(); });
 }
-function openBreak(){
-  openSheet(`<h2>Break time</h2><p class="note">Short movement breaks are linked with better attention in ADHD research. Pick one:</p>
-  <div class="sec"><div class="kv"><span>Drink a glass of water</span><span>2 min</span></div><div class="kv"><span>Walk around the block or the office</span><span>10 min</span></div><div class="kv"><span>Neck, shoulder and wrist stretches</span><span>5 min</span></div>
-  <div class="kv"><span><a href="https://www.youtube.com/results?search_query=10+minute+desk+yoga" target="_blank" rel="noopener">10-minute desk yoga videos</a></span><span>10 min</span></div></div>
-  <div class="actions"><button class="btn primary" data-act="breakdone">I took a break</button><button class="btn ghost" data-close="1">Skip</button></div>`);
+function openBreakPicker(){
+  openSheet(`<h2>Take a break</h2><p class="note">Short movement breaks are linked with better attention in ADHD research. The timer starts when you pick one.</p>
+    <div class="sec" style="border:0">${breakOptions(S.breakDue && S.breakDue.reward ? 'reward' : '')}</div>
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Cancel</button></div>`, 'break');
 }
 const TEMPLATES = {
   followup:{title:'Follow up: ', steps:[['Send a check-in message','contact'],['Log their reply'],['Get proof it\'s done','proof'],['Close the loop with whoever asked']], doneWhen:'Proof received and requester notified', diff:1, span:'quick', cadence:'2'},
@@ -716,11 +915,12 @@ function aiDone(title){
   if (/call|email|text/.test(s)) return 'Message sent and reply logged';
   return 'The result exists and you can show it to someone';
 }
-function openAdd(){
+function openAdd(goalId){
   const dayOpts = [...Array(7).keys()].filter(i => i >= S.day).map(i => `<option value="${i}">${i===S.day?'Today':DAYS[i]}</option>`).join('');
   openSheet(`<h2>New task</h2>
   <div class="field"><label for="fTitle">Goal (title)</label><input id="fTitle" placeholder="e.g. Follow up with Riverside on missing hours"></div>
   <div class="grid2">
+    <div class="field"><label for="fGoal">Part of goal</label><select id="fGoal">${goalOptions(goalId)}</select></div>
     <div class="field"><label for="fTmpl">Start from a template</label><select id="fTmpl"><option value="">None</option><option value="followup">Follow up with someone</option><option value="billing">Missing-time billing correction</option><option value="agreement">Service agreement</option><option value="onboard">Nurse onboarding</option></select></div>
     <div class="field"><label for="fCtx">Area</label><select id="fCtx"><option value="work">Work</option><option value="home">Home</option></select></div>
     <div class="field"><label for="fType">Schedule</label><select id="fType"><option value="due">One-off with a due date</option><option value="1">Routine: daily</option><option value="w">Routine: weekdays</option><option value="2">Routine: every 2 days</option><option value="3">Routine: every 3 days</option><option value="7">Routine: weekly</option></select></div>
@@ -733,7 +933,7 @@ function openAdd(){
   <div class="field"><label for="fDone">Done when…</label><input id="fDone" placeholder="Leave blank and AI suggests one"></div>
   <label style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><input type="checkbox" id="fSplit"> Split into chunks across the day</label>
   <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="fProof" checked> Proof required to finish</label>
-  <div class="actions"><button class="btn primary" data-act="saveadd">Add and re-plan</button><button class="btn ghost" data-close="1">Cancel</button></div>`);
+  <div class="actions"><button class="btn primary" data-act="saveadd">Add and re-plan</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'add');
   $('#fTmpl').addEventListener('change', ev => { const tp = TEMPLATES[ev.target.value]; if (!tp) return;
     if (!$('#fTitle').value) $('#fTitle').value = tp.title; $('#fDiff').value = tp.diff; $('#fSpan').value = tp.span; $('#fDone').value = tp.doneWhen; if (tp.cadence) $('#fType').value = tp.cadence; $('#fTitle').focus(); });
   setTimeout(() => $('#fTitle') && $('#fTitle').focus(), 50);
@@ -745,9 +945,8 @@ function saveAdd(){
   const cadMap = {'1':{every:1,label:'Daily'}, w:{every:1,label:'Weekdays'}, '2':{every:2,label:'Every 2 days'}, '3':{every:3,label:'Every 3 days'}, '7':{every:7,label:'Weekly'}};
   const steps = (tmpl ? tmpl.steps : aiSteps(title)).map(([t,type]) => ({t, type}));
   const t = {id:'n' + (S.nextId++), title, ctx:$('#fCtx').value, diff, span, est:estIn, aiEst:estIn?null:Math.round(SPANS[span][1] * (diff===3?1.2:1)), aiRuns:0,
-    prio:+$('#fPrio').value, due: type==='due' ? first : null, cadence: type==='due' ? null : cadMap[type], day: type==='due' ? S.day : first,
+    prio:+$('#fPrio').value, due: type==='due' ? first : null, cadence: type==='due' ? null : cadMap[type], day: type==='due' ? S.day : first, goalId: $('#fGoal').value || null,
     source: tmpl ? 'template' : 'manual', doneWhen: $('#fDone').value.trim() || aiDone(title), proof: $('#fProof').checked, split: $('#fSplit').checked || span==='marathon', steps, notes:''};
-  // one-off tasks due later still start on today's board only if they fit; otherwise the engine places them on the due day
   if (type === 'due' && first > S.day && diff < 3 && t.prio < 3) t.day = first;
   S.tasks.push(t); closeSheet(); render();
   const el = document.querySelector(`.card[data-id="${t.id}"]`); if (el){ el.classList.add('pop'); el.scrollIntoView({block:'nearest', behavior:'smooth'}); }
@@ -755,14 +954,23 @@ function saveAdd(){
 }
 function openSettings(){
   const st = S.settings, hh = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+  const cb = (id, on, text) => `<label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="${id}" ${on?'checked':''}> ${text}</label>`;
   openSheet(`<h2>Settings</h2>
-  <div class="sec" style="border:0;margin:0;padding:0"><h4>Cues and feedback</h4>
+  <div class="sec" style="border:0;margin:0;padding:0"><h4>Day flow</h4>
+    ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
+    ${cb('sLock', st.breakLock, 'Break lock: pause check-offs until I take a due break')}</div>
+  <div class="sec"><h4>Cues and feedback</h4>
     <div class="field"><label for="sCue">Attention cue intensity: ${['Off','Gentle','Medium','Strong'][st.cue]}</label><input id="sCue" type="range" min="0" max="3" value="${st.cue}"></div>
-    <label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="sSound" ${st.sound?'checked':''}> Sounds</label>
-    <label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="sHap" ${st.haptics?'checked':''}> Vibration (on phones that support it)</label>
-    <label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="sReduce" ${st.reduce?'checked':''}> Reduce motion (no shaking or confetti)</label>
-    <label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="sPies" ${st.pies?'checked':''}> Pie timers on cards</label>
-    <label style="display:flex;gap:8px"><input type="checkbox" id="sTimes" ${st.times?'checked':''}> Show approximate start times</label></div>
+    ${cb('sFlare', st.flare, 'Light flare sweep on urgent cards')}
+    ${cb('sSound', st.sound, 'Sounds')}${cb('sHap', st.haptics, 'Vibration (on phones that support it)')}
+    ${cb('sReduce', st.reduce, 'Reduce motion (no shaking, flare or confetti)')}${cb('sPies', st.pies, 'Pie timers on cards')}${cb('sTimes', st.times, 'Show approximate start times')}</div>
+  <div class="sec"><h4>What the colors mean</h4><div class="legend">
+    <span class="sw" style="background:color-mix(in srgb,var(--accent) 12%,var(--surface));border-color:var(--accent)"></span><span>Now: what you're working on</span>
+    <span class="sw" style="background:color-mix(in srgb,var(--warn) 18%,var(--surface))"></span><span>Due today: needs attention soon</span>
+    <span class="sw" style="background:color-mix(in srgb,var(--hot) 16%,var(--surface))"></span><span>Late: overdue, missed routine, or running long</span>
+    <span class="sw" style="background:color-mix(in srgb,var(--rest) 18%,var(--surface));border-color:var(--rest)"></span><span>Break: rest and recharge</span>
+    <span class="sw" style="background:var(--surface-2);border-style:dashed"></span><span>Waiting on someone else</span>
+    <span class="sw" style="background:var(--surface)"></span><span>On track. The dot shows Work (teal) or Home (orange)</span></div></div>
   <div class="sec"><h4>Your day</h4><div class="grid2">
     <div class="field"><label for="sFs">Fresh hours start</label><input type="time" id="sFs" value="${hh(st.freshStart)}"></div>
     <div class="field"><label for="sFe">Fresh hours end</label><input type="time" id="sFe" value="${hh(st.freshEnd)}"></div>
@@ -770,11 +978,12 @@ function openSettings(){
     <div class="field"><label for="sWe">Work ends</label><input type="time" id="sWe" value="${hh(st.workEnd)}"></div>
     <div class="field"><label for="sBuf">Buffer between tasks (min)</label><input type="number" id="sBuf" min="0" max="30" value="${st.buffer}"></div>
     <div class="field"><label for="sBrk">Break every (min)</label><input type="number" id="sBrk" min="30" max="240" step="15" value="${st.breakEvery}"></div></div>
-    <label style="display:flex;gap:8px"><input type="checkbox" id="sPrep" ${st.prepAll?'checked':''}> Prep blocks before meetings</label></div>
-  <div class="actions"><button class="btn primary" data-close="1">Done</button></div>`);
+    ${cb('sPrep', st.prepAll, 'Prep blocks before meetings')}</div>
+  <div class="actions"><button class="btn primary" data-close="1">Done</button></div>`, 'settings');
   const toMin = v => { const [h,m] = v.split(':').map(Number); return h*60+m; };
   const bind = (id, fn, evn='change') => $(id).addEventListener(evn, ev => { fn(ev.target); render(); });
   bind('#sCue', el => { st.cue = +el.value; el.previousElementSibling.textContent = 'Attention cue intensity: ' + ['Off','Gentle','Medium','Strong'][st.cue]; }, 'input');
+  bind('#sAuto', el => st.autoNext = el.checked); bind('#sLock', el => st.breakLock = el.checked); bind('#sFlare', el => st.flare = el.checked);
   bind('#sSound', el => st.sound = el.checked); bind('#sHap', el => st.haptics = el.checked); bind('#sReduce', el => st.reduce = el.checked);
   bind('#sPies', el => st.pies = el.checked); bind('#sTimes', el => st.times = el.checked); bind('#sPrep', el => st.prepAll = el.checked);
   bind('#sFs', el => st.freshStart = toMin(el.value)); bind('#sFe', el => st.freshEnd = toMin(el.value));
@@ -784,14 +993,15 @@ function openSettings(){
 
 /* ---------- events ---------- */
 document.addEventListener('click', ev => {
-  const el = ev.target.closest('[data-check],[data-open],[data-act],[data-ev],[data-break],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
+  const el = ev.target.closest('[data-check],[data-open],[data-act],[data-ev],[data-brk],[data-donelist],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
   if (!el) return;
-  const sheetTask = byId($('#sheetRoot').dataset.task);
+  const root = $('#sheetRoot'), sheetTask = byId(root.dataset.task);
   if (el.dataset.close !== undefined){ if (ev.target === el || el.tagName === 'BUTTON') closeSheet(); return; }
   if (el.dataset.check){ ev.stopPropagation(); checkStep(byId(el.dataset.check), null, el); return; }
-  if (el.dataset.open){ openTask(byId(el.dataset.open)); return; }
+  if (el.dataset.open){ const t = byId(el.dataset.open); if (t) openTask(t); return; }
   if (el.dataset.ev){ openEvent(S.events.find(e => e.id === el.dataset.ev)); return; }
-  if (el.dataset.break){ openBreak(); return; }
+  if (el.dataset.brk){ startBreak(el.dataset.brk); return; }
+  if (el.dataset.donelist){ openDoneList(+el.dataset.donelist); return; }
   if (el.dataset.focus){ S.focus = el.dataset.focus; render(); toast(S.focus==='all'?'Showing everything':'Focus: ' + (S.focus==='work'?'Work':'Home'), S.focus==='work'?'Home items fade back in during your last 3 work hours.':''); return; }
   if (el.dataset.view){ S.view = el.dataset.view; S.viewDay = S.day; render.scrolled = false; render(); return; }
   if (el.dataset.speed){ S.speed = +el.dataset.speed; render(); return; }
@@ -799,18 +1009,26 @@ document.addEventListener('click', ev => {
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
   const a = el.dataset.act, cur = byId(S.currentId);
   switch (a){
-    case 'start': S.currentId = sheetTask.id; sheetTask.status = 'in progress'; if (sheetTask.day !== S.day) sheetTask.day = S.day; closeSheet(); render(); toast('Started: ' + sheetTask.title, 'The pie fills as time passes.'); break;
-    case 'stop': S.currentId = null; closeSheet(); render(); toast('Paused', 'Time so far is saved. Re-planned today.'); break;
+    case 'startday': closeSheet(); startNext(); break;
+    case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
+    case 'stop': S.currentId = null; S.paused = false; closeSheet(); render(); toast('Stopped', 'Time so far is saved. Re-planned today.'); break;
+    case 'pause': S.paused = true; render(); toast('Paused', 'The timer is stopped. Resume when you\'re ready.'); break;
+    case 'resume': S.paused = false; render(); break;
     case 'more15': if (cur){ cur.est = estOf(cur) + 15; cur.warned1 = false; cur.warned2 = false; render(); } break;
     case 'finish': if (cur) openComplete(cur); break;
     case 'complete': openComplete(sheetTask); break;
+    case 'reopen': sheetTask.done = false; sheetTask.day = S.day; const li = S.log.map(l => l.taskId === sheetTask.id && l.kind === 'task').lastIndexOf(true); if (li > -1) S.log.splice(li,1); openTask(sheetTask); render(); toast('Task reopened', 'It\'s back on today\'s board.'); break;
     case 'confirmdone': {
       const note = $('#resNote').value.trim(), files = [...$('#proofFile').files].map(f => f.name);
       if (sheetTask.proof && note.length < 3){ $('#resErr').hidden = false; $('#resNote').focus(); return; }
       completeTask(sheetTask, note, files); break; }
+    case 'brkpick': openBreakPicker(); break;
+    case 'endbrk': endBreak(); break;
+    case 'brkmore': if (S.brk){ S.brk.min += 5; S.brk.ready = false; render(); } break;
+    case 'snooze': S.breakDue = null; S.workSince = Math.max(0, S.settings.breakEvery - 15); render(); break;
     case 'wait': {
       const box = document.createElement('div'); box.className = 'actions';
-      box.innerHTML = `<input id="waitWho" placeholder="Who or what are you waiting on?" style="flex:1;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:8px 10px"><button class="btn small primary" data-act="savewait">Save</button>`;
+      box.innerHTML = `<input id="waitWho" class="inp" placeholder="Who or what are you waiting on?" style="flex:1;min-width:0;width:auto"><button class="btn small primary" data-act="savewait">Save</button>`;
       el.closest('.actions').after(box); $('#waitWho').focus(); break; }
     case 'savewait': { const w = $('#waitWho').value.trim() || 'a reply';
       sheetTask.status = 'waiting'; sheetTask.waitingOn = w; if (S.currentId === sheetTask.id) S.currentId = null;
@@ -819,26 +1037,43 @@ document.addEventListener('click', ev => {
     case 'addstep': { const v = $('#newStep').value.trim(); if (v){ sheetTask.steps.push({t:v}); openTask(sheetTask); render(); } break; }
     case 'aisteps': { const have = new Set(sheetTask.steps.map(s => s.t)); aiSteps(sheetTask.title).forEach(([t,type]) => { if (!have.has(t)) sheetTask.steps.push({t, type}); }); openTask(sheetTask); render(); toast('Suggested steps added', 'Edit or remove any that don\'t fit.'); break; }
     case 'saveadd': saveAdd(); break;
+    case 'goals': openGoals(); break;
+    case 'savegoal': case 'savesub': {
+      const inp = a === 'savegoal' ? $('#newGoal') : $('#newSub'); const v = inp.value.trim(); if (!v){ inp.focus(); return; }
+      S.goals.push({id:'g' + (S.nextId++), title:v, parent: a === 'savesub' ? inp.dataset.parent : null});
+      openGoals(); save(); toast(a === 'savegoal' ? 'Goal added' : 'Sub-goal added', 'Add tasks to it with "+ Task".'); break; }
+    case 'addsub': {
+      document.querySelectorAll('.subrow').forEach(n => n.remove());
+      const row = document.createElement('div'); row.className = 'actions subrow';
+      row.innerHTML = `<input id="newSub" class="inp" data-parent="${el.dataset.goal}" placeholder="Sub-goal of ${esc(goalById(el.dataset.goal).title)}" style="flex:1;min-width:0;width:auto"><button class="btn small primary" data-act="savesub">Add</button>`;
+      $('#ga-' + el.dataset.goal).after(row); $('#newSub').focus(); break; }
+    case 'addgtask': openAdd(el.dataset.goal); break;
     case 'pushlater': {
       const {overflow} = schedule(S.day); let n = 0;
       overflow.filter(t => t.due == null || t.due > S.day).sort((a,b) => (b.due ?? 99) - (a.due ?? 99)).forEach(t => { if (S.day < 6){ t.day = S.day + 1; n++; } });
       render(); toast(n ? 'Moved ' + n + ' task' + (n>1?'s':'') + ' to tomorrow' : 'Nothing could move', n ? 'Tasks due soonest stayed on today.' : 'Everything left is due today.'); break; }
-    case 'breakdone': closeSheet(); confetti(innerWidth/2, innerHeight/2, 60, 6); chime(false); toast('Break logged', 'Your brain says thanks.'); break;
-    case 'breakdown': openTask(sheetTask); toast('Tip', 'Add a smaller first step below, something you can do in 5 minutes.'); $('#newStep') && $('#newStep').focus(); break;
+    case 'breakdown': toast('Tip', 'Add a smaller first step below, something you can do in 5 minutes.'); $('#newStep') && $('#newStep').focus(); break;
     case 'delegate': toast('Hand-offs come with team workspaces', 'Phase 6 in the roadmap.'); break;
     case 'resched': sheetTask.day = Math.min(6, S.day + 2); sheetTask.rolled = 0; closeSheet(); render(); toast('Moved to ' + DAYS[sheetTask.day], 'Rollover count reset.'); break;
-    case 'drop': S.tasks = S.tasks.filter(t => t !== sheetTask); closeSheet(); render(); toast('Dropped', 'Letting go is a valid choice.'); break;
+    case 'drop': S.tasks = S.tasks.filter(t => t !== sheetTask); if (S.currentId === sheetTask.id) S.currentId = null; closeSheet(); render(); toast('Dropped', 'Letting go is a valid choice.'); break;
   }
 });
 document.addEventListener('change', ev => {
-  const st = ev.target.dataset && ev.target.dataset.step;
-  if (st !== undefined){ const t = byId($('#sheetRoot').dataset.task); checkStep(t, +st, ev.target); if (t.steps.some(s => !s.done)) openTask(t); }
+  const el = ev.target; if (!el.dataset || el.dataset.step === undefined) return;
+  const t = byId(el.dataset.task), i = +el.dataset.step;
+  if (el.checked) checkStep(t, i, el); else uncheckStep(t, i);
+  const root = $('#sheetRoot');
+  if (root.dataset.kind === 'task' && root.dataset.task === t.id && (nextStep(t) || !el.checked || locked())) openTask(t);
 });
 document.addEventListener('keydown', ev => {
   if (ev.key === 'Escape') closeSheet();
+  if (ev.key === 'Enter' && ev.target.id === 'newGoal') $('[data-act="savegoal"]').click();
+  if (ev.key === 'Enter' && ev.target.id === 'newSub') $('[data-act="savesub"]').click();
+  if (ev.key === 'Enter' && ev.target.id === 'newStep') $('[data-act="addstep"]').click();
   if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('card') && ev.target.dataset.id){ ev.preventDefault(); openTask(byId(ev.target.dataset.id)); }
 });
-$('#addBtn').onclick = openAdd;
+$('#addBtn').onclick = () => openAdd(null);
+$('#goalsBtn').onclick = openGoals;
 $('#settingsBtn').onclick = openSettings;
 $('#playBtn').onclick = () => { S.running = !S.running; render(); };
 $('#endDayBtn').onclick = endDay;
