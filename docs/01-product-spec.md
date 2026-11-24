@@ -324,3 +324,19 @@ CRM · Android/desktop native apps (web covers desktop first).
 ### 12.4 Edge light
 - Every visible card has a light that runs along its top edge, peaking at the center and fading out on the right.
 - Urgency changes color (accent → amber → red), speed (9s → 1.6s) and thickness/glow.
+
+### 12.5 Flow builder, hand-offs and permissions
+- The swimlane diagram is also the editor: "+ Add stage" in any lane, arrows to reorder or change lanes,
+  a stage panel for name, owner and tasks (pulled from template tasks or written new).
+- A stage finishing triggers the next stage's tasks for its owner. The person finishing can add a task for the next owner.
+- **Job levels**: Admin · Manager · Team lead · Member, set in an org chart.
+  - Company flows: created by anyone who manages people; structure (order, owners, hand-offs) changed by the
+    flow owner or an admin.
+  - Department leads edit the tasks inside their own stages.
+  - Members use flows and can save personal copies; admins and leads track progress.
+- **CRM**: supplies contacts and owners; an "Account owner (CRM)" lane resolves to that owner when a flow starts.
+
+### 12.6 Day flow additions
+- Switch task: pick another task; the current one pauses and keeps its time.
+- Get ahead: when today is clear, pull in tasks due later; finishing early has its own celebration.
+- Notifications sit at the top of the screen, at most two at a time.

@@ -36,6 +36,14 @@
 | D31 | "Suggest routines (AI)" breaks a long goal (e.g. weight loss) into routine sub-goals with small daily/weekly tasks |
 | D32 | **Template library**: company processes (shared, role-owned stages) and personal templates (saved from any goal). Usable from Add task or the Library |
 | D33 | Company processes render as a **swimlane flow** (lanes = people/teams, dashed arrows = hand-offs). Using one creates the goal tree; my stages go on my board, stages after a teammate's wait until that stage is done |
+| D34 | "Switch task" opens a picker: choose another task; the current one pauses with its time saved and stays near the top |
+| D35 | Notifications appear at the top of the screen, at most two at a time, and fade on their own |
+| D36 | **Get ahead**: when today is clear, offer tasks due later; finishing a pulled-in task early gets its own celebration (rising sparkles, a longer chime, "N done early this week") |
+| D37 | **Flow builder**: the swimlane diagram is the editor. Add stages per lane, reorder, move between lanes, set owners, and pull in template tasks or write new ones |
+| D38 | Completing a stage automatically starts the next owner's tasks. When completing, you can add an extra task for the next owner |
+| D39 | **Org chart and job levels** (Admin, Manager, Team lead, Member). Anyone who manages people can create company flows. The flow owner controls order, owners and hand-offs; departments edit the tasks in their own stages |
+| D40 | **CRM**: contacts (candidates, vendors, clients) and their owners. An "Account owner (CRM)" lane assigns that stage to the contact's owner when a flow starts |
+| D41 | Family flows use the same builder, with lanes for family members |
 
 ## Open
 | # | Question |

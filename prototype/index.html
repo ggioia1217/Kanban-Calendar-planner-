@@ -299,9 +299,46 @@ a{color:var(--accent)}
 .flowkey i{display:inline-block;width:22px;height:0;border-top:2px solid var(--muted)}
 .flowkey i.h{border-top:2px dashed var(--violet)}
 
+/* Get ahead */
+.chip.ahead{color:var(--violet);border-color:color-mix(in srgb,var(--violet) 45%,var(--line))}
+.panel.aheadp{border-color:var(--violet);background:color-mix(in srgb,var(--violet) 8%,var(--surface));--ec:var(--violet)}
+.panel.aheadp .tag{color:var(--violet)}
+/* Flow builder */
+.fnode.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.fnode.editable{cursor:pointer}
+.ntools{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.ntools button{border:1px solid var(--line);background:var(--surface-2);border-radius:6px;min-width:26px;height:24px;font-size:12px;line-height:1;padding:0 4px;color:var(--muted)}
+.ntools button:hover{color:var(--ink);border-color:var(--accent)}
+.fnode.ghost{border-style:dashed;background:transparent;color:var(--muted);align-items:center;justify-content:center;min-height:56px;cursor:pointer;font-weight:600}
+.fnode.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.fnode .ft{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.stageed{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;background:var(--surface)}
+.handoff-note{font-size:13.5px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--violet) 10%,var(--surface));margin:6px 0 10px}
+.btask{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);margin-bottom:6px;font-size:14px}
+.btask small{color:var(--muted)}
+.lockmsg{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);background:var(--surface-2);border-radius:10px;padding:8px 10px;margin:8px 0}
+.lockmsg svg{width:16px;height:16px;flex:none}
+/* Org chart */
+.org{list-style:none;margin:0;padding:0}
+.org .org{margin-left:18px;padding-left:16px;border-left:2px solid var(--line)}
+.org li{margin:8px 0;position:relative}
+.org .org > li::before{content:"";position:absolute;left:-16px;top:24px;width:14px;height:2px;background:var(--line)}
+.op{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface);flex-wrap:wrap;max-width:100%}
+.op.me{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.op b{font-size:14px} .op small{color:var(--muted);font-size:12px;display:block}
+.tablewrap{overflow-x:auto}
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+.ptable th,.ptable td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:center}
+.ptable th:first-child,.ptable td:first-child{text-align:left}
+.ptable th{font-size:12px;color:var(--muted);font-weight:700}
+.ptable th.cur{color:var(--accent)}
+.yes{color:var(--ok);font-weight:700} .no{color:var(--muted)}
+
 /* Toasts + confetti */
-.toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
-.toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:up .25s ease}
+.toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
+@keyframes down{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
+.sheet.still{animation:none}
 .toast small{display:block;font-weight:500;opacity:.8}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
 @media (prefers-reduced-motion: reduce){.card,.sheet,.toast{animation:none!important}}
@@ -319,6 +356,7 @@ a{color:var(--accent)}
     <div class="spacer"></div>
     <button class="btn" id="goalsBtn">Goals</button>
     <button class="btn" id="libBtn">Library</button>
+    <button class="btn" id="orgBtn">Team</button>
     <button class="btn primary" id="addBtn">+ Add task</button>
     <button class="iconbtn" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
@@ -332,6 +370,7 @@ a{color:var(--accent)}
       <button data-speed="1">1×</button><button data-speed="60">60×</button><button data-speed="300">300×</button>
     </div>
     <button class="btn small" id="endDayBtn">End day ▸</button>
+    <button class="btn small" id="clearBtn">Finish today (demo)</button>
     <div class="spacer"></div>
     <button class="btn small ghost" id="resetBtn">Reset demo</button>
   </div>
@@ -361,9 +400,13 @@ const BREAKS = [
   {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'}
 ];
 const ROLES = {
-  me:{name:'You', c:'--accent'}, recruiter:{name:'Recruiter', c:'--home'}, cred:{name:'Credentialing', c:'--warn'},
-  hr:{name:'HR', c:'--work'}, payroll:{name:'Payroll', c:'--hot'}, ar:{name:'Billing (AR)', c:'--rest'}, vendor:{name:'Vendor', c:'--violet'}
+  me:{name:'You', c:'--accent', group:'Team'}, recruiter:{name:'Recruiting', c:'--home', group:'Team'}, cred:{name:'Credentialing', c:'--warn', group:'Team'},
+  hr:{name:'HR', c:'--work', group:'Team'}, payroll:{name:'Payroll', c:'--hot', group:'Team'}, ar:{name:'Billing (AR)', c:'--rest', group:'Team'},
+  crmowner:{name:'Account owner (CRM)', c:'--violet', group:'From the CRM'}, vendor:{name:'Vendor', c:'--violet', group:'External'},
+  partner:{name:'Partner', c:'--home', group:'Family'}, kids:{name:'Kids', c:'--warn', group:'Family'}
 };
+const LV = {member:0, lead:1, manager:2, admin:3};
+const LEVEL_NAMES = {admin:'Admin', manager:'Manager', lead:'Team lead', member:'Member'};
 const ICON = {
   repeat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
   dot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>',
@@ -380,7 +423,7 @@ const ICON = {
 /* ---------- sample data ---------- */
 function seedTemplates(){
   return [
-    {id:'tp1', scope:'company', name:'Nurse onboarding', desc:'From accepted offer to first shift. Each team owns its stage and hands off to the next.', horizon:{n:3,unit:'weeks'}, ctx:'work', stages:[
+    {id:'tp1', scope:'company', owner:'p-morgan', name:'Nurse onboarding', desc:'From accepted offer to first shift. Each team owns its stage and hands off to the next.', horizon:{n:3,unit:'weeks'}, ctx:'work', stages:[
       {title:'Offer accepted', role:'recruiter', tasks:[{title:'Send and collect the offer packet', est:30, steps:['Send offer letter','Collect signed offer']}]},
       {title:'Credentialing', role:'cred', tasks:[{title:'Verify license and certifications', est:45, steps:['Collect RN license copy','Verify on the state board site','Verify BLS card']},{title:'Collect health records', est:30, steps:['TB test result','Immunization records']}]},
       {title:'Background check', role:'hr', tasks:[{title:'Run background check', est:20, steps:['Submit vendor form','Save confirmation number']}]},
@@ -388,19 +431,47 @@ function seedTemplates(){
       {title:'Orientation', role:'me', tasks:[{title:'Schedule orientation', est:20, steps:['Pick a date with the unit manager','Send the calendar invite']},{title:'Send welcome packet', est:30, steps:['Fill in the welcome letter','Add the shift schedule','Email the packet']}]},
       {title:'First-shift check-in', role:'me', tasks:[{title:'Check in after the first shift', est:15, steps:['Call the nurse','Log feedback']}]}
     ]},
-    {id:'tp2', scope:'company', name:'Missing-time billing correction', desc:'Get missing hours corrected with proof so AR can bill.', horizon:{n:1,unit:'weeks'}, ctx:'work', stages:[
+    {id:'tp2', scope:'company', owner:'me', name:'Missing-time billing correction', desc:'Get missing hours corrected with proof so AR can bill.', horizon:{n:1,unit:'weeks'}, ctx:'work', stages:[
       {title:'Identify the gap', role:'ar', tasks:[{title:'Flag missing hours', est:15, steps:['Run the missing-time report','Send the list to the account owner']}]},
-      {title:'Request the fix', role:'me', tasks:[{title:'Contact the customer or vendor', est:15, cadence:2, cadLabel:'Every 2 days until done', steps:['Email the contact','Call if no reply in 2 days']}]},
+      {title:'Request the fix', role:'crmowner', tasks:[{title:'Contact the customer or vendor', est:15, cadence:2, cadLabel:'Every 2 days until done', steps:['Email the contact','Call if no reply in 2 days']}]},
       {title:'Record corrected', role:'vendor', tasks:[{title:'Correct the record', est:30, steps:['Update the hours','Send a screenshot']}]},
       {title:'Verify proof', role:'me', tasks:[{title:'Verify proof and close the loop', est:15, steps:['Check the screenshot matches the hours','Forward the proof to AR']}]},
       {title:'Bill', role:'ar', tasks:[{title:'Bill the corrected hours', est:20, steps:['Create the invoice','Send the invoice']}]}
     ]},
-    {id:'tp3', scope:'mine', name:'Lose 15 pounds', desc:'A months-long goal broken into small routines you can do today.', horizon:{n:3,unit:'months'}, ctx:'home', stages:[
+    {id:'tp3', scope:'mine', owner:'me', name:'Lose 15 pounds', desc:'A months-long goal broken into small routines you can do today.', horizon:{n:3,unit:'months'}, ctx:'home', stages:[
       {title:'Track food', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Log meals', est:10, cadence:1, cadLabel:'Daily', steps:['Log breakfast','Log lunch','Log dinner']}]},
       {title:'Move more', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Exercise session', est:60, cadence:2, cadLabel:'3× a week', steps:['Warm up for 5 minutes','Main workout','Stretch']}]},
       {title:'Check progress', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Weekly weigh-in', est:5, cadence:7, cadLabel:'Weekly', steps:['Weigh in before breakfast','Log the number']}]},
       {title:'Plan ahead', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Sunday meal prep', est:90, cadence:7, cadLabel:'Weekly', steps:['Plan 5 meals','Shop','Prep and portion']}]}
+    ]},
+    {id:'tp4', scope:'family', owner:'me', name:'Sunday family reset', desc:'Everyone does their part so the week starts calm.', horizon:{n:1,unit:'days'}, ctx:'home', stages:[
+      {title:'Tidy common rooms', role:'kids', tasks:[{title:'Pick up toys and shoes', est:15, steps:['Living room','Hallway']}]},
+      {title:'Laundry and linens', role:'partner', tasks:[{title:'Wash and fold towels', est:45, steps:['Wash','Dry','Fold']}]},
+      {title:'Plan the week', role:'me', tasks:[{title:'Meal plan and calendar check', est:30, steps:['Check the family calendar','Pick 5 dinners','Write the grocery list']}]},
+      {title:'Grocery order', role:'partner', tasks:[{title:'Place the grocery order', est:20, steps:['Use the list','Pick a delivery slot']}]}
     ]}
+  ];
+}
+function seedOrg(){
+  return [
+    {id:'p-alex', name:'Alex Rivera', title:'Chief Operating Officer', level:'admin', role:null, mgr:null},
+    {id:'p-morgan', name:'Morgan Blake', title:'Director of Operations', level:'manager', role:'me', mgr:'p-alex'},
+    {id:'p-you', name:'You', title:'Account Manager', level:'lead', role:'me', mgr:'p-morgan', me:true},
+    {id:'p-casey', name:'Casey Nguyen', title:'Coordinator', level:'member', role:'me', mgr:'p-you'},
+    {id:'p-riley', name:'Riley Brooks', title:'Coordinator', level:'member', role:'me', mgr:'p-you'},
+    {id:'p-sam', name:'Sam Ortiz', title:'Recruiting Lead', level:'lead', role:'recruiter', mgr:'p-morgan'},
+    {id:'p-taylor', name:'Taylor Reed', title:'Credentialing Lead', level:'lead', role:'cred', mgr:'p-morgan'},
+    {id:'p-pat', name:'Pat Kim', title:'HR Manager', level:'manager', role:'hr', mgr:'p-alex'},
+    {id:'p-jamie', name:'Jamie Fox', title:'HR Specialist', level:'member', role:'hr', mgr:'p-pat'},
+    {id:'p-lee', name:'Lee Park', title:'Payroll Manager', level:'manager', role:'payroll', mgr:'p-alex'},
+    {id:'p-priya', name:'Priya Shah', title:'Billing (AR) Lead', level:'lead', role:'ar', mgr:'p-lee'}
+  ];
+}
+function seedCrm(){
+  return [
+    {name:'Jordan Lee', type:'Candidate', owner:'Sam Ortiz', ownerId:'p-sam'},
+    {name:'Acme Staffing', type:'Vendor', owner:'You', ownerId:'p-you'},
+    {name:'Riverside Clinic', type:'Client', owner:'Morgan Blake', ownerId:'p-morgan'}
   ];
 }
 function seed(){
@@ -410,7 +481,7 @@ function seed(){
     settings:{cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
-    templates: seedTemplates(),
+    templates: seedTemplates(), org: seedOrg(), crm: seedCrm(), crmConnected:true, viewAs:'lead', aheadCount:0,
     goals:[
       {id:'g1', title:'Close November billing gaps', parent:null, why:'Every missing hour is revenue we can\'t bill.', horizon:{n:2,unit:'weeks'}, start:-3},
       {id:'g2', title:'Acme Staffing', parent:'g1', horizon:{n:1,unit:'weeks'}, start:-1},
@@ -488,10 +559,10 @@ function seed(){
          {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'},{title:'Break: Walk', day:0, kind:'break'}]
   };
 }
-const STORE = 'cueue-proto-v3';
+const STORE = 'cueue-proto-v5';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
-if (!S.tasks || !S.goals || !S.templates) S = seed();
+if (!S.tasks || !S.goals || !S.templates || !S.org) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 
 /* ---------- helpers ---------- */
@@ -513,7 +584,7 @@ const isMine = t => !t.owner || t.owner === 'me';
 function isWeek(){ if (S.view==='week') return true; if (S.view==='day') return false; return innerWidth > innerHeight && innerWidth >= 700; }
 function locked(){ return S.settings.breakLock && (S.breakDue || S.brk); }
 function motionOK(){ return !S.settings.reduce && !matchMedia('(prefers-reduced-motion: reduce)').matches; }
-function roleOf(k){ return ROLES[k] || {name:k, c:'--muted'}; }
+function roleOf(k){ if (k && k.startsWith('crm:')) return {name:k.slice(4), c:'--violet'}; return ROLES[k] || {name:k, c:'--muted'}; }
 function avatar(k, withName){ const r = roleOf(k), ini = k === 'me' ? 'ME' : r.name.split(/[\s(]+/).filter(Boolean).map(w => w[0]).join('').slice(0,2).toUpperCase();
   return `<span class="av" style="--c:var(${r.c})" title="${esc(r.name)}"><i>${ini}</i>${withName ? esc(r.name) : ''}</span>`; }
 function estInputs(prefix, min){
@@ -571,6 +642,7 @@ function score(t, at){
   const st = S.settings; let s = t.prio * 10;
   if (t.due != null){ const d = t.due - S.day; s += d < 0 ? 45 : d === 0 ? 30 : d === 1 ? 15 : Math.max(0, 8 - d*2); }
   if (t.cadence && t.missed) s += 12 * t.missed;
+  if (t.spent > 0 && t.id !== S.currentId) s += 25; // paused work stays near the top
   const fresh = at >= st.freshStart && at < st.freshEnd;
   if (t.diff === 3) s += fresh ? 35 : -15;
   if (t.diff === 2 && fresh) s += 8;
@@ -655,7 +727,7 @@ function cardHTML(t, start, dayIdx, chunk){
     <div class="title">${esc(t.title)}</div>
     ${next}
     ${!ns && t.status !== 'waiting' ? `<button class="verify" data-finish="${t.id}">Complete</button>` : ''}
-    <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}</div>
+    <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}${t.spent>0&&S.currentId!==t.id?`<span class="chip">Paused · ${fmtDur(t.spent)} in</span>`:''}${t.ahead!=null?'<span class="chip ahead">Getting ahead</span>':''}</div>
     <div class="prog" aria-label="${stepsDone(t)} of ${t.steps.length} steps"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
   </div>`;
 }
@@ -687,7 +759,7 @@ function topPanel(){
       <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
       <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
         <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
-      ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="stop">Switch</button></div>`:''}
+      ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="switch">Switch</button></div>`:''}
       ${open.length ? `<ul class="steps">${open.slice(0,4).map(([s,i],k) => stepLI(t, s, i, k===0?'nextup':'')).join('')}</ul>${open.length > 4 ? `<div class="sub">+${open.length-4} more steps</div>` : ''}`
         : `<div class="row"><button class="btn ok" data-finish="${t.id}">All steps done. Complete the task</button></div>`}
       ${t.notes ? `<div class="sub">${esc(t.notes)}</div>` : ''}
@@ -695,14 +767,23 @@ function topPanel(){
       <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
         <button class="btn small" data-open="${t.id}">Details</button>
-        <button class="btn small ghost" data-act="stop">Switch task</button></div></div>`;
+        <button class="btn small ghost" data-act="switch">Switch task</button></div></div>`;
   }
   const up = firstUp();
-  if (!up) return '';
+  if (!up) return aheadPanel();
   return `<div class="panel" style="${edgeDelay()}"><div class="ph"><span class="tag">${S.dayMode?'Ready for the next one':'Good morning'}</span></div>
     <h3>${S.dayMode?'Up next: ':'First up: '}${esc(up.title)}</h3>
     <div class="sub">${S.settings.autoNext?'When you finish a task, the next one starts on its own. Turn this off in Settings.':'Tasks start when you tap them.'}</div>
     <div class="row"><button class="btn primary" data-act="startday">${S.dayMode?'Start next task':'Start my day'}</button><button class="btn small rest" data-act="brkpick">Take a break first</button></div></div>`;
+}
+function aheadCandidates(){ return S.tasks.filter(t => isMine(t) && !t.done && t.status !== 'waiting' && !t.cadence && t.day != null && t.day > S.day && (t.due == null || t.due > S.day)).sort((a,b) => (a.due ?? a.day) - (b.due ?? b.day)); }
+function aheadPanel(){
+  const c = aheadCandidates().slice(0, 4), doneToday = S.log.some(l => l.day === S.day && l.kind === 'task');
+  if (!c.length) return doneToday ? `<div class="panel aheadp"><div class="ph"><span class="tag">All clear</span></div><h3>Today is done and nothing is waiting ahead.</h3><div class="sub">Rest counts too.</div></div>` : '';
+  return `<div class="panel aheadp" style="${edgeDelay()}"><div class="ph"><span class="tag">Today is clear</span>${S.aheadCount ? `<span style="margin-left:auto">${S.aheadCount} done early this week</span>` : ''}</div>
+    <h3>Want to get ahead?</h3><div class="sub">These are due later. Pull one in, and finishing it early earns a special celebration.</div>
+    <div style="display:flex;flex-direction:column;gap:6px">${c.map(t => `<div class="trow" style="grid-template-columns:1fr auto"><span class="tt">${esc(t.title)}<small>Planned ${DAYS[t.day]}${t.due != null ? ' · due ' + DAYS[t.due] : ''} · ${fmtDur(estOf(t))}</small></span><button class="btn small" data-act="pullin" data-task="${t.id}">Pull in</button></div>`).join('')}</div>
+    <div class="row"><button class="btn primary" data-act="pullfit">Pull in what fits today</button></div></div>`;
 }
 function columnHTML(day, single){
   const L = dayLabel(day), isToday = day === S.day, past = day < S.day;
@@ -815,9 +896,16 @@ function cue(lvl){
   if (S.settings.sound && lvl >= 3) tone([440, 440], .18, .08);
 }
 const cv = $('#confetti'), cx = cv.getContext('2d'); let parts = [], animating = false;
+function sizeCanvas(){ if (!animating){ cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); } }
+function stars(n){ // the "got ahead" celebration: sparkles rise from the bottom of the screen
+  if (!motionOK()) return; sizeCanvas();
+  const cs = getComputedStyle(document.documentElement), cols = ['--violet','--warn','--accent'].map(v => cs.getPropertyValue(v).trim());
+  for (let i=0;i<n;i++) parts.push({x:Math.random()*innerWidth, y:innerHeight + Math.random()*80, vx:(Math.random()-.5)*1.4, vy:-(7+Math.random()*7), g:.07, r:4+Math.random()*6, c:cols[i%3], life:120+Math.random()*40, rot:Math.random()*6, star:true});
+  if (!animating){ animating = true; requestAnimationFrame(drawConfetti); }
+}
 function confetti(x, y, n, spread){
   if (!motionOK()) return;
-  cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  sizeCanvas();
   const cs = getComputedStyle(document.documentElement);
   const cols = ['--accent','--ok','--warn','--home','--work','--hot'].map(v => cs.getPropertyValue(v).trim());
   for (let i=0;i<n;i++){ const a = Math.random()*Math.PI*2, v = (2 + Math.random()*spread);
@@ -826,14 +914,18 @@ function confetti(x, y, n, spread){
 }
 function drawConfetti(){
   cx.clearRect(0,0,innerWidth,innerHeight);
-  parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .25; p.vx *= .98; p.life--; p.rot += .2;
-    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.globalAlpha = Math.max(0, Math.min(1, p.life/30)); cx.fillStyle = p.c; cx.fillRect(-p.r, -p.r/2, p.r*2, p.r); cx.restore(); });
+  parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += (p.g ?? .25); p.vx *= .98; p.life--; p.rot += p.star ? .05 : .2;
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.globalAlpha = Math.max(0, Math.min(1, p.life/30)); cx.fillStyle = p.c;
+    if (p.star){ cx.beginPath(); for (let k=0;k<8;k++){ const rr = k%2 ? p.r*.35 : p.r, a = k*Math.PI/4; cx.lineTo(Math.cos(a)*rr, Math.sin(a)*rr); } cx.closePath(); cx.fill(); }
+    else cx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+    cx.restore(); });
   parts = parts.filter(p => p.life > 0);
   if (parts.length) requestAnimationFrame(drawConfetti); else { animating = false; cx.clearRect(0,0,innerWidth,innerHeight); }
 }
 function toast(msg, sub){
+  const box = $('#toasts'); while (box.children.length >= 2) box.firstElementChild.remove();
   const el = document.createElement('div'); el.className = 'toast'; el.innerHTML = esc(msg) + (sub ? `<small>${esc(sub)}</small>` : '');
-  $('#toasts').appendChild(el); setTimeout(() => el.remove(), 3600);
+  box.appendChild(el); setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3300);
 }
 
 /* ---------- actions ---------- */
@@ -856,16 +948,28 @@ function uncheckStep(t, i){
   const li = S.log.map(l => l.taskId === t.id && l.kind === 'step' && l.title === s.t).lastIndexOf(true); if (li > -1) S.log.splice(li, 1);
   toast('Step reopened', s.t); render();
 }
-function startTask(t){
+function startTask(t, sub){
   S.currentId = t.id; S.paused = false; t.status = 'in progress'; if (t.day !== S.day) t.day = S.day;
-  toast('Started: ' + t.title, 'The pie fills as time passes.'); render();
+  toast('Started: ' + t.title, sub || 'The pie fills as time passes.'); render();
+}
+function openSwitch(){
+  const cur = byId(S.currentId);
+  const list = [...new Set(schedule(S.day).items.filter(i => i.kind === 'task' && i.task.id !== S.currentId).map(i => i.task))];
+  openSheet(`<h2>Switch to another task</h2><p class="note">${cur ? '"' + esc(cur.title) + '" will be paused with ' + fmtDur(cur.spent || 0) + ' saved. It stays near the top of your list.' : ''}</p>
+    <div style="display:flex;flex-direction:column;gap:6px">${list.map(t => `<button class="trow" data-act="switchto" data-task="${t.id}"><span class="tic">${t.cadence?ICON.repeat:ICON.dot}</span><span class="tt">${esc(t.title)}<small>${nextStep(t) ? 'Next: ' + esc(nextStep(t).t) : 'All steps done'} · ${fmtDur(Math.max(5, estOf(t) - (t.spent||0)))} left</small></span>${dueChip(t)}</button>`).join('') || '<p class="note">Nothing else is planned today.</p>'}</div>
+    <div class="actions"><button class="btn" data-act="pause">Just pause</button><div class="spacer"></div><button class="btn ghost" data-close="1">Cancel</button></div>`, 'switch');
 }
 function startNext(){
   const up = firstUp();
   if (up){ S.dayMode = true; startTask(up); }
   else { S.dayMode = false; confetti(innerWidth/2, innerHeight*.4, 220, 10); chime(true); toast('That\'s everything for today', 'You cleared the board.'); render(); }
 }
-function completeTask(t, note, files){
+function nextStage(t){
+  const g = goalById(t.goalId); if (!g || !g.parent || !g.role) return null;
+  const sibs = goalKids(g.parent), n = sibs[sibs.indexOf(g) + 1];
+  return n && n.role ? n : null;
+}
+function completeTask(t, note, files, handoffTask){
   t.completions = (t.completions||0) + 1;
   t.resolution = note; t.proofFiles = files;
   S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task'});
@@ -873,8 +977,13 @@ function completeTask(t, note, files){
     if (t.est == null && t.spent){ t.aiEst = Math.round((t.aiEst*(t.aiRuns||1) + t.spent) / ((t.aiRuns||1)+1)); t.aiRuns = (t.aiRuns||1)+1; }
     S.currentId = null; S.paused = false;
   }
-  const m = MILESTONES.find(x => x === t.completions);
-  confetti(innerWidth/2, innerHeight*.45, m ? 260 : 140, m ? 11 : 8); chime(true); cue(2);
+  const m = MILESTONES.find(x => x === t.completions), ahead = t.ahead != null && !t.cadence;
+  if (ahead){ stars(170); tone([523.25,659.25,783.99,1046.5,1318.5,1568], .07, .12); cue(2); }
+  else { confetti(innerWidth/2, innerHeight*.45, m ? 260 : 140, m ? 11 : 8); chime(true); cue(2); }
+  if (handoffTask){ const nx = nextStage(t), g = goalById(t.goalId);
+    S.tasks.push({id:newId('n'), title:handoffTask, ctx:t.ctx, diff:1, span:'quick', est:15, prio:2, owner:nx.role, goalId:nx.id, steps:[{t:handoffTask}],
+      doneWhen:aiDone(handoffTask), proof:false, source:'handoff', status:'waiting', waitingOn:roleOf(g.role).name + ': ' + g.title, waitStage:g.id, day:null,
+      notes:'Added by You when completing "' + t.title + '".'}); }
   if (t.cadence){
     let nd = t.day + t.cadence.every; if (t.cadence.label === 'Weekdays') while (nd % 7 >= 5) nd++;
     t.history = (t.history||[]).concat([{day:S.day, note, steps:t.steps.map(s => ({...s}))}]);
@@ -883,13 +992,17 @@ function completeTask(t, note, files){
     toast(m ? 'Milestone: ' + m + ' times!' : 'Done! Completed ' + t.completions + ' times', nd <= 6 ? 'Comes back ' + DAYS[nd] + '. Next badge at ' + MILESTONES.find(x => x > t.completions) + '.' : 'Comes back next week.');
   } else {
     t.done = true; t.doneDay = S.day; t.status = null;
-    toast(m ? 'Milestone: ' + m + '!' : 'Task complete!', 'Resolution saved' + (files && files.length ? ' with ' + files.length + ' proof file' + (files.length>1?'s':'') : '') + '.');
-    unblockAfter(t);
+    if (ahead){ S.aheadCount = (S.aheadCount||0) + 1;
+      toast('Ahead of schedule!', 'Planned for ' + DAYS[t.ahead] + ', done ' + DAYS[S.day] + '. That\'s ' + S.aheadCount + ' early this week.'); }
+    else toast(m ? 'Milestone: ' + m + '!' : 'Task complete!', 'Resolution saved' + (files && files.length ? ' with ' + files.length + ' proof file' + (files.length>1?'s':'') : '') + '.');
+    const freed = unblockAfter(t), theirs = freed.filter(x => !isMine(x)), mine = freed.filter(isMine);
+    if (theirs.length) setTimeout(() => toast('Handed off to ' + roleOf(theirs[0].owner).name, theirs.map(x => x.title).join(', ') + ' is now on their list.'), 700);
+    else if (mine.length) setTimeout(() => toast('Your next stage is ready', mine[0].title), 700);
   }
   if (t.diff === 3) S.breakDue = {reason:'You finished a heavy task. Take a reward break.', reward:true};
   else if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for a while'};
   closeSheet(); render();
-  if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId) setTimeout(startNext, 900);
+  if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId && (firstUp() || !ahead)) setTimeout(startNext, 900);
 }
 function unblockAfter(t){
   // when every task in a stage is done, tasks waiting on that stage are released
@@ -937,21 +1050,28 @@ function instantiate(tp, subject){
   S.goals.push(root);
   let prevStage = null, prevRole = null, created = 0;
   tp.stages.forEach((st, i) => {
-    const g = {id:newId('g'), title:st.title, parent:root.id, role:st.role, start:S.day, horizon: st.horizon ? {...st.horizon} : null};
+    const role = resolveRole(st.role, subject);
+    const g = {id:newId('g'), title:st.title, parent:root.id, role, start:S.day, horizon: st.horizon ? {...st.horizon} : null};
     S.goals.push(g);
     st.tasks.forEach(tt => {
-      const mine = st.role === 'me', waiting = prevStage && prevRole !== st.role;
+      const mine = role === 'me', waiting = prevStage && prevRole !== role;
       const t = {id:newId('n'), title:tt.title, ctx: tp.ctx || 'work', diff: tt.est >= 60 ? 2 : 1, span: spanFor(tt.est), est: tt.est, prio:2,
-        owner: st.role, goalId: g.id, steps: tt.steps.map(s => ({t:s})), doneWhen: tt.doneWhen || aiDone(tt.title), proof: tp.scope === 'company', source:'template',
+        owner: role, goalId: g.id, steps: (tt.steps && tt.steps.length ? tt.steps : [tt.title]).map(s => ({t:s})), doneWhen: tt.doneWhen || aiDone(tt.title), proof: tp.scope === 'company', source:'template',
         cadence: tt.cadence ? {every:tt.cadence, label: tt.cadLabel || 'Every ' + tt.cadence + ' days'} : null,
         day: null, status: null, notes:''};
       if (waiting){ t.status = 'waiting'; t.waitingOn = roleOf(prevRole).name + ': ' + tp.stages[i-1].title; t.waitStage = prevStage; }
       else if (mine) t.day = S.day;
       S.tasks.push(t); created++;
     });
-    prevStage = g.id; prevRole = st.role;
+    prevStage = g.id; prevRole = role;
   });
   return {root, created};
+}
+function resolveRole(role, subject){
+  if (role !== 'crmowner' || !S.crmConnected || !subject) return role;
+  const q = subject.toLowerCase(), rec = S.crm.find(r => r.name.toLowerCase().includes(q) || q.includes(r.name.toLowerCase()));
+  if (!rec) return role;
+  return rec.ownerId === 'p-you' ? 'me' : 'crm:' + rec.owner;
 }
 function taskToTpl(t){ return {title:t.title, est:estOf(t), steps:t.steps.map(s => s.t), cadence: t.cadence ? t.cadence.every : null, cadLabel: t.cadence ? t.cadence.label : null}; }
 function templateFromGoal(g){
@@ -984,7 +1104,7 @@ function suggestRoutines(g){
 }
 
 /* ---------- sheets ---------- */
-function openSheet(html, kind, taskId, wide){ const r = $('#sheetRoot'); r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet ${wide?'wide':''}" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
+function openSheet(html, kind, taskId, wide){ const r = $('#sheetRoot'), again = r.dataset.kind && r.dataset.kind === kind; r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet ${wide?'wide':''} ${again?'still':''}" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
 function closeSheet(){ const r = $('#sheetRoot'); r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; }
 function relatedTasks(e){
   const words = (e.title + ' ' + e.desc + ' ' + e.who.join(' ')).match(/\b[A-Z][a-z]{3,}\b/g) || [];
@@ -1041,8 +1161,15 @@ function openComplete(t){
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}</div>
     <div class="field" style="margin-top:12px"><label for="resNote">What happened? ${t.proof?'(required)':'(optional)'}</label><textarea id="resNote" rows="3" placeholder="e.g. Dana confirmed the record is fixed and sent a screenshot of the timekeeping system">${esc(t.resolution||'')}</textarea></div>
     <div class="field"><label for="proofFile">Proof ${t.proof?'(photo, file or forwarded email)':'(optional)'}</label><input type="file" id="proofFile" multiple></div>
+    ${handoffHTML(t)}
     <p class="note" id="resErr" hidden style="color:var(--hot)">Add a short note so future you (and your team) knows how this got resolved.</p>
     <div class="actions"><button class="btn ok" data-act="confirmdone">Complete</button><button class="btn ghost" data-close="1">Not yet</button></div>`, 'complete', t.id);
+}
+function handoffHTML(t){
+  const nx = nextStage(t); if (!nx) return '';
+  const who = roleOf(nx.role).name, rest = goalTasks(t.goalId).filter(x => x !== t && !x.done).length;
+  return `<div class="handoff-note"><b>Hand-off:</b> ${rest ? 'Once the rest of this stage is done' : 'Completing this finishes your stage, so'} <b>${esc(who)}</b> gets "${esc(nx.title)}" next.</div>
+    <div class="field"><label for="hoTask">Add a task for ${esc(who)} (optional)</label><input id="hoTask" placeholder="e.g. Use the attached license copy for verification"></div>`;
 }
 function openDoneList(day){
   const items = S.log.filter(l => l.day === day);
@@ -1103,17 +1230,22 @@ function stageStatus(g){
   return 'active';
 }
 let flowStages = [];
-function flowHTML(stages){
-  const lanes = [...new Set(stages.map(s => s.role || 'me'))];
-  let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${stages.length}, 185px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
+function flowHTML(stages, opts){
+  opts = opts || {};
+  const lanes = opts.lanes || [...new Set(stages.map(s => s.role || 'me'))];
+  const cols = stages.length + (opts.edit && opts.structure ? 1 : 0);
+  let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${cols}, 185px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
   lanes.forEach((r, li) => { html += `<div class="laneband" style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}</div>`; });
   stages.forEach((s, i) => {
     const mins = s.tasks.reduce((a, t) => a + (t.est || 0), 0), routines = s.tasks.filter(t => t.cadence).length;
     const stLabel = {done:'Done', active:'In progress', waiting:'Waiting', others:'With ' + roleOf(s.role).name}[s.status] || '';
-    html += `<div class="fnode st-${s.status || ''}" style="grid-row:${lanes.indexOf(s.role || 'me')+1};grid-column:${i+2}">
+    const ed = opts.edit, tools = ed && opts.structure ? `<div class="ntools"><button data-act="bleft" data-i="${i}" title="Move earlier" aria-label="Move earlier">◀</button><button data-act="bright" data-i="${i}" title="Move later" aria-label="Move later">▶</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div>` : '';
+    html += `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${ed && opts.sel===i?'sel':''}" ${ed?`data-act="bsel" data-i="${i}"`:''} style="grid-row:${lanes.indexOf(s.role || 'me')+1};grid-column:${i+2}">
       <span class="fm">Stage ${i+1}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
-      <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span></div>`;
+      <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span>
+      ${ed ? s.tasks.slice(0,2).map(t => `<span class="ft">• ${esc(t.title)}</span>`).join('') : ''}${tools}</div>`;
   });
+  if (opts.edit && opts.structure) lanes.forEach((r, li) => { html += `<div class="fnode ghost" data-act="baddstage" data-role="${esc(r)}" style="grid-row:${li+1};grid-column:${stages.length+2}">+ Add stage</div>`; });
   html += `<svg class="flowsvg" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
     <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ahv" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg></div></div>
     <div class="flowkey"><span><i></i>Next step, same owner</span><span><i class="h"></i>Hand-off to another person or team</span></div>`;
@@ -1124,7 +1256,7 @@ function drawFlow(){
   const stages = flowStages, svg = flow.querySelector('.flowsvg'), fr = flow.getBoundingClientRect();
   svg.setAttribute('width', flow.scrollWidth); svg.setAttribute('height', flow.scrollHeight);
   svg.querySelectorAll('path.link,path.handoff').forEach(n => n.remove());
-  const nodes = [...flow.querySelectorAll('.fnode')];
+  const nodes = [...flow.querySelectorAll('.fnode:not(.ghost)')];
   for (let i = 0; i < nodes.length - 1; i++){
     const a = nodes[i].getBoundingClientRect(), b = nodes[i+1].getBoundingClientRect();
     const x1 = a.right - fr.left, y1 = a.top + a.height/2 - fr.top, x2 = b.left - fr.left - 2, y2 = b.top + b.height/2 - fr.top;
@@ -1146,20 +1278,127 @@ function goalStages(g){
     return {title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, status: stageStatus(k), tasks: ts.map(t => ({est:estOf(t), cadence:t.cadence}))};
   });
 }
+function scopeLabel(tp){ return tp.scope === 'company' ? 'Company process' : tp.scope === 'family' ? 'Family flow' : 'My template'; }
 function tplCard(tp){
   const lanes = [...new Set(tp.stages.map(s => s.role))], tasks = tp.stages.reduce((a,s) => a + s.tasks.length, 0);
-  return `<div class="tpl"><span class="scope">${tp.scope === 'company' ? 'Company process' : 'My template'}</span><h3>${esc(tp.name)}</h3>
+  return `<div class="tpl"><span class="scope">${scopeLabel(tp)}</span><h3>${esc(tp.name)}</h3>
     <p class="note" style="margin:0">${esc(tp.desc || '')}</p>
     <div class="chips" style="margin:0"><span class="chip">${esc(horizonLabel(tp))}</span><span class="chip">${tp.stages.length} stages · ${tasks} tasks</span></div>
     <div class="lanes">${lanes.map(r => avatar(r, true)).join('')}</div>
-    <div class="actions" style="margin-top:4px" id="tu-${tp.id}"><button class="btn small" data-act="tplflow" data-tpl="${tp.id}">Preview flow</button><button class="btn small primary" data-act="tpluse" data-tpl="${tp.id}">Use</button></div></div>`;
+    <div class="actions" style="margin-top:4px" id="tu-${tp.id}"><button class="btn small" data-act="tplflow" data-tpl="${tp.id}">Preview flow</button><button class="btn small" data-act="editflow" data-tpl="${tp.id}">${canStructure(tp) ? 'Edit flow' : 'Open in builder'}</button><button class="btn small primary" data-act="tpluse" data-tpl="${tp.id}">Use</button></div></div>`;
 }
 function openLibrary(){
-  const co = S.templates.filter(t => t.scope === 'company'), mine = S.templates.filter(t => t.scope !== 'company');
-  openSheet(`<h2>Template library</h2><p class="note">Company processes are shared by your organization and show who owns each stage. Your templates are ones you saved from your own goals. Using one creates the goal, its sub-goals and tasks. Your tasks go on your board, and teammates' stages show who you're waiting on.</p>
+  const co = S.templates.filter(t => t.scope === 'company'), fam = S.templates.filter(t => t.scope === 'family'), mine = S.templates.filter(t => t.scope === 'mine');
+  openSheet(`<h2>Template library</h2><p class="note">Company processes are shared by your organization and show who owns each stage. Using one creates the goal, its sub-goals and tasks. Your tasks go on your board. When a stage is finished, the next owner's tasks start automatically.</p>
+    <div class="actions" style="margin-top:6px"><button class="btn primary" data-act="newflow">+ New flow</button><button class="btn" data-act="org">Team &amp; permissions</button><span class="note">Previewing as ${LEVEL_NAMES[S.viewAs]}.${canCreateFlows() ? '' : ' Members can build family flows and personal templates. Company processes need a team lead or above.'}</span></div>
     <div class="sec"><h4>Company processes (sample)</h4><div class="tplgrid">${co.map(tplCard).join('')}</div></div>
+    <div class="sec"><h4>Family flows</h4><div class="tplgrid">${fam.map(tplCard).join('') || '<p class="note">None yet.</p>'}</div></div>
     <div class="sec"><h4>My templates</h4><div class="tplgrid">${mine.map(tplCard).join('') || '<p class="note">Save any goal as a template from the Goals view.</p>'}</div></div>
     <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'library', null, true);
+}
+
+/* Flow builder: the diagram is the editor */
+let D = null;
+function canCreateFlows(){ return LV[S.viewAs] >= 1; }
+function canStructure(d){ return d.scope !== 'company' || LV[S.viewAs] === 3 || (LV[S.viewAs] >= 1 && (!d.id || d.owner === 'me')); }
+function canEditStage(d, st){ return canStructure(d) || (LV[S.viewAs] >= 1 && st.role === 'me'); }
+function ownerName(id){ if (id === 'me') return 'you'; const p = S.org.find(x => x.id === id); return p ? p.name : 'someone else'; }
+function roleOptions(sel, exclude){
+  const groups = {};
+  Object.entries(ROLES).forEach(([k, r]) => { if (exclude && exclude.includes(k)) return; (groups[r.group] = groups[r.group] || []).push(`<option value="${k}" ${k===sel?'selected':''}>${esc(r.name)}</option>`); });
+  return Object.entries(groups).map(([g, o]) => `<optgroup label="${g}">${o.join('')}</optgroup>`).join('');
+}
+function taskPickOptions(){
+  let html = '<option value="">Pull in a template task…</option><optgroup label="Task templates">' + Object.entries(TEMPLATES).map(([k, v]) => `<option value="t:${k}">${esc(v.title.replace(/:\s*$/, ''))} (${fmtDur(SPANS[v.span][1])})</option>`).join('') + '</optgroup>';
+  S.templates.forEach(tp => { html += `<optgroup label="From: ${esc(tp.name)}">` + tp.stages.flatMap((st, si) => st.tasks.map((tk, ti) => `<option value="l:${tp.id}:${si}:${ti}">${esc(tk.title)} (${fmtDur(tk.est)})</option>`)).join('') + '</optgroup>'; });
+  return html;
+}
+function openBuilder(tp){
+  D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', stages:JSON.parse(JSON.stringify(tp.stages)), sel:0}
+         : {id:null, name:'', desc:'', scope: canCreateFlows() ? 'company' : 'family', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', stages:[{title:'Kickoff', role:'me', tasks:[]}], sel:0};
+  D.lanes = [...new Set(D.stages.map(s => s.role))];
+  renderBuilder();
+}
+function renderBuilder(){
+  const st = D.stages[D.sel], structure = canStructure(D), stageEdit = st && canEditStage(D, st), nx = D.stages[D.sel + 1];
+  const prevSheet = document.querySelector('.sheet'), top = prevSheet ? prevSheet.scrollTop : 0;
+  const dis = structure ? '' : 'disabled';
+  openSheet(`<h2>${D.id ? 'Edit flow' : 'New flow'}</h2>
+    ${!structure ? `<div class="lockmsg">${ICON.lock}<span>${LV[S.viewAs] >= 1 ? 'This flow belongs to ' + esc(ownerName(D.owner)) + '. You can edit the tasks in your own stages. The order, owners and hand-offs are set by the flow owner.' : 'You can view this flow. Ask a team lead or manager to change it, or save your own copy.'}</span></div>` : ''}
+    <div class="grid2">
+      <div class="field"><label for="bName">Flow name</label><input id="bName" value="${esc(D.name)}" placeholder="e.g. New vendor setup" ${dis}></div>
+      <div class="field"><label for="bScope">Type</label><select id="bScope" ${dis}><option value="company" ${D.scope==='company'?'selected':''} ${canCreateFlows()?'':'disabled'}>Company process${canCreateFlows()?'':' (team leads and above)'}</option><option value="family" ${D.scope==='family'?'selected':''}>Family flow</option><option value="mine" ${D.scope==='mine'?'selected':''}>My template</option></select></div>
+      <div class="field"><label>Time frame</label><div class="estrow"><input id="bHn" type="number" min="1" value="${D.horizon.n}" aria-label="Time frame amount" ${dis}><select id="bHu" aria-label="Time frame unit" ${dis}>${['days','weeks','months'].map(u => `<option ${D.horizon.unit===u?'selected':''}>${u}</option>`).join('')}</select></div></div>
+      <div class="field"><label for="bDesc">Description</label><input id="bDesc" value="${esc(D.desc)}" placeholder="What this process gets done" ${dis}></div>
+    </div>
+    <p class="note" style="margin:0">Click a stage to edit it.${structure ? ' Arrows reorder a stage or move it to another lane. "+ Add stage" adds a stage owned by that lane.' : ''}</p>
+    ${flowHTML(D.stages, {edit:true, structure, sel:D.sel, lanes:D.lanes})}
+    ${structure ? `<div class="actions" style="margin-top:8px"><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane (person, team or family member)…</option>${roleOptions('', D.lanes)}</select></div>` : ''}
+    ${st ? `<div class="stageed"><h4 style="margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Stage ${D.sel + 1}</h4>
+      <div class="grid2"><div class="field"><label for="bsTitle">Stage name</label><input id="bsTitle" value="${esc(st.title)}" ${dis}></div>
+      <div class="field"><label for="bsRole">Owned by</label><select id="bsRole" ${dis}>${roleOptions(st.role)}</select></div></div>
+      <div class="handoff-note">${nx ? `When this stage is done, <b>${esc(roleOf(nx.role).name)}</b> automatically gets stage ${D.sel + 2}: "${esc(nx.title)}".` : 'This is the last stage. Finishing it completes the goal.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
+      ${st.tasks.map((tk, ti) => `<div class="btask"><span>${esc(tk.title)}<small> · ${fmtDur(tk.est)}${tk.cadLabel ? ' · ' + esc(tk.cadLabel) : ''}${tk.steps && tk.steps.length ? ' · ' + tk.steps.length + ' steps' : ''}</small></span>${stageEdit ? `<button class="btn small ghost" data-act="bdeltask" data-ti="${ti}">Remove</button>` : '<span></span>'}</div>`).join('') || '<p class="note">No tasks yet. Pull one in from a template or write your own.</p>'}
+      ${stageEdit ? `<div class="actions" style="margin-top:6px"><select id="bPick" class="inp" style="flex:1;min-width:200px;width:auto" aria-label="Template task">${taskPickOptions()}</select><button class="btn small" data-act="bpick">Add</button></div>
+        <div class="actions" style="margin-top:6px"><input id="bNewTask" class="inp" placeholder="Or write a new task" style="flex:1;min-width:160px;width:auto"><input id="bNewEst" class="inp" type="number" min="5" step="5" value="30" style="width:80px" aria-label="Minutes"><span class="note">min</span><button class="btn small" data-act="baddtask">Add</button></div>` : ''}
+    </div>` : ''}
+    <div class="actions">${structure || D.stages.some(s => canEditStage(D, s)) ? '<button class="btn primary" data-act="bsave">Save flow</button>' : ''}${D.id ? '<button class="btn" data-act="bcopy">Save as my copy</button>' : ''}<div class="spacer"></div><button class="btn ghost" data-act="library">Back to library</button></div>`, 'builder', null, true);
+  const sh = document.querySelector('.sheet'); if (sh) sh.scrollTop = top;
+  flowStages = D.stages; requestAnimationFrame(drawFlow);
+  const on = (id, evn, fn) => { const el = $(id); if (el) el.addEventListener(evn, ev => fn(ev.target)); };
+  on('#bName', 'input', el => D.name = el.value); on('#bDesc', 'input', el => D.desc = el.value);
+  on('#bScope', 'change', el => { D.scope = el.value; D.ctx = el.value === 'family' ? 'home' : D.ctx; renderBuilder(); });
+  on('#bHn', 'change', el => D.horizon.n = Math.max(1, +el.value || 1)); on('#bHu', 'change', el => D.horizon.unit = el.value);
+  on('#bsTitle', 'change', el => { st.title = el.value.trim() || st.title; renderBuilder(); });
+  on('#bsRole', 'change', el => { st.role = el.value; if (!D.lanes.includes(el.value)) D.lanes.push(el.value); renderBuilder(); });
+  on('#bLane', 'change', el => { if (el.value){ D.lanes.push(el.value); renderBuilder(); } });
+}
+function builderAct(a, el){
+  const i = +el.dataset.i, sw = (x, y) => { [D.stages[x], D.stages[y]] = [D.stages[y], D.stages[x]]; };
+  const st = D.stages[D.sel];
+  switch (a){
+    case 'bsel': D.sel = i; break;
+    case 'bleft': if (i > 0){ sw(i, i-1); D.sel = i-1; } break;
+    case 'bright': if (i < D.stages.length - 1){ sw(i, i+1); D.sel = i+1; } break;
+    case 'bup': case 'bdown': { const li = D.lanes.indexOf(D.stages[i].role) + (a === 'bup' ? -1 : 1); if (li >= 0 && li < D.lanes.length) D.stages[i].role = D.lanes[li]; D.sel = i; break; }
+    case 'bdel': D.stages.splice(i, 1); if (!D.stages.length) D.stages.push({title:'New stage', role:'me', tasks:[]}); D.sel = Math.max(0, Math.min(D.sel, D.stages.length - 1)); break;
+    case 'baddstage': D.stages.push({title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; break;
+    case 'bdeltask': st.tasks.splice(+el.dataset.ti, 1); break;
+    case 'bpick': { const v = $('#bPick').value; if (!v) return;
+      if (v.startsWith('t:')){ const tp = TEMPLATES[v.slice(2)]; st.tasks.push({title:tp.title.replace(/:\s*$/, ''), est:SPANS[tp.span][1], steps:tp.steps.map(x => x[0]), cadence: tp.cadence ? +tp.cadence : null, cadLabel: tp.cadence ? 'Every 2 days until done' : null}); }
+      else { const [, id, si, ti] = v.split(':'); st.tasks.push(JSON.parse(JSON.stringify(S.templates.find(t => t.id === id).stages[+si].tasks[+ti]))); }
+      break; }
+    case 'baddtask': { const v = $('#bNewTask').value.trim(); if (!v){ $('#bNewTask').focus(); return; } st.tasks.push({title:v, est:Math.max(5, +$('#bNewEst').value || 30), steps:aiSteps(v).map(x => x[0])}); break; }
+    case 'bsave': case 'bcopy': {
+      if (!D.name.trim()){ toast('Give the flow a name', 'It shows in the library and on the goal it creates.'); $('#bName').focus(); return; }
+      const copy = a === 'bcopy', tp = {id: copy || !D.id ? newId('tp') : D.id, scope: copy ? (D.scope === 'company' ? 'mine' : D.scope) : D.scope, owner: copy ? 'me' : D.owner,
+        name: D.name.trim() + (copy ? ' (my copy)' : ''), desc:D.desc.trim(), horizon:{...D.horizon}, ctx: D.scope === 'family' ? 'home' : D.ctx, stages:JSON.parse(JSON.stringify(D.stages))};
+      const idx = S.templates.findIndex(t => t.id === tp.id);
+      if (idx > -1) S.templates[idx] = tp; else S.templates.push(tp);
+      save(); openLibrary(); toast(copy ? 'Saved your copy' : 'Flow saved: ' + tp.name, tp.stages.length + ' stages. Use it from the library or when adding a task.'); return; }
+  }
+  renderBuilder();
+}
+function openOrg(){
+  const kids = id => S.org.filter(p => p.mgr === id);
+  const dept = p => p.role ? (p.role === 'me' ? 'Operations' : roleOf(p.role).name) : 'Leadership';
+  const ini = n => n === 'You' ? 'ME' : n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const node = p => `<li><div class="op ${p.me ? 'me' : ''}"><span class="av" style="--c:var(${p.role ? roleOf(p.role).c : '--violet'})"><i>${ini(p.name)}</i></span><div><b>${esc(p.name)}</b><small>${esc(p.title)} · ${esc(dept(p))}</small></div><span class="chip">${LEVEL_NAMES[p.level]}</span>${kids(p.id).length ? `<span class="chip">Manages ${kids(p.id).length}</span>` : ''}</div>${kids(p.id).length ? `<ul class="org">${kids(p.id).map(node).join('')}</ul>` : ''}</li>`;
+  const Y = '<span class="yes">Yes</span>', N = '<span class="no">–</span>';
+  const rows = [['Create company flows', Y, Y, Y, N], ['Change a flow\'s order, owners and hand-offs', Y, 'Own flows', 'Own flows', N],
+    ['Edit tasks in their department\'s stages', Y, Y, Y, 'Suggest changes'], ['Use flows and complete their tasks', Y, Y, Y, Y],
+    ['Track flow progress for their team', Y, Y, Y, 'Own tasks'], ['Manage the org chart and job levels', Y, N, N, N]];
+  const cur = S.viewAs;
+  openSheet(`<h2>Team &amp; permissions</h2><p class="note">Job levels decide who can build and change flows. Anyone who manages people can create flows. Departments can tune the tasks inside their own stages, but the flow decides who gets the next step.</p>
+    <div class="actions" style="margin-top:6px"><span class="note">Preview the app as:</span><div class="seg" role="group" aria-label="Preview as">${['admin','manager','lead','member'].map(l => `<button data-viewas="${l}" aria-pressed="${cur === l}">${LEVEL_NAMES[l]}${l === 'lead' ? ' (you)' : ''}</button>`).join('')}</div></div>
+    <div class="sec"><h4>Org chart (sample)</h4><ul class="org">${S.org.filter(p => !p.mgr).map(node).join('')}</ul></div>
+    <div class="sec"><h4>What each level can do</h4><div class="tablewrap"><table class="ptable"><thead><tr><th>Permission</th>${['admin','manager','lead','member'].map(l => `<th class="${cur===l?'cur':''}">${LEVEL_NAMES[l]}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r => `<tr><td>${r[0]}</td>${r.slice(1).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
+    <div class="sec"><h4>CRM connection (sample)</h4><p class="note">A connected CRM supplies candidates, vendors and clients, and who owns each one. A flow stage owned by "Account owner (CRM)" is assigned to that contact's owner when the flow starts.</p>
+      <div class="actions" style="margin-top:6px"><button class="btn small" data-act="crmtoggle">${S.crmConnected ? 'Disconnect sample CRM' : 'Connect sample CRM'}</button></div>
+      ${S.crmConnected ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">${S.crm.map(r => `<div class="trow" style="grid-template-columns:1fr auto"><span class="tt">${esc(r.name)}<small>${esc(r.type)}</small></span><span class="note">Owner: ${esc(r.owner)}</span></div>`).join('')}</div>
+      <p class="note">Try it: in the Library, use "Missing-time billing correction" for <b>Acme Staffing</b>. Its "Request the fix" stage comes to you because you own Acme in the CRM.</p>` : ''}</div>
+    <div class="actions"><button class="btn" data-act="library">Open the library</button><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'org', null, true);
 }
 
 function openEvent(e){
@@ -1298,7 +1537,7 @@ function openSettings(){
 /* ---------- events ---------- */
 document.addEventListener('click', ev => {
   if (ev.target.closest('.nextck')) return; // step checkboxes on cards are handled by the change event
-  const el = ev.target.closest('[data-finish],[data-open],[data-act],[data-ev],[data-brk],[data-donelist],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
+  const el = ev.target.closest('[data-finish],[data-open],[data-act],[data-ev],[data-brk],[data-donelist],[data-viewas],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
   if (!el) return;
   const root = $('#sheetRoot'), sheetTask = byId(root.dataset.task);
   if (el.dataset.close !== undefined){ if (ev.target === el || el.tagName === 'BUTTON') closeSheet(); return; }
@@ -1307,17 +1546,30 @@ document.addEventListener('click', ev => {
   if (el.dataset.ev){ openEvent(S.events.find(e => e.id === el.dataset.ev)); return; }
   if (el.dataset.brk){ startBreak(el.dataset.brk); return; }
   if (el.dataset.donelist){ openDoneList(+el.dataset.donelist); return; }
+  if (el.dataset.viewas){ S.viewAs = el.dataset.viewas; save(); openOrg(); toast('Previewing as ' + LEVEL_NAMES[S.viewAs], canCreateFlows() ? 'You can create and change company flows.' : 'Company flows are view-only. Family and personal flows still work.'); return; }
   if (el.dataset.focus){ S.focus = el.dataset.focus; render(); toast(S.focus==='all'?'Showing everything':'Focus: ' + (S.focus==='work'?'Work':'Home'), S.focus==='work'?'Home items fade back in during your last 3 work hours.':''); return; }
   if (el.dataset.view){ S.view = el.dataset.view; S.viewDay = S.day; render.scrolled = false; render(); return; }
   if (el.dataset.speed){ S.speed = +el.dataset.speed; render(); return; }
   if (el.dataset.nav){ S.viewDay = Math.max(0, Math.min(6, S.viewDay + +el.dataset.nav)); render(); return; }
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
   const a = el.dataset.act, cur = byId(S.currentId), gid = el.dataset.goal, tpl = S.templates.find(t => t.id === el.dataset.tpl);
+  if (a && a[0] === 'b' && D && $('#sheetRoot').dataset.kind === 'builder' && /^b(sel|left|right|up|down|del|addstage|deltask|pick|addtask|save|copy)$/.test(a)){ builderAct(a, el); return; }
   switch (a){
     case 'startday': closeSheet(); startNext(); break;
     case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
     case 'stop': S.currentId = null; S.paused = false; closeSheet(); render(); toast('Stopped', 'Time so far is saved. Re-planned today.'); break;
-    case 'pause': S.paused = true; render(); toast('Paused', 'The timer is stopped. Resume when you\'re ready.'); break;
+    case 'pause': S.paused = true; closeSheet(); render(); toast('Paused', 'The timer is stopped. Resume when you\'re ready.'); break;
+    case 'switch': openSwitch(); break;
+    case 'switchto': { const t = byId(el.dataset.task), prev = cur; closeSheet(); if (prev) prev.status = 'paused';
+      startTask(t, prev ? 'Paused "' + prev.title + '" with ' + fmtDur(prev.spent || 0) + ' saved.' : ''); break; }
+    case 'pullin': { const t = byId(el.dataset.task); t.ahead = t.day; t.day = S.day; render(); toast('Pulled in: ' + t.title, 'Planned for ' + DAYS[t.ahead] + '. Finish it today to get ahead.'); break; }
+    case 'pullfit': { let left = (S.now < S.settings.workEnd ? S.settings.workEnd : DAY_END) - S.now, n = 0;
+      aheadCandidates().forEach(t => { const e = estOf(t) + S.settings.buffer; if (e <= left){ left -= e; t.ahead = t.day; t.day = S.day; n++; } });
+      render(); toast(n ? 'Pulled in ' + n + ' task' + (n>1?'s':'') : 'Nothing fits the time left', n ? 'Finish them early for a special celebration.' : 'Try pulling one in anyway, or call it a day.'); break; }
+    case 'newflow': openBuilder(null); break;
+    case 'editflow': openBuilder(tpl); break;
+    case 'org': openOrg(); break;
+    case 'crmtoggle': S.crmConnected = !S.crmConnected; save(); openOrg(); break;
     case 'resume': S.paused = false; render(); break;
     case 'more15': if (cur){ cur.est = estOf(cur) + 15; cur.warned1 = false; cur.warned2 = false; render(); } break;
     case 'finish': if (cur) openComplete(cur); break;
@@ -1325,7 +1577,7 @@ document.addEventListener('click', ev => {
     case 'confirmdone': {
       const note = $('#resNote').value.trim(), files = [...$('#proofFile').files].map(f => f.name);
       if (sheetTask.proof && note.length < 3){ $('#resErr').hidden = false; $('#resNote').focus(); return; }
-      completeTask(sheetTask, note, files); break; }
+      completeTask(sheetTask, note, files, $('#hoTask') ? $('#hoTask').value.trim() : ''); break; }
     case 'othersdone': closeSheet(); othersDone(byId(el.dataset.task)); break;
     case 'brkpick': openBreakPicker(); break;
     case 'endbrk': endBreak(); break;
@@ -1358,7 +1610,7 @@ document.addEventListener('click', ev => {
     case 'suggest': { const g = goalById(gid), n = suggestRoutines(g); render(); openGoals(); toast('Added ' + n + ' routine sub-goals to ' + g.title, 'Each one has a small daily or weekly task on your board.'); break; }
     case 'savetpl': { const tp = templateFromGoal(goalById(gid)); save(); toast('Saved as a template: ' + tp.name, 'Find it under My templates in the Library.'); break; }
     case 'goalflow': { const g = goalById(gid); openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it. Dashed arrows are hand-offs.', goalStages(g), `<button class="btn" data-act="goals">Back to goals</button>`); break; }
-    case 'tplflow': openFlow(tpl.name, (tpl.scope==='company'?'Company process':'My template') + ' · ' + horizonLabel(tpl) + '. ' + (tpl.desc||''), tpl.stages.map(s => ({...s})), `<button class="btn" data-act="library">Back to library</button><button class="btn primary" data-act="tpluse" data-tpl="${tpl.id}">Use this process</button>`); break;
+    case 'tplflow': openFlow(tpl.name, scopeLabel(tpl) + ' · ' + horizonLabel(tpl) + '. ' + (tpl.desc||''), tpl.stages.map(s => ({...s})), `<button class="btn" data-act="library">Back to library</button><button class="btn" data-act="editflow" data-tpl="${tpl.id}">Open in builder</button><button class="btn primary" data-act="tpluse" data-tpl="${tpl.id}">Use this process</button>`); break;
     case 'tpluse': {
       if ($('#tplFor')){ const {root, created} = instantiate(tpl, $('#tplFor').value.trim()); closeSheet(); render(); openGoals(); toast('Created: ' + root.title, created + ' tasks across ' + tpl.stages.length + ' stages. Yours are on your board.'); break; }
       const host = $('#tu-' + tpl.id) || el.closest('.actions');
@@ -1392,6 +1644,17 @@ document.addEventListener('keydown', ev => {
 $('#addBtn').onclick = () => openAdd(null);
 $('#goalsBtn').onclick = openGoals;
 $('#libBtn').onclick = openLibrary;
+$('#orgBtn').onclick = openOrg;
+$('#clearBtn').onclick = () => { // demo shortcut: finish everything planned today so "Get ahead" appears
+  S.tasks.filter(t => t.day === S.day && isMine(t) && !t.done && t.status !== 'waiting').forEach(t => {
+    S.log.push({title:t.title, day:S.day, taskId:t.id, kind:'task'}); t.completions = (t.completions||0) + 1;
+    if (t.cadence){ t.day += t.cadence.every; t.steps.forEach(s => { s.done = false; delete s.at; }); t.missed = 0; if (t.due != null) t.due = t.day; }
+    else { t.done = true; t.doneDay = S.day; t.steps.forEach(s => { s.done = true; }); }
+    t.spent = 0; t.status = null;
+  });
+  Object.assign(S, {currentId:null, paused:false, brk:null, breakDue:null, workSince:0});
+  closeSheet(); render(); toast('Today cleared (demo)', 'Now try "Get ahead" at the top of Today.');
+};
 $('#settingsBtn').onclick = openSettings;
 $('#playBtn').onclick = () => { S.running = !S.running; render(); };
 $('#endDayBtn').onclick = endDay;
