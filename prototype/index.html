@@ -343,7 +343,7 @@ a{color:var(--accent)}
 .iconbtn{position:relative}
 .badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:999px;background:var(--hot);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px;font-style:normal;line-height:1}
 .newwrap{position:relative}
-.newmenu{position:absolute;right:0;top:calc(100% + 6px);z-index:35;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;width:270px;display:flex;flex-direction:column}
+.newmenu{position:absolute;left:0;top:calc(100% + 6px);z-index:35;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;width:min(270px,calc(100vw - 24px));display:flex;flex-direction:column}
 .newmenu button{border:0;background:none;text-align:left;padding:9px 10px;border-radius:10px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center}
 .newmenu button svg{width:18px;height:18px;color:var(--accent);grid-row:1/3}
 .newmenu button:hover,.newmenu button:focus-visible{background:var(--surface-2)}
@@ -453,6 +453,36 @@ a{color:var(--accent)}
 .status.pending{background:color-mix(in srgb,var(--violet) 14%,var(--surface));color:var(--violet)}
 .status.changes{background:color-mix(in srgb,var(--warn) 18%,var(--surface));color:var(--warn)}
 .status.live{background:color-mix(in srgb,var(--ok) 14%,var(--surface));color:var(--ok)}
+
+/* Suggestion review: what changed */
+.fnode.diff-added{border-color:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 28%,transparent)}
+.fnode.diff-changed{border-color:var(--warn);box-shadow:0 0 0 3px color-mix(in srgb,var(--warn) 32%,transparent)}
+.fnode.diff-removed{border-style:dashed;border-color:var(--hot);background:color-mix(in srgb,var(--hot) 6%,var(--surface))}
+.fnode.diff-removed b{text-decoration:line-through;color:var(--muted)}
+.dtag{align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:999px;color:#fff}
+.dtag.added{background:var(--ok)} .dtag.changed{background:var(--warn)} .dtag.removed{background:var(--hot)}
+.dnote{font-size:12px;color:var(--ink);background:color-mix(in srgb,var(--warn) 14%,var(--surface));border-radius:6px;padding:3px 6px}
+.flowsvg path.ladd{stroke:var(--ok)!important;stroke-width:2.6!important;stroke-dasharray:none!important}
+.flowsvg path.lrem{stroke:var(--hot)!important;stroke-dasharray:4 4!important;opacity:.75}
+.chg{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;font-size:13.5px;width:100%}
+.chg i{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none}
+.chg.on{border-color:var(--accent);background:var(--accent-soft)}
+.diffkey{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
+.diffkey span{display:inline-flex;gap:6px;align-items:center}
+.diffkey i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.connectbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--violet) 14%,var(--surface));margin-bottom:10px;font-size:14px;font-weight:600}
+.fnode.editable{-webkit-user-select:none}
+/* Kudos + podium */
+.kudo{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
+.kudo p{margin:4px 0 0;font-size:14.5px}
+.kudo small{color:var(--muted)}
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:end;margin:8px 0 12px}
+.pod{border-radius:14px;background:var(--surface-2);padding:10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pod .av i{width:34px;height:34px;font-size:12px}
+.pod b{font-size:13.5px} .pod .val{font-family:var(--font-display);font-size:22px;font-weight:700}
+.pod.p1{min-height:150px;background:color-mix(in srgb,var(--violet) 14%,var(--surface))} .pod.p2{min-height:126px} .pod.p3{min-height:110px}
+.pod.you{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.kbtn{border:1px solid color-mix(in srgb,var(--violet) 45%,var(--line));background:var(--surface);color:var(--violet);border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:700}
 
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
@@ -569,11 +599,11 @@ function seedTemplates(){
       {id:'first', after:['orient'], title:'First-shift check-in', role:'me', tasks:[{title:'Check in after the first shift', est:15, steps:['Call the nurse','Log feedback']}]}
     ]},
     {id:'tp2', scope:'company', owner:'me', name:'Missing-time billing correction', desc:'Get missing hours corrected with proof so AR can bill.', horizon:{n:1,unit:'weeks'}, ctx:'work', stages:[
-      {title:'Identify the gap', role:'ar', tasks:[{title:'Flag missing hours', est:15, steps:['Run the missing-time report','Send the list to the account owner']}]},
-      {title:'Request the fix', role:'crmowner', tasks:[{title:'Contact the customer or vendor', est:15, cadence:2, cadLabel:'Every 2 days until done', steps:['Email the contact','Call if no reply in 2 days']}]},
-      {title:'Record corrected', role:'vendor', tasks:[{title:'Correct the record', est:30, steps:['Update the hours','Send a screenshot']}]},
-      {title:'Verify proof', role:'me', tasks:[{title:'Verify proof and close the loop', est:15, steps:['Check the screenshot matches the hours','Forward the proof to AR']}]},
-      {title:'Bill', role:'ar', tasks:[{title:'Bill the corrected hours', est:20, steps:['Create the invoice','Send the invoice']}]}
+      {id:'gap', after:[], title:'Identify the gap', role:'ar', tasks:[{title:'Flag missing hours', est:15, steps:['Run the missing-time report','Send the list to the account owner']}]},
+      {id:'fix', after:['gap'], title:'Request the fix', role:'crmowner', tasks:[{title:'Contact the customer or vendor', est:15, cadence:2, cadLabel:'Every 2 days until done', steps:['Email the contact','Call if no reply in 2 days']}]},
+      {id:'corrected', after:['fix'], title:'Record corrected', role:'vendor', tasks:[{title:'Correct the record', est:30, steps:['Update the hours','Send a screenshot']}]},
+      {id:'verify', after:['corrected'], title:'Verify proof', role:'me', tasks:[{title:'Verify proof and close the loop', est:15, steps:['Check the screenshot matches the hours','Forward the proof to AR']}]},
+      {id:'bill', after:['verify'], title:'Bill', role:'ar', tasks:[{title:'Bill the corrected hours', est:20, steps:['Create the invoice','Send the invoice']}]}
     ]},
     {id:'tp3', scope:'mine', owner:'me', name:'Lose 15 pounds', desc:'A months-long goal broken into small routines you can do today.', horizon:{n:3,unit:'months'}, ctx:'home', stages:[
       {title:'Track food', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Log meals', est:10, cadence:1, cadLabel:'Daily', steps:['Log breakfast','Log lunch','Log dinner']}]},
@@ -624,6 +654,18 @@ function seedIdeas(){
       [['Prep for 1:1', 15, 7, 'Weekly', ['Wins this week','Blockers','What I need']]], '')
   ];
 }
+function seedChangeSuggestion(){
+  return {id:'tp6', scope:'company', status:'pending', owner:'p-casey', suggestedBy:'Casey Nguyen', suggestedOn:'Tue', suggestFor:'tp2', reviewer:'You',
+    note:'We keep re-asking AR for the list of hours, and clients call to ask if their bill is fixed. This hands the list over and adds a client update.',
+    name:'Missing-time billing correction', desc:'Get missing hours corrected with proof so AR can bill, and keep the client in the loop.', horizon:{n:1, unit:'weeks'}, ctx:'work', stages:[
+      {id:'gap', after:[], title:'Identify the gap', role:'ar', tasks:[{title:'Flag missing hours', est:15, steps:['Run the missing-time report','Send the list to the account owner']}]},
+      {id:'fix', after:['gap'], links:{gap:{note:'List of missing hours by date'}}, title:'Request the fix', role:'crmowner', tasks:[{title:'Contact the customer or vendor', est:20, cadence:2, cadLabel:'Every 2 days until done', steps:['Email the contact with the hour list','Call if no reply in 2 days']}]},
+      {id:'corrected', after:['fix'], title:'Record corrected', role:'vendor', tasks:[{title:'Correct the record', est:30, steps:['Update the hours','Send a screenshot']}]},
+      {id:'verify', after:['corrected'], title:'Verify proof', role:'me', tasks:[{title:'Verify proof and close the loop', est:15, steps:['Check the screenshot matches the hours','Forward the proof to AR']},{title:'Save proof to the client file', est:5, steps:['Upload the screenshot']}]},
+      {id:'bill', after:['verify'], title:'Bill and send', role:'ar', tasks:[{title:'Bill the corrected hours', est:20, steps:['Create the invoice','Send the invoice']}]},
+      {id:'client', after:['verify'], title:'Update the client', role:'crmowner', tasks:[{title:'Tell the client the bill is fixed', est:10, steps:['Email a summary of the corrected invoice']}]}
+    ]};
+}
 function seedSuggestion(){
   return {id:'tp5', scope:'company', status:'pending', owner:'p-casey', suggestedBy:'Casey Nguyen', suggestedOn:'Mon', reviewer:'You',
     note:'We keep losing track of complaints between calls. This makes sure the account owner and AR both close the loop.',
@@ -641,6 +683,8 @@ function seedOrg(){
     {id:'p-you', name:'You', title:'Account Manager', level:'lead', role:'me', mgr:'p-morgan', me:true},
     {id:'p-casey', name:'Casey Nguyen', title:'Coordinator', level:'member', role:'me', mgr:'p-you'},
     {id:'p-riley', name:'Riley Brooks', title:'Coordinator', level:'member', role:'me', mgr:'p-you'},
+    {id:'p-dev', name:'Dev Patel', title:'Account Manager', level:'member', role:'me', mgr:'p-morgan'},
+    {id:'p-lina', name:'Lina Gomez', title:'Account Manager', level:'member', role:'me', mgr:'p-morgan'},
     {id:'p-sam', name:'Sam Ortiz', title:'Recruiting Lead', level:'lead', role:'recruiter', mgr:'p-morgan'},
     {id:'p-taylor', name:'Taylor Reed', title:'Compliance Lead', level:'lead', role:'cred', mgr:'p-morgan'},
     {id:'p-pat', name:'Pat Kim', title:'HR Manager', level:'manager', role:'hr', mgr:'p-alex'},
@@ -664,7 +708,10 @@ function seed(){
       tabbar:true, leaderboard:true, medTime:'',
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
-    notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'steps',
+    notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'effort',
+    kudos:[{to:'p-you', from:'Morgan Blake', text:'The Riverside agreement went out early and the client noticed. Great work.', when:'Mon', forWhat:'Draft Q4 service agreement'},
+      {to:'p-you', from:'Priya Shah (Billing)', text:'Thanks for chasing the Acme hours. We billed them the same day.', when:'Last week', forWhat:'Follow up: Acme vendor record update'},
+      {to:'p-riley', from:'Priya Shah (Billing)', text:'Saved the day on the Riverside timesheet fix.', when:'Mon', forWhat:'Follow up: Riverside timesheets'}],
     templates: seedTemplates().concat(seedIdeas()), org: seedOrg(), crm: seedCrm(), crmConnected:true, viewAs:'lead', aheadCount:0,
     goals:[
       {id:'g1', title:'Close November billing gaps', parent:null, why:'Every missing hour is revenue we can\'t bill.', horizon:{n:2,unit:'weeks'}, start:-3},
@@ -740,13 +787,13 @@ function seed(){
     ],
     log:[{title:'Send November timesheet reminders', day:0, taskId:'t0', kind:'task'},{title:'Inbox triage', day:0, taskId:'t5', kind:'task'},
          {title:'20-minute walk', day:0, taskId:'t8', kind:'task'},{title:'Collect RN license copy', day:0, taskId:'t3', kind:'step'},
-         {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'},{title:'Break: Walk', day:0, kind:'break'}]
+         {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'}]
   };
 }
-const STORE = 'cueue-proto-v7';
+const STORE = 'cueue-proto-v8';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
-if (!S.tasks || !S.goals || !S.templates || !S.org) S = seed();
+if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -979,7 +1026,7 @@ function columnHTML(day, single){
   const L = dayLabel(day), isToday = day === S.day, past = day < S.day;
   let body = '', count = '';
   const doneHere = S.log.filter(l => l.day === day);
-  const doneTasks = doneHere.filter(l => l.kind === 'task').length, doneSteps = doneHere.filter(l => l.kind === 'step').length, breaks = doneHere.filter(l => l.kind === 'break').length;
+  const doneTasks = doneHere.filter(l => l.kind === 'task').length, doneSteps = doneHere.filter(l => l.kind === 'step').length, doneOther = doneHere.filter(l => l.kind === 'other').length;
   if (past){ body = '<div class="empty">Day wrapped up.</div>'; count = doneTasks + ' done'; }
   else {
     const {items, overflow} = schedule(day);
@@ -1001,7 +1048,7 @@ function columnHTML(day, single){
   }
   if (isToday || past){
     const left = past ? 0 : S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length, total = doneTasks + left;
-    body += `<button class="dayprog" data-donelist="${day}"><div class="row"><span><b>${doneTasks}</b> tasks · <b>${doneSteps}</b> steps · <b>${breaks}</b> breaks</span><span>View done ›</span></div><div class="bar"><i style="width:${total?Math.round(100*doneTasks/total):0}%"></i></div></button>`;
+    body += `<button class="dayprog" data-donelist="${day}"><div class="row"><span><b>${doneTasks}</b> tasks · <b>${doneSteps}</b> steps${doneOther ? ` · <b>${doneOther}</b> other` : ''}</span><span>View done ›</span></div><div class="bar"><i style="width:${total?Math.round(100*doneTasks/total):0}%"></i></div></button>`;
   }
   const nav = single ? `<div class="nav"><button class="iconbtn" data-nav="-1" aria-label="Previous day">${ICON.left}</button><button class="iconbtn" data-nav="1" aria-label="Next day">${ICON.right}</button></div>` : '';
   return `<section class="col ${isToday?'today':''} ${past?'past':''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span></div><div class="colbody">${body}</div></section>`;
@@ -1224,7 +1271,6 @@ function startBreak(k){
 }
 function endBreak(){
   const b = BREAKS.find(x => x.k === S.brk.k);
-  S.log.push({title:'Break: ' + b.label, day:S.day, kind:'break'});
   S.brk = null; S.workSince = 0;
   confetti(innerWidth/2, innerHeight/3, 50, 6); chime(false);
   toast('Welcome back', 'Breaks count as wins too.'); render();
@@ -1327,9 +1373,11 @@ function initRuntime(){
   goalKids(root.id).filter(k => ['Offer approved','Welcome the nurse','Compliance packet'].includes(k.title))
     .forEach(k => goalTasks(k.id).forEach(t => { t.done = true; t.doneDay = 0; t.steps.forEach(x => x.done = true); }));
   S.tasks.forEach(t => { if (t.status === 'waiting' && t.waitStages){ if (t.waitStages.every(stageDone)){ t.status = null; t.day = isMine(t) ? S.day : null; t.waitStages = null; } else t.waitingOn = waitText(t.waitStages); } });
-  S.templates.push(seedSuggestion());
+  S.templates.push(seedChangeSuggestion(), seedSuggestion());
   S.notes = [
+    {id:'nt0', icon:'idea', text:'Casey Nguyen suggested changes to "Missing-time billing correction"', sub:'6 changes, highlighted for your review.', when:'Tue 7:50 AM', read:false, open:{page:'flows', tab:'suggest'}},
     {id:'nt1', icon:'idea', text:'Casey Nguyen suggested a flow: "Client complaint follow-up"', sub:'Waiting for your review.', when:'Mon 3:40 PM', read:false, open:{page:'flows', tab:'suggest'}},
+    {id:'nt4', icon:'star', text:'Riley Brooks got kudos from Priya Shah', sub:'You\'re their manager. It\'s saved to their profile for reviews.', when:'Mon 2:15 PM', read:true, open:{page:'profile'}},
     {id:'nt2', icon:'flow', text:'Morgan Blake added you to "Nurse onboarding: Avery Park"', sub:'You own Orientation and First-shift check-in. They start when four teams finish.', when:'Mon 4:12 PM', read:false, open:{flow:root.id}},
     {id:'nt3', icon:'handoff', text:'Compliance finished "Compliance packet" for Avery Park', sub:'Orientation still waits on HR and Payroll.', when:'Tue 8:05 AM', read:false, open:{page:'goals', tab:'waiting'}}
   ];
@@ -1386,7 +1434,10 @@ function openNewMenu(){
   const m = $('#newMenu'), item = (act, icon, label, sub) => `<button role="menuitem" data-act="${act}">${ICON[icon]}<b>${label}</b><span>${sub}</span></button>`;
   m.innerHTML = item('newtask', 'plus', 'Task', 'One-off or routine, with steps') + item('newgoal', 'target', 'Goal', 'Days, weeks or months, broken into routines')
     + item('newflow', 'flow', canCreateFlows() ? 'Flow' : 'Suggest a flow', canCreateFlows() ? 'A process across people or family' : 'Build it, your manager reviews it') + item('templates', 'idea', 'From a template', 'Home, family and work ideas');
-  m.hidden = false; $('#newBtn').setAttribute('aria-expanded', 'true'); m.querySelector('button').focus();
+  m.innerHTML += item('otherwork', 'chart', 'Other work', 'Log work that isn\'t a task so it still counts');
+  m.style.left = '0px'; m.hidden = false; $('#newBtn').setAttribute('aria-expanded', 'true');
+  const r = m.getBoundingClientRect(); if (r.right > innerWidth - 8) m.style.left = (-(r.right - innerWidth + 8)) + 'px';
+  m.querySelector('button').focus();
 }
 function closeNewMenu(){ const m = $('#newMenu'); if (m){ m.hidden = true; $('#newBtn').setAttribute('aria-expanded', 'false'); } }
 function updateTabs(){
@@ -1475,7 +1526,7 @@ function openDoneList(day){
   const items = S.log.filter(l => l.day === day);
   const row = l => `<button class="trow" ${l.taskId?`data-open="${l.taskId}"`:''}><span class="tic">${l.kind==='break'?ICON.leaf:ICON.done}</span><span class="tt">${esc(l.title)}${l.kind==='step'?`<small>Step of ${esc((byId(l.taskId)||{}).title||'')}</small>`:''}</span><span></span></button>`;
   openSheet(`<h2>Done ${day===S.day?'today':'on '+DAYS[day]}</h2><p class="note">Tap a task or step to see its details, add notes, or uncheck something done by mistake.</p>
-    ${['task','step','break'].map(k => { const g = items.filter(l => l.kind === k); return g.length ? `<div class="sec"><h4>${k==='task'?'Tasks':k==='step'?'Steps':'Breaks'} · ${g.length}</h4><div style="display:flex;flex-direction:column;gap:6px">${g.map(row).join('')}</div></div>` : ''; }).join('') || '<p class="empty">Nothing yet. Your first check-off shows up here.</p>'}
+    ${['task','step','other'].map(k => { const g = items.filter(l => l.kind === k); return g.length ? `<div class="sec"><h4>${k==='task'?'Tasks':k==='step'?'Steps':'Other work'} · ${g.length}</h4><div style="display:flex;flex-direction:column;gap:6px">${g.map(row).join('')}</div></div>` : ''; }).join('') || '<p class="empty">Nothing yet. Your first check-off shows up here.</p>'}
     <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'done');
 }
 
@@ -1568,7 +1619,7 @@ function stageStatus(g){
   if (ts.some(t => !isMine(t) && !t.done)) return 'others';
   return 'active';
 }
-let flowStages = [];
+let flowStages = [], flowLinkDiff = null, flowEditable = false;
 function stageCols(stages){
   const idx = {}, memo = {}; stages.forEach((s, i) => idx[s.id] = i);
   const col = i => { if (memo[i] != null) return memo[i]; memo[i] = 0;
@@ -1582,8 +1633,12 @@ function nodeHTML(stages, i, cols, opts){
   const stLabel = {done:'Done', active:'In progress', waiting:'Waiting', others:'With ' + roleOf(s.role).name}[s.status] || '';
   const deps = (s.after || []).length, kids = stages.filter(x => (x.after || []).includes(s.id)).length, par = cols.filter(c => c === cols[i]).length > 1;
   const tools = ed && opts.structure ? `<div class="ntools"><button data-act="bnext" data-i="${i}" title="Add a stage that starts after this one">+ Next</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div><span class="nport" title="Drag onto another stage to connect" aria-hidden="true"></span>` : '';
-  return `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${ed && opts.sel===i?'sel':''}" data-sid="${esc(s.id)}" ${ed?`data-act="bsel" data-i="${i}"`:''}>
+  const dk = opts.diff && opts.diff.nodes[s.id], act = opts.diffSelect ? `data-act="bdsel" data-sid="${esc(s.id)}"` : ed ? `data-act="bsel" data-i="${i}"` : '';
+  const isSel = (ed && opts.sel === i) || (opts.selSid && opts.selSid === s.id);
+  return `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${isSel?'sel':''} ${dk ? 'diff-' + dk.kind : ''}" data-sid="${esc(s.id)}" ${act} ${dk ? `title="${esc(dk.notes.join('. '))}"` : ''}>
+    ${dk ? `<span class="dtag ${dk.kind}">${dk.kind === 'added' ? 'NEW' : dk.kind === 'removed' ? 'REMOVED' : 'CHANGED'}</span>` : ''}
     <span class="fm">Stage ${cols[i]+1}${par ? ' · in parallel' : ''}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
+    ${dk && dk.kind === 'changed' && opts.diffSelect ? dk.notes.slice(0, 2).map(t => `<span class="dnote">${esc(t)}</span>`).join('') + (dk.notes.length > 2 ? `<span class="note" style="font-size:11.5px">+${dk.notes.length - 2} more</span>` : '') : ''}
     <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span>
     ${kids > 1 ? `<span class="fm" style="color:var(--violet);font-weight:700">Starts ${kids} stages</span>` : ''}${deps > 1 ? `<span class="fm" style="color:var(--violet);font-weight:700">Waits for ${deps} stages</span>` : ''}
     ${ed ? s.tasks.slice(0,2).map(t => `<span class="ft">• ${esc(t.title)}</span>`).join('') : ''}${tools}</div>`;
@@ -1619,20 +1674,20 @@ function drawFlow(){
     const ra = na.getBoundingClientRect(), rb = nb.getBoundingClientRect();
     const x1 = ra.right - fr.left, y1 = ra.top + ra.height/2 - fr.top, x2 = rb.left - fr.left - 2, y2 = rb.top + rb.height/2 - fr.top, mx = (x1 + x2) / 2;
     const hand = (byS[a].role || 'me') !== (s.role || 'me'), m = (s.links && s.links[a]) || {}, d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
-    const sel = D && flow.closest('.bcanvas') && D.link && D.link.src === a && D.link.dst === s.id;
+    const sel = D && flowEditable && D.link && D.link.src === a && D.link.dst === s.id, ld = flowLinkDiff && flowLinkDiff[a + '>' + s.id];
     const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', d);
-    p.setAttribute('class', (hand ? 'handoff' : 'link') + (m.type === 'soft' ? ' soft' : m.type === 'same' ? ' same' : '') + (sel ? ' selink' : '')); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
+    p.setAttribute('class', (hand ? 'handoff' : 'link') + (m.type === 'soft' ? ' soft' : m.type === 'same' ? ' same' : '') + (sel ? ' selink' : '') + (ld === 'added' ? ' ladd' : ld === 'removed' ? ' lrem' : '')); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
     svg.appendChild(p);
     const label = [m.type === 'same' ? 'same time' : '', m.delay ? '+' + m.delay : '', m.cond ? 'if ' + m.cond : '', m.note ? '↳ ' + m.note : ''].filter(Boolean).join(' · ');
     if (label){ const t = document.createElementNS('http://www.w3.org/2000/svg', 'text'); t.setAttribute('class', 'll'); t.setAttribute('x', mx + 4); t.setAttribute('y', (y1 + y2) / 2 - 4);
       t.textContent = label.length > 34 ? label.slice(0, 33) + '…' : label; svg.appendChild(t); }
-    if (flow.closest('.bcanvas')){ const h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('d', d); h.setAttribute('class', 'hit');
+    if (flowEditable){ const h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('d', d); h.setAttribute('class', 'hit');
       h.dataset.act = 'blink'; h.dataset.src = a; h.dataset.dst = s.id; svg.appendChild(h); }
   }));
 }
 function openFlow(title, sub, stages, actions, crumbs){
-  flowStages = stages;
+  flowStages = stages; flowLinkDiff = null; flowEditable = false;
   openPage('flowview', (crumbs || [['Board', 'board'], ['Flows', 'flows']]).concat([[title, '']]), `<h1>${esc(title)}</h1><p class="lede">${esc(sub)}</p>${flowHTML(stages)}<div class="actions">${actions || ''}</div>`);
   requestAnimationFrame(drawFlow);
 }
@@ -1725,12 +1780,53 @@ function taskPickOptions(){
 function openBuilder(tp){
   if (tp) ensureStageIds(tp);
   D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope === 'idea' ? 'mine' : tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', status:tp.status || 'published',
-            suggestFor:tp.suggestFor || null, suggestedBy:tp.suggestedBy || '', note:tp.note || '', fromIdea: tp.scope === 'idea', stages:JSON.parse(JSON.stringify(tp.stages)), sel:0, link:null}
+            suggestFor:tp.suggestFor || null, suggestedBy:tp.suggestedBy || '', note:tp.note || '', fromIdea: tp.scope === 'idea', stages:JSON.parse(JSON.stringify(tp.stages)), sel:0, link:null, view: tp.suggestFor ? 'changes' : 'suggested'}
          : {id:null, name:'', desc:'', scope: 'company', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', status:'new', stages:[{id:newSid(), after:[], title:'Kickoff', role:'me', tasks:[]}], sel:0, link:null};
   if (D.fromIdea){ D.id = null; D.status = 'new'; D.name = D.name + ' (my version)'; }
   if (!tp && !canCreateFlows()) D.status = 'suggest';
   D.lanes = [...new Set(D.stages.map(s => s.role))];
   renderBuilder();
+}
+function flowDiff(orig, cur){
+  const o = {}, n = {}, nodes = {}, links = {}, list = [];
+  orig.stages.forEach(x => o[x.id] = x); cur.forEach(x => n[x.id] = x);
+  const nm = id => (n[id] || o[id] || {}).title || 'a stage';
+  cur.forEach(s2 => {
+    const a = o[s2.id];
+    if (!a){ nodes[s2.id] = {kind:'added', notes:['New stage']}; list.push({sid:s2.id, kind:'added', text:'Added stage "' + s2.title + '" for ' + roleOf(s2.role).name}); return; }
+    const notes = [];
+    if (a.title !== s2.title) notes.push('Renamed from "' + a.title + '"');
+    if (a.role !== s2.role) notes.push('Owner changed from ' + roleOf(a.role).name + ' to ' + roleOf(s2.role).name);
+    const at = a.tasks.map(t => t.title), st = s2.tasks.map(t => t.title);
+    st.filter(x => !at.includes(x)).forEach(x => notes.push('Added task "' + x + '"'));
+    at.filter(x => !st.includes(x)).forEach(x => notes.push('Removed task "' + x + '"'));
+    s2.tasks.forEach(t => { const ot = a.tasks.find(x => x.title === t.title); if (!ot) return;
+      if (ot.est !== t.est) notes.push('"' + t.title + '": ' + fmtDur(ot.est) + ' → ' + fmtDur(t.est));
+      if (JSON.stringify(ot.steps || []) !== JSON.stringify(t.steps || [])) notes.push('"' + t.title + '": steps changed');
+      if ((ot.cadLabel || '') !== (t.cadLabel || '')) notes.push('"' + t.title + '": repeats ' + (t.cadLabel || 'once') + ' (was ' + (ot.cadLabel || 'once') + ')'); });
+    (s2.after || []).filter(x => (a.after || []).includes(x)).forEach(x => { const m1 = linkOf(a, x), m2 = linkOf(s2, x);
+      if (JSON.stringify(m1) !== JSON.stringify(m2)) notes.push('Connection from "' + nm(x) + '": ' + [m2.note ? 'hands over "' + m2.note + '"' : '', m2.delay ? 'waits ' + m2.delay : '', m2.cond ? 'only when ' + m2.cond : '', m2.type && m2.type !== 'finish' ? (m2.type === 'same' ? 'starts at the same time' : 'not required') : ''].filter(Boolean).join(', ') || 'details removed'); });
+    (s2.after || []).filter(x => !(a.after || []).includes(x)).forEach(x => { links[x + '>' + s2.id] = 'added'; notes.push('Now also waits for "' + nm(x) + '"'); });
+    (a.after || []).filter(x => !(s2.after || []).includes(x)).forEach(x => { links[x + '>' + s2.id] = 'removed'; notes.push('No longer waits for "' + nm(x) + '"'); });
+    if (notes.length){ nodes[s2.id] = {kind:'changed', notes}; notes.forEach(t => list.push({sid:s2.id, kind:'changed', text:'"' + s2.title + '": ' + t})); }
+  });
+  cur.filter(s2 => !o[s2.id]).forEach(s2 => (s2.after || []).forEach(x => links[x + '>' + s2.id] = 'added'));
+  orig.stages.filter(a => !n[a.id]).forEach(a => { nodes[a.id] = {kind:'removed', notes:['Removed from the flow']}; list.push({sid:a.id, kind:'removed', text:'Removed stage "' + a.title + '"'}); (a.after || []).forEach(x => links[x + '>' + a.id] = 'removed'); });
+  return {nodes, links, list};
+}
+function diffDisplay(orig, cur){
+  const ids = new Set(cur.map(x => x.id)), out = cur.map(x => ({...x, after:[...(x.after || [])]}));
+  orig.stages.forEach(a => { if (!ids.has(a.id)) out.push({...a, after:[...(a.after || [])], _removed:true}); });
+  out.forEach(x => { const a = orig.stages.find(y => y.id === x.id); if (a && !x._removed) (a.after || []).forEach(d => { if (!x.after.includes(d)) x.after.push(d); }); });
+  return out;
+}
+function changesPanel(diff){
+  const kc = {added:'var(--ok)', changed:'var(--warn)', removed:'var(--hot)'}, sel = D.diffSel;
+  const focus = sel && diff.nodes[sel];
+  return `<h3>What changed</h3><p class="note">${diff.list.length} change${diff.list.length === 1 ? '' : 's'} compared with the live version. Click a change to find it on the diagram.</p>
+    ${focus ? `<div class="box" style="padding:10px 12px;margin-bottom:10px;border-color:${kc[focus.kind]}"><b>${esc((D.stages.find(x => x.id === sel) || (S.templates.find(t => t.id === D.suggestFor) || {stages:[]}).stages.find(x => x.id === sel) || {}).title || '')}</b><ul class="note" style="margin:6px 0 0;padding-left:18px">${focus.notes.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}
+    <div class="list" style="gap:6px">${diff.list.map(c => `<button class="chg ${sel === c.sid ? 'on' : ''}" data-act="bdsel" data-sid="${esc(c.sid)}"><i style="background:${kc[c.kind]}"></i><span>${esc(c.text)}</span></button>`).join('')}</div>
+    <div class="actions"><button class="btn small" data-act="bview" data-v="suggested">Edit the suggested version</button></div>`;
 }
 function reviewing(){ return D.status === 'pending' && D.owner !== 'me' && canCreateFlows(); }
 const LINK_SUGG = {payroll:['I-9 and direct deposit form', 'Start date and pay rate'], hr:['Signed offer letter', 'Personal details for the employee record'], cred:['License number and expiration', 'Required trainings list'],
@@ -1767,7 +1863,8 @@ function stagePanel(){
     <div class="field"><label>Starts when these are done</label><div class="depgrid">${opts.map(x => `<label class="dep"><input type="checkbox" data-dep="${esc(x.id)}" ${(st.after || []).includes(x.id) ? 'checked' : ''} ${dis}> ${esc(x.title)} <small>${esc(roleOf(x.role).name)}</small></label>`).join('') || '<span class="note">No other stages yet.</span>'}</div>
       <p class="hint" style="margin-top:4px">${!(st.after || []).length ? 'Starts as soon as the flow begins.' : st.after.length > 1 ? 'Waits until all ' + st.after.length + ' are finished.' : ''} ${(st.after || []).map(a => { const x = D.stages.find(y => y.id === a); return x ? `<button class="chipbtn" style="padding:2px 8px;font-size:12px" data-act="blink" data-src="${a}" data-dst="${st.id}">Edit link from ${esc(x.title)}</button>` : ''; }).join(' ')}</p></div>
     <div class="handoff-note">${kids.length ? `When this stage is done, it starts ${kids.length > 1 ? '<b>' + kids.length + ' stages at once</b>: ' : ''}${kids.map(k => '<b>' + esc(roleOf(k.role).name) + '</b> ("' + esc(k.title) + '")').join(', ')}.` : 'Nothing starts after this stage yet.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
-    ${structure ? `<div class="field"><select id="bBranch" aria-label="Start another stage after this one"><option value="">+ When this is done, also start a stage for…</option>${roleOptions('')}</select></div>` : ''}
+    ${structure ? `<div class="field"><select id="bBranch" aria-label="Start another stage after this one"><option value="">+ When this is done, also start a new stage for…</option>${roleOptions('')}</select></div>
+      ${(() => { const later = D.stages.filter(x => x !== st && !(x.after || []).includes(st.id) && !upstream(st.id, x.id)); return later.length ? `<div class="field"><select id="bConn" aria-label="Connect to an existing stage"><option value="">+ When this is done, also start an existing stage…</option>${later.map(x => `<option value="${esc(x.id)}">${esc(x.title)} (${esc(roleOf(x.role).name)})</option>`).join('')}</select></div>` : ''; })()}` : ''}
     <div class="field"><label>Tasks in this stage</label>
     ${st.tasks.map((tk, ti) => `<div class="btask"><span>${esc(tk.title)}<small> · ${fmtDur(tk.est)}${tk.cadLabel ? ' · ' + esc(tk.cadLabel) : ''}${tk.steps && tk.steps.length ? ' · ' + tk.steps.length + ' steps' : ''}</small></span>${stageEdit ? `<button class="btn small ghost" data-act="bdeltask" data-ti="${ti}">Remove</button>` : '<span></span>'}</div>`).join('') || '<p class="note">No tasks yet.</p>'}</div>
     ${stageEdit ? `<div class="actions" style="margin-top:0"><select id="bPick" class="inp" style="flex:1;min-width:180px;width:auto" aria-label="Template task">${taskPickOptions()}</select><button class="btn small" data-act="bpick">Add</button></div>
@@ -1791,19 +1888,34 @@ function renderBuilder(){
     <div class="field"><label for="bDesc">Description</label><input id="bDesc" value="${esc(D.desc)}" placeholder="What this process gets done" ${dis}></div>
     ${needsReview || D.status === 'suggest' ? `<div class="field"><label for="bNote">Note for your manager</label><input id="bNote" value="${esc(D.note || '')}" placeholder="Why this would help the team"></div>` : ''}
     ${rev ? `<div class="field"><label for="bReview">Note back to ${esc(D.suggestedBy)}</label><input id="bReview" placeholder="Needed if you request changes"></div>` : ''}</details>`;
-  const top = structure ? `<div class="btool"><button class="btn small" data-act="broot">+ Stage at the start</button><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane…</option>${roleOptions('', D.lanes)}</select>
-    <span class="hint">Drag a stage into another lane to change its owner. Drag from the round handle onto another stage to connect them. Click any line to edit how two stages relate.</span></div>` : '';
+  const orig = D.suggestFor && S.templates.find(t => t.id === D.suggestFor);
+  const diff = orig ? flowDiff(orig, D.stages) : (rev ? {nodes:Object.fromEntries(D.stages.map(x => [x.id, {kind:'added', notes:['New stage']}])), links:{}, list:[]} : null);
+  const view = orig ? (D.view || 'changes') : 'suggested';
+  const viewBar = orig ? `<div class="actions" style="margin:0 0 6px"><div class="seg" role="group" aria-label="Compare versions">${[['changes', 'Changes highlighted'], ['suggested', 'Suggested version'], ['original', 'Current live version']].map(([v, l]) => `<button data-act="bview" data-v="${v}" aria-pressed="${view === v}">${l}</button>`).join('')}</div></div>
+    ${view !== 'original' ? `<div class="diffkey"><span><i style="background:var(--ok)"></i>New</span><span><i style="background:var(--warn)"></i>Changed</span><span><i style="background:var(--hot)"></i>Removed</span><span>Green line: new connection · red dashed line: removed connection</span></div>` : '<p class="hint" style="margin:0 0 8px">This is the version people use today. It doesn\'t change until you approve.</p>'}` : rev ? '<p class="hint" style="margin:0 0 8px">This is a brand-new flow, so every stage is marked new.</p>' : '';
+  const connectBar = D.connectFrom ? `<div class="connectbar">Tap the stage that should start after "${esc((D.stages.find(x => x.id === D.connectFrom) || {}).title || '')}"<button class="btn small" data-act="bcancelconn">Cancel</button></div>` : '';
+  const top = structure && view === 'suggested' ? `<div class="btool"><button class="btn small" data-act="broot">+ Stage at the start</button><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane…</option>${roleOptions('', D.lanes)}</select>
+    <span class="hint">Drag a stage into another lane to change its owner. Drag from the round handle onto another stage to connect them, or on a phone tap the handle and then tap the next stage. Click any line to edit how two stages relate.</span></div>` : '';
+  let canvas, side;
+  if (view === 'changes'){ const disp = diffDisplay(orig, D.stages); flowStages = disp; flowLinkDiff = diff.links; flowEditable = false;
+    canvas = flowHTML(disp, {edit:false, diff, diffSelect:true, selSid:D.diffSel, lanes:[...new Set(disp.map(x => x.role))]}); side = changesPanel(diff); }
+  else if (view === 'original'){ flowStages = orig.stages; flowLinkDiff = null; flowEditable = false;
+    canvas = flowHTML(orig.stages, {}); side = `<h3>Current live version</h3><p class="note">Published by ${esc(ownerName(orig.owner))}. Switch to "Changes highlighted" to compare it with the suggestion.</p>`; }
+  else { flowStages = D.stages; flowLinkDiff = diff ? diff.links : null; flowEditable = true;
+    canvas = flowHTML(D.stages, {edit:true, structure, sel: D.link ? -1 : D.sel, lanes:D.lanes, link:D.link, diff}); side = D.link ? linkPanel() : stagePanel(); }
   openPage('builder', [['Board', 'board'], ['Flows', 'flows'], [D.name || (D.status === 'suggest' ? 'Suggested flow' : 'New flow'), '']],
-    `<div class="bwrap"><div class="bcanvas">${banner}${top}${flowHTML(D.stages, {edit:true, structure, sel: D.link ? -1 : D.sel, lanes:D.lanes, link:D.link})}</div><aside class="bside" aria-label="Editor">${details}${D.link ? linkPanel() : stagePanel()}</aside></div>`,
+    `<div class="bwrap"><div class="bcanvas">${banner}${viewBar}${connectBar}${top}${canvas}</div><aside class="bside" aria-label="Editor">${details}${side}</aside></div>`,
     {raw:true, right});
-  flowStages = D.stages; requestAnimationFrame(() => { drawFlow(); bindBuilderDrag(); });
+  requestAnimationFrame(() => { drawFlow(); if (view === 'suggested') bindBuilderDrag();
+    if (view === 'changes' && D.diffSel){ const n = document.querySelector(`.bcanvas .fnode[data-sid="${CSS.escape(D.diffSel)}"]`); if (n) n.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'}); } });
   const st = D.stages[D.sel], on = (id, evn, fn) => { const el = $(id); if (el) el.addEventListener(evn, ev => fn(ev.target)); };
   on('#bName', 'input', el => D.name = el.value); on('#bDesc', 'input', el => D.desc = el.value); on('#bNote', 'input', el => D.note = el.value);
   on('#bName', 'change', () => renderBuilder());
   on('#bScope', 'change', el => { D.scope = el.value; D.ctx = el.value === 'family' ? 'home' : D.ctx; renderBuilder(); });
   on('#bHn', 'change', el => D.horizon.n = Math.max(1, +el.value || 1)); on('#bHu', 'change', el => D.horizon.unit = el.value);
   on('#bLane', 'change', el => { if (el.value){ D.lanes.push(el.value); renderBuilder(); } });
-  if (st && !D.link){
+  if (st && !D.link && view === 'suggested'){
+    on('#bConn', 'change', el => { if (el.value){ connect(st.id, el.value); renderBuilder(); } });
     on('#bsTitle', 'change', el => { st.title = el.value.trim() || st.title; renderBuilder(); });
     on('#bsRole', 'change', el => { st.role = el.value; if (!D.lanes.includes(el.value)) D.lanes.push(el.value); renderBuilder(); });
     on('#bBranch', 'change', el => { if (!el.value) return; D.stages.push({id:newSid(), after:[st.id], title:'New stage', role:el.value, tasks:[]}); if (!D.lanes.includes(el.value)) D.lanes.push(el.value); D.sel = D.stages.length - 1; renderBuilder(); });
@@ -1834,6 +1946,8 @@ function bindBuilderDrag(){
     const node = e.target.closest('.fnode[data-sid]'); if (!node) return;
     const port = !!e.target.closest('.nport'), sid = node.dataset.sid, flow = canvas.querySelector('.flow'), svg = flow.querySelector('.flowsvg');
     const x0 = e.clientX, y0 = e.clientY; let moved = false, ghost = null, line = null, over = null;
+    const noScroll = ev => { if (moved) ev.preventDefault(); };
+    document.addEventListener('touchmove', noScroll, {passive:false});
     const laneAt = y => [...flow.querySelectorAll('.laneband')].findIndex(b => { const r = b.getBoundingClientRect(); return y >= r.top && y < r.bottom; });
     const move = ev => {
       if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
@@ -1851,8 +1965,8 @@ function bindBuilderDrag(){
       }
     };
     const up = ev => {
-      window.removeEventListener('pointermove', move);
-      if (!moved) return;
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointercancel', up); document.removeEventListener('touchmove', noScroll);
+      if (!moved){ if (port){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); D.connectFrom = sid; D.link = null; renderBuilder(); } return; }
       dragSuppress = true; setTimeout(() => dragSuppress = false, 60);
       if (ghost) ghost.remove(); if (line) line.remove(); node.classList.remove('dragging');
       if (port){ if (over) connect(sid, over.dataset.sid); }
@@ -1860,7 +1974,7 @@ function bindBuilderDrag(){
         if (li > -1 && role && st.role !== role){ st.role = role; D.sel = D.stages.indexOf(st); D.link = null; toast('Moved "' + st.title + '" to ' + roleOf(role).name, 'That lane owns this stage now.'); } }
       renderBuilder();
     };
-    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up, {once:true});
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up, {once:true}); window.addEventListener('pointercancel', up, {once:true});
   };
 }
 function builderSave(kind){
@@ -1893,7 +2007,10 @@ function builderSave(kind){
 function builderAct(a, el){
   const i = +el.dataset.i, st = D.stages[D.sel];
   switch (a){
-    case 'bsel': D.sel = i; D.link = null; break;
+    case 'bsel': if (D.connectFrom){ const from = D.connectFrom; D.connectFrom = null; if (D.stages[i] && D.stages[i].id !== from) connect(from, D.stages[i].id); break; } D.sel = i; D.link = null; break;
+    case 'bview': D.view = el.dataset.v; D.link = null; D.connectFrom = null; break;
+    case 'bdsel': D.diffSel = el.dataset.sid; break;
+    case 'bcancelconn': D.connectFrom = null; break;
     case 'blink': D.link = {src:el.dataset.src, dst:el.dataset.dst}; break;
     case 'bup': case 'bdown': { const li = D.lanes.indexOf(D.stages[i].role) + (a === 'bup' ? -1 : 1); if (li >= 0 && li < D.lanes.length) D.stages[i].role = D.lanes[li]; D.sel = i; D.link = null; break; }
     case 'bdel': { const del = D.stages.splice(i, 1)[0];
@@ -1915,7 +2032,7 @@ function builderAct(a, el){
       if (upstream(src, dst)){ d2.after.push(src); toast('Can\'t reverse', 'That would make a loop.'); break; }
       s2.after = [...(s2.after || []), dst]; s2.links = s2.links || {}; s2.links[dst] = m; D.link = {src:dst, dst:src}; break; }
     case 'lkdel': { const d2 = D.stages.find(x => x.id === D.link.dst); d2.after = d2.after.filter(x => x !== D.link.src); if (d2.links) delete d2.links[D.link.src]; D.sel = D.stages.indexOf(d2); D.link = null; toast('Connection removed', ''); break; }
-    case 'bsuggest': D.suggestFor = D.id; D.id = null; D.owner = 'me'; D.status = 'suggest'; D.name = D.name + ' (suggested changes)'; toast('Suggesting changes', 'Edit anything, then send it for review.'); break;
+    case 'bsuggest': D.suggestFor = D.id; D.id = null; D.owner = 'me'; D.status = 'suggest'; D.view = 'suggested'; toast('Suggesting changes', 'Edit anything, then send it for review.'); break;
     case 'bsave': return builderSave(D.status === 'suggest' && D.scope === 'company' && !canCreateFlows() ? 'send' : 'publish');
     case 'bdraft': return builderSave('draft');
     case 'bsend': return builderSave('send');
@@ -1962,46 +2079,74 @@ function openTemplates(){
     <div class="grid-cards">${ideas.map(ideaCard).join('')}</div>`, {refresh: openTemplates});
 }
 function openInbox(){
-  const icon = k => ({flow:ICON.flow, handoff:ICON.link, ask:ICON.ask, reply:ICON.ask, idea:ICON.idea, ok:ICON.done})[k] || ICON.bell;
+  const icon = k => ({flow:ICON.flow, handoff:ICON.link, ask:ICON.ask, reply:ICON.ask, idea:ICON.idea, ok:ICON.done, star:ICON.star})[k] || ICON.bell;
   openPage('inbox', [['Board', 'board'], ['Notifications', 'inbox']], `<h1>Notifications</h1>
     <p class="lede">Flows you were added to, hand-offs that reached you, update requests and replies.</p>
     <div class="list" style="margin-top:14px">${S.notes.map((n, i) => `<button class="nitem ${n.read ? '' : 'unread'}" data-act="opennote" data-i="${i}"><span class="ni">${icon(n.icon)}</span><span style="min-width:0"><b>${esc(n.text)}</b>${n.sub ? `<small>${esc(n.sub)}</small>` : ''}</span><span class="note when">${esc(n.when)}</span></button>`).join('') || '<div class="empty2">You\'re all caught up.</div>'}</div>`,
     {right: S.notes.some(n => !n.read) ? '<button class="btn small" data-act="readall">Mark all read</button>' : '', refresh: openInbox});
 }
-const TEAMS = [ // weekly, per-person or rate based so teams with harder work aren't penalized
-  {role:'me', name:'Operations', people:3, steps:41, ontime:92, improved:12, breaks:9, ahead:2},
-  {role:'recruiter', name:'Recruiting', people:4, steps:46, ontime:88, improved:4, breaks:6, ahead:1},
-  {role:'cred', name:'Compliance', people:3, steps:38, ontime:97, improved:18, breaks:11, ahead:3},
-  {role:'hr', name:'HR', people:2, steps:33, ontime:85, improved:-3, breaks:7, ahead:0},
-  {role:'payroll', name:'Payroll', people:2, steps:36, ontime:90, improved:9, breaks:5, ahead:1},
-  {role:'ar', name:'Billing (AR)', people:3, steps:29, ontime:94, improved:21, breaks:8, ahead:2}];
-const LB_CATS = {steps:['Steps per person', 'steps', ''], ontime:['Hand-offs on time', 'ontime', '%'], improved:['Most improved', 'improved', '%'], breaks:['Breaks per person', 'breaks', ''], ahead:['Got ahead', 'ahead', '']};
+const TEAM_STATS = { // sample weekly numbers for your teammates
+  'p-casey':{effort:58, ontime:95, improved:14, ahead:2}, 'p-riley':{effort:61, ontime:88, improved:22, ahead:1},
+  'p-dev':{effort:47, ontime:91, improved:6, ahead:3}, 'p-lina':{effort:66, ontime:97, improved:3, ahead:0}, 'p-you':{effort:36, ontime:92, improved:12, ahead:0}};
+const LB_CATS = {effort:['Effort points', 'effort', ''], ontime:['Hand-offs on time', 'ontime', '%'], improved:['Most improved', 'improved', '%'], ahead:['Got ahead', 'ahead', '']};
+function effortPts(l){ // harder and longer work counts for more, so different kinds of work compare fairly
+  if (l.kind === 'step') return 1;
+  if (l.kind === 'other') return l.pts || 1;
+  if (l.kind === 'task'){ const t = byId(l.taskId); return t ? (t.diff || 1) * Math.max(1, Math.round(estOf(t) / 30)) : 2; }
+  return 0;
+}
+function initials(n){ return n === 'You' ? 'ME' : n.split(/[\s(]+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
+function personAv(pid, size){ const p = S.org.find(x => x.id === pid) || {name:pid, role:'me'}; return `<span class="av" style="--c:var(${p.role ? roleOf(p.role).c : '--violet'})"><i ${size ? `style="width:${size}px;height:${size}px"` : ''}>${initials(p.name)}</i></span>`; }
+const personName = pid => (S.org.find(x => x.id === pid) || {name:pid}).name;
 function openLeaderboard(){
-  const cat = S.lbCat || 'steps', [label, key, unit] = LB_CATS[cat];
-  const mine = S.log.filter(l => l.kind === 'step').length, myBreaks = S.log.filter(l => l.kind === 'break').length;
-  const teams = TEAMS.map(t => t.role === 'me' ? {...t, steps: t.steps + Math.round(mine / t.people), breaks: t.breaks + Math.round(myBreaks / t.people), ahead: t.ahead + (S.aheadCount || 0)} : t)
-    .filter(t => S.settings.leaderboard || t.role !== 'me').sort((a, b) => b[key] - a[key]);
-  const max = Math.max(...teams.map(t => t[key]), 1), you = teams.findIndex(t => t.role === 'me');
-  const row = (t, i) => `<div class="lbrow ${t.role === 'me' ? 'you' : ''}"><span class="rk">${i + 1}</span>${avatar(t.role)}<div style="min-width:0"><b>${esc(t.name)}</b>${t.role === 'me' ? ' <span class="note">your team</span>' : ''}<div class="lbbar"><i style="width:${Math.max(4, Math.round(100 * t[key] / max))}%"></i></div></div><span class="val">${t[key] > 0 && cat === 'improved' ? '+' : ''}${t[key]}${unit}</span></div>`;
-  const feed = [['cred', 'Taylor Reed finished the Compliance packet for Avery Park', 'Tue 8:05 AM'], ['recruiter', 'Sam Ortiz welcomed Avery Park', 'Mon 5:20 PM'], ['ar', 'Priya Shah closed 3 billing corrections', 'Mon 3:10 PM']]
-    .concat(S.log.filter(l => l.day === S.day && l.kind === 'task').slice(-3).map(l => ['me', 'You finished ' + l.title, 'Today']));
+  const cat = LB_CATS[S.lbCat] ? S.lbCat : 'effort', [label, key, unit] = LB_CATS[cat];
+  const team = S.org.filter(p => p.role === 'me' && ['lead', 'member'].includes(p.level));
+  const mine = S.log.reduce((a, l) => a + effortPts(l), 0);
+  const rows = team.map(p => { const b = TEAM_STATS[p.id] || {effort:30, ontime:90, improved:0, ahead:0};
+    return p.id === 'p-you' ? {...b, effort: b.effort + mine, ahead: b.ahead + (S.aheadCount || 0), id:p.id, name:'You'} : {...b, id:p.id, name:p.name}; })
+    .filter(r => S.settings.leaderboard || r.id !== 'p-you').sort((a, b) => b[key] - a[key]);
+  const youAt = rows.findIndex(r => r.id === 'p-you'), top = rows.slice(0, 3), order = [top[1], top[0], top[2]].filter(Boolean);
+  const pod = r => { const i = rows.indexOf(r); return `<div class="pod p${i + 1} ${r.id === 'p-you' ? 'you' : ''}">${personAv(r.id)}<b>${esc(r.name)}</b><span class="val">${cat === 'improved' && r[key] > 0 ? '+' : ''}${r[key]}${unit}</span><span class="note">#${i + 1}</span></div>`; };
+  const wins = [['p-lina', 'Closed 4 client follow-ups', 'Tue 8:40 AM'], ['p-riley', 'Fixed the Riverside timesheets with proof', 'Mon 4:05 PM'], ['p-casey', 'Suggested 2 flow improvements', 'Tue 7:50 AM'],
+    ['p-dev', 'Finished a 2-hour contract review a day early', 'Mon 1:30 PM'], ['p-taylor', 'Finished the Compliance packet for Avery Park', 'Tue 8:05 AM']]
+    .concat(S.log.filter(l => l.day === S.day && (l.kind === 'task' || l.kind === 'other')).slice(-3).map(l => ['p-you', l.kind === 'other' ? l.title : 'Finished ' + l.title, 'Today']));
+  const isMgr = S.org.some(p => p.mgr === 'p-you'), teamKudos = S.kudos.filter(k => (S.org.find(p => p.id === k.to) || {}).mgr === 'p-you');
   openPage('leaderboard', [['Board', 'board'], ['Team activity', 'leaderboard']], `<h1>Team activity</h1>
-    <p class="lede">Light, team-based competition. Teams are compared on per-person averages and on-time rates, so a team doing harder work isn't at a disadvantage. Resets every Monday. Only the top teams and your own are shown, never a last place.</p>
-    <div class="actions" style="margin:12px 0 16px">${Object.entries(LB_CATS).map(([k, v]) => `<button class="chipbtn" aria-pressed="${cat === k}" data-act="lbcat" data-cat="${k}">${v[0]}</button>`).join('')}</div>
+    <p class="lede">Friendly competition with your own team (Operations). <b>Effort points</b> weigh each finished task by difficulty and time, so a hard two-hour task counts more than a quick one. Work that isn't a task still counts when you log it. Breaks are never counted. Resets every Monday, and only the top 3 and your own spot are shown.</p>
+    <div class="actions" style="margin:12px 0 16px">${Object.entries(LB_CATS).map(([k, v]) => `<button class="chipbtn" aria-pressed="${cat === k}" data-act="lbcat" data-cat="${k}">${v[0]}</button>`).join('')}<div class="spacer"></div><button class="btn small" data-act="otherwork">+ Log other work</button></div>
     <div class="grid-cards" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
-      <div class="box"><h3>${label}</h3><p class="note" style="margin:2px 0 10px">This week</p><div class="lb">${teams.slice(0, 5).map(row).join('')}${you >= 5 ? row(teams[you], you) : ''}</div>
-        ${S.settings.leaderboard ? '' : '<p class="note">Your team is hidden from the leaderboard. Turn it on in Settings.</p>'}</div>
-      <div class="box"><h3>Wins this week</h3><p class="note" style="margin:2px 0 10px">Recent finishes across teams</p><div class="feed">${feed.reverse().map(f => `<div>${avatar(f[0])}<span>${esc(f[1])}</span><small>${esc(f[2])}</small></div>`).join('')}</div></div>
-    </div>
-    <p class="note" style="margin-top:14px">Team leads can turn the leaderboard off for their team. Personal stats stay private in Achievements.</p>`, {refresh: openLeaderboard});
+      <div class="box"><h3>${label}</h3><p class="note" style="margin:2px 0 4px">This week · ${team.length} people</p>
+        <div class="podium">${order.map(pod).join('')}</div>
+        ${youAt >= 3 ? `<div class="lbrow you"><span class="rk">#${youAt + 1}</span>${personAv('p-you')}<b>Your spot</b><span class="val">${rows[youAt][key]}${unit}</span></div><p class="note">${rows[2][key] - rows[youAt][key] > 0 ? (rows[2][key] - rows[youAt][key]) + (unit || ' points') + ' to reach the top 3.' : ''}</p>` : youAt > -1 ? '<p class="note">You\'re in the top 3 this week.</p>' : '<p class="note">You\'re hidden from the leaderboard. Turn it on in Settings.</p>'}</div>
+      <div class="box"><h3>Wins this week</h3><p class="note" style="margin:2px 0 10px">Send kudos. Their manager is copied, and it's saved to their profile for reviews.</p>
+        <div class="feed">${wins.reverse().map(w => `<div>${personAv(w[0])}<span><b>${esc(w[0] === 'p-you' ? 'You' : personName(w[0]))}</b> ${esc(w[1].charAt(0).toLowerCase() + w[1].slice(1))}<br><span class="note">${esc(w[2])}</span></span>${w[0] !== 'p-you' ? `<button class="kbtn" data-act="kudos" data-pid="${w[0]}" data-for="${esc(w[1])}" style="margin-left:auto">Kudos</button>` : ''}</div>`).join('')}</div></div>
+      ${isMgr ? `<div class="box"><h3>Kudos your team received</h3><p class="note" style="margin:2px 0 10px">You see these because you manage them.</p>${teamKudos.map(k => `<div class="kudo" style="margin-bottom:8px"><small>${esc(personName(k.to))} · from ${esc(k.from)} · ${esc(k.when)}</small><p>${esc(k.text)}</p></div>`).join('') || '<p class="note">None yet.</p>'}</div>` : ''}
+    </div>`, {refresh: openLeaderboard});
+}
+const KUDOS_CHIPS = ['Great hand-off', 'Saved the day', 'Above and beyond', 'Thanks for the quick turnaround', 'Made the client happy'];
+function openKudos(pid, forWhat){
+  const p = S.org.find(x => x.id === pid), mgr = p && S.org.find(x => x.id === p.mgr);
+  openSheet(`<h2>Kudos for ${esc(p ? p.name : pid)}</h2><p class="note">For: ${esc(forWhat || 'their work')}. ${mgr ? esc(mgr.id === 'p-you' ? 'You manage them, so it also goes in your team view.' : mgr.name + ', their manager, is copied.') : ''} It's saved to their profile for reviews.</p>
+    <div class="sugchips" style="margin:10px 0">${KUDOS_CHIPS.map(c => `<button data-act="kchip" data-v="${esc(c)}">+ ${esc(c)}</button>`).join('')}</div>
+    <div class="field"><label for="kText">Message</label><textarea id="kText" rows="3" placeholder="What did they do that helped?"></textarea></div>
+    <div class="actions"><button class="btn primary" data-act="sendkudos" data-pid="${pid}" data-for="${esc(forWhat || '')}">Send kudos</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'kudos');
+  setTimeout(() => $('#kText') && $('#kText').focus(), 50);
+}
+function openOtherWork(){
+  openSheet(`<h2>Log other work</h2><p class="note">Not everything fits a task: a surprise phone call, helping a coworker, putting out a fire. Log it so it counts toward your day and your effort points.</p>
+    <div class="field"><label for="owWhat">What did you do?</label><input id="owWhat" placeholder="e.g. Helped Dev untangle a payroll question"></div>
+    <div class="grid2"><div class="field"><label>Time spent</label>${estInputs('owT', 30)}</div>
+    <div class="field"><label for="owDiff">How demanding was it?</label><select id="owDiff"><option value="1">Light</option><option value="2" selected>Medium</option><option value="3">Heavy</option></select></div></div>
+    <div class="actions"><button class="btn primary" data-act="saveother">Log it</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'other');
+  setTimeout(() => $('#owWhat') && $('#owWhat').focus(), 50);
 }
 function openAchievements(){
-  const tasks = S.log.filter(l => l.kind === 'task').length, steps = S.log.filter(l => l.kind === 'step').length, breaks = S.log.filter(l => l.kind === 'break').length;
+  const tasks = S.log.filter(l => l.kind === 'task').length, steps = S.log.filter(l => l.kind === 'step').length, other = S.log.filter(l => l.kind === 'other').length, kud = S.kudos.filter(k => k.to === 'p-you').length;
   const routines = S.tasks.filter(t => t.cadence && t.completions && isMine(t));
-  const badges = [['First get-ahead', 'Finish a task before its planned day', (S.aheadCount || 0) >= 1], ['Break taker', 'Take 5 breaks', breaks >= 5], ['Step by step', 'Check off 25 steps', steps >= 25],
+  const badges = [['First get-ahead', 'Finish a task before its planned day', (S.aheadCount || 0) >= 1], ['Appreciated', 'Receive kudos from a teammate', kud >= 1], ['Step by step', 'Check off 25 steps', steps >= 25],
     ['Routine builder', 'Reach 10 on any routine', routines.some(t => t.completions >= 10)], ['Hand-off pro', 'Finish a stage that starts others', S.log.some(l => l.kind === 'task' && l.handoff)], ['Week cleared', 'Clear a whole day', S.log.some(l => l.cleared)]];
   openPage('achievements', [['Board', 'board'], ['Achievements', 'achievements']], `<h1>Achievements</h1><p class="lede">Your progress, just for you.</p>
-    <div class="stats" style="margin-top:14px"><div class="stat"><b>${tasks}</b><span>Tasks this week</span></div><div class="stat"><b>${steps}</b><span>Steps checked</span></div><div class="stat"><b>${breaks}</b><span>Breaks taken</span></div><div class="stat"><b>${S.aheadCount || 0}</b><span>Done early</span></div></div>
+    <div class="stats" style="margin-top:14px"><div class="stat"><b>${tasks}</b><span>Tasks this week</span></div><div class="stat"><b>${steps}</b><span>Steps checked</span></div><div class="stat"><b>${other}</b><span>Other work logged</span></div><div class="stat"><b>${kud}</b><span>Kudos received</span></div><div class="stat"><b>${S.aheadCount || 0}</b><span>Done early</span></div></div>
     <div class="sec"><h4>Routine milestones</h4><div class="list">${routines.map(t => { const m = MILESTONES.find(x => x > t.completions); return `<div class="box" style="padding:10px 14px"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(t.title)}</b><span class="note">${t.completions} of ${m}</span></div><div class="bar" style="margin-top:6px"><i style="width:${Math.round(100 * t.completions / m)}%"></i></div></div>`; }).join('')}</div></div>
     <div class="sec"><h4>Badges</h4><div class="grid-cards">${badges.map(b => `<div class="box" style="display:flex;gap:12px;align-items:center;${b[2] ? '' : 'opacity:.55'}"><span class="ring sm" style="--p:${b[2] ? 1 : 0};--rc:var(--violet)"></span><div><b>${b[0]}</b><div class="note">${b[2] ? 'Earned' : b[1]}</div></div></div>`).join('')}</div></div>`, {refresh: openAchievements});
 }
@@ -2033,7 +2178,11 @@ function openProfile(){
       <div class="box"><h3>Reminders</h3><p class="note">How strongly Cueue gets your attention.</p>
         <div class="actions">${['Off', 'Gentle', 'Medium', 'Strong'].map((l, i) => `<button class="chipbtn" aria-pressed="${st.cue === i}" data-act="setcue" data-cue="${i}">${l}</button>`).join('')}</div>
         <p class="note" style="margin-top:10px">More options, like sounds, vibration and the edge light, are in Settings.</p><button class="btn small" data-act="settings">Open Settings</button></div>
-    </div>`, {refresh: openProfile});
+    </div>
+    <div class="sec"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h4 style="margin:0;flex:1">Kudos you've received (${S.kudos.filter(k => k.to === 'p-you').length})</h4><button class="btn small" data-act="copykudos">Copy all for my review</button></div>
+      <p class="note">Saved here so they're easy to find at review time. Your manager sees them too.</p>
+      <div class="list">${S.kudos.filter(k => k.to === 'p-you').map(k => `<div class="kudo"><small>From ${esc(k.from)} · ${esc(k.when)}${k.forWhat ? ' · for "' + esc(k.forWhat) + '"' : ''}</small><p>${esc(k.text)}</p></div>`).join('') || '<div class="empty2">Kudos from teammates will collect here.</div>'}</div></div>
+    ${S.org.some(p => p.mgr === 'p-you') ? `<div class="sec"><h4>Your team's kudos</h4><div class="list">${S.kudos.filter(k => (S.org.find(p => p.id === k.to) || {}).mgr === 'p-you').map(k => `<div class="kudo"><small>${esc(personName(k.to))} · from ${esc(k.from)} · ${esc(k.when)}</small><p>${esc(k.text)}</p></div>`).join('') || '<p class="note">None yet.</p>'}</div></div>` : ''}`, {refresh: openProfile});
   const toMin = v => { const [h, m] = v.split(':').map(Number); return h * 60 + m; };
   const bind = (id, fn) => $(id).addEventListener('change', ev => { fn(ev.target); save(); render(); });
   bind('#pFs', el => st.freshStart = toMin(el.value)); bind('#pFe', el => st.freshEnd = toMin(el.value)); bind('#pWs', el => st.workStart = toMin(el.value)); bind('#pWe', el => st.workEnd = toMin(el.value));
@@ -2193,7 +2342,7 @@ document.addEventListener('click', ev => {
   if (el.dataset.nav){ S.viewDay = Math.max(0, Math.min(6, S.viewDay + +el.dataset.nav)); render(); return; }
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
   const a = el.dataset.act, cur = byId(S.currentId), gid = el.dataset.goal, tpl = S.templates.find(t => t.id === el.dataset.tpl);
-  if (D && page && page.kind === 'builder' && /^(b(sel|link|up|down|del|addstage|next|root|deltask|pick|addtask|save|draft|send|copy|approve|reqchg|suggest)|lk(sug|rev|del))$/.test(a)){ builderAct(a, el); return; }
+  if (D && page && page.kind === 'builder' && /^(b(sel|link|up|down|del|addstage|next|root|deltask|pick|addtask|save|draft|send|copy|approve|reqchg|suggest|view|dsel|cancelconn)|lk(sug|rev|del))$/.test(a)){ builderAct(a, el); return; }
   switch (a){
     case 'startday': closeSheet(); startNext(); break;
     case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
@@ -2251,6 +2400,18 @@ document.addEventListener('click', ev => {
     case 'help': closeDrawer(); toast('Help & feedback', 'In the real app this opens guides and a feedback form.'); break;
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
+    case 'otherwork': closeNewMenu(); openOtherWork(); break;
+    case 'saveother': { const w = $('#owWhat').value.trim(); if (!w){ $('#owWhat').focus(); return; } const mins = readEst('owT') || 30, d = +$('#owDiff').value;
+      S.log.push({title:w, day:S.day, kind:'other', mins, pts: d * Math.max(1, Math.round(mins / 30))}); closeSheet(); render();
+      confetti(innerWidth / 2, innerHeight / 3, 40, 5); chime(false); toast('Logged: ' + w, fmtDur(mins) + ' counted toward today and your effort points.'); break; }
+    case 'kudos': openKudos(el.dataset.pid, el.dataset.for); break;
+    case 'kchip': { const t = $('#kText'); t.value = t.value ? t.value + ' ' + el.dataset.v + '.' : el.dataset.v + '.'; t.focus(); return; }
+    case 'sendkudos': { const t = $('#kText').value.trim(); if (!t){ $('#kText').focus(); return; } const pid = el.dataset.pid, pp = S.org.find(x => x.id === pid), mgr = pp && S.org.find(x => x.id === pp.mgr);
+      S.kudos.push({to:pid, from:'You', text:t, when:DAYS[S.day], forWhat:el.dataset.for}); closeSheet();
+      note('You sent kudos to ' + (pp ? pp.name : pid), mgr ? (mgr.id === 'p-you' ? 'Saved to their profile and your team view.' : mgr.name + ' was copied. Saved to their profile for reviews.') : 'Saved to their profile.', 'star', {page:'profile'});
+      confetti(innerWidth / 2, innerHeight / 3, 50, 6); chime(false); toast('Kudos sent to ' + (pp ? pp.name : pid), mgr && mgr.id !== 'p-you' ? mgr.name + ' was copied.' : 'Saved to their profile.'); break; }
+    case 'copykudos': { const txt = S.kudos.filter(k => k.to === 'p-you').map(k => '- ' + k.text + ' (' + k.from + ', ' + k.when + ')').join('\n');
+      try { navigator.clipboard.writeText(txt).then(() => toast('Copied', 'Paste them into your review notes.'), () => toast('Couldn\'t copy automatically', 'Select the kudos below and copy them.')); } catch(e){ toast('Couldn\'t copy automatically', 'Select the kudos below and copy them.'); } break; }
     case 'goaltab': openGoals(el.dataset.tab); break;
     case 'flowtab': openFlows(el.dataset.tab); break;
     case 'ideacat': S.ideaCat = el.dataset.cat; openTemplates(); break;
@@ -2258,7 +2419,7 @@ document.addEventListener('click', ev => {
     case 'setcue': S.settings.cue = +el.dataset.cue; render(); openProfile(); break;
     case 'readall': S.notes.forEach(n => n.read = true); save(); openInbox(); break;
     case 'opennote': { const n = S.notes[+el.dataset.i]; n.read = true; save(); updateBadges(); const o = n.open || {};
-      if (o.page === 'goals') openGoals(o.tab); else if (o.page === 'flows') openFlows(o.tab); else if (o.flow){ const g = goalById(o.flow); if (g) openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it.', goalStages(g), '', [['Board', 'board'], ['Notifications', 'inbox']]); } else openInbox(); break; }
+      if (o.page === 'goals') openGoals(o.tab); else if (o.page === 'flows') openFlows(o.tab); else if (o.page === 'profile') openProfile(); else if (o.flow){ const g = goalById(o.flow); if (g) openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it.', goalStages(g), '', [['Board', 'board'], ['Notifications', 'inbox']]); } else openInbox(); break; }
     case 'useidea': { const {root, created} = instantiate(tpl, ''); render(); openGoals('own'); toast('Added: ' + root.title, created + ' routine' + (created > 1 ? 's' : '') + ' on your board, starting today.'); break; }
     case 'savenewgoal': { const t = $('#ngTitle').value.trim(); if (!t){ $('#ngTitle').focus(); return; }
       const g = {id:newId('g'), title:t, parent:null, owner:'me', horizon:{n:Math.max(1, +$('#ngN').value || 1), unit:$('#ngU').value}, start:S.day, why:$('#ngWhy').value.trim()};

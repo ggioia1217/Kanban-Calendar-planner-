@@ -367,3 +367,14 @@ CRM · Android/desktop native apps (web covers desktop first).
 - Drag a stage to another lane to change its owner; drag from its round handle onto another stage to connect them.
 - Click a connection line to set how the two stages relate: starts when finished (default), starts at the same time,
   or helpful but not required, plus an optional wait, what gets handed over (with suggestions) and an only-when condition.
+
+### 12.11 Fair recognition
+- Leaderboard compares **individuals inside your own team**: effort points (difficulty × time per finished task, steps, and logged other work),
+  hand-offs on time, most improved, got ahead. Top 3 plus your own spot. Weekly reset, opt-out.
+- **Breaks are never counted or shown** in any score, badge or list.
+- **Other work** can be logged so everything a person does is accounted for.
+- **Kudos** copy the recipient's manager and are kept on the recipient's profile for performance reviews.
+
+### 12.12 Reviewing suggested changes
+- Three views: changes highlighted, suggested version, current live version.
+- Stage badges NEW / CHANGED / REMOVED with the specific edits listed on the card and in a "What changed" panel; connection lines colored for added and removed.

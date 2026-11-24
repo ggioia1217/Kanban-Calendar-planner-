@@ -54,8 +54,15 @@
 | D49 | **Flows hub**: Active runs with progress and who holds each stage, Templates, Drafts, and Suggestions |
 | D50 | **Full-screen flow builder**: drag a stage into another lane to change its owner; drag from a stage's handle onto another to connect them; click a line to edit the connection (starts when finished / same time / helpful but not required, wait time, what gets handed over, only-when condition, with suggestions) |
 | D51 | **Flow suggestions**: anyone without flow rights can build a flow or suggest changes to an existing one; managers review, edit, approve or request changes with a note |
-| D52 | **Team leaderboard**: teams compete on per-person and on-time measures, several categories, weekly reset, top five plus your team, no last place, opt-out |
+| D52 | ~~Team vs team leaderboard~~ replaced by D54 |
 | D53 | **Templates & ideas**: ready-made home, family and work routines (morning launch, weekly reset, meals, bills, car, health, pets, school week, and more) with research notes where evidence exists |
+| D54 | **Leaderboard = individuals within your own team.** Categories: effort points (each finished task weighted by difficulty × time), hand-offs on time, most improved, got ahead. Top 3 podium plus your own spot; nobody else's low rank is shown; weekly reset; opt-out |
+| D55 | **Breaks are never tracked or scored** anywhere (no counts, badges or leaderboard). They exist only for health |
+| D56 | **Log other work**: anything that isn't a task (calls, helping a coworker, fires) can be logged with time and difficulty so it counts toward the day and effort points |
+| D57 | **Kudos**: send from Team activity; the person's manager is copied and it's saved to their profile ("Copy all for my review"). Managers see their team's kudos |
+| D58 | **Reviewing suggested changes**: switch between "Changes highlighted", "Suggested version" and "Current live version". New stages green, changed amber with what changed on the card, removed red and crossed out; new connections green, removed connections red dashed; a "What changed" list jumps to each change |
+| D59 | **+ New** menu opens aligned to the button's left edge and shifts to stay on screen |
+| D60 | **Builder on phones**: tap a stage's round handle, then tap the stage that should follow (tap-to-connect); drag also supports touch; "When this is done, also start an existing stage…" gives a no-drag way to connect |
 
 ## Open
 | # | Question |
