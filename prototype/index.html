@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Cueue Prototype</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -483,6 +484,76 @@ a{color:var(--accent)}
 .pod.p1{min-height:150px;background:color-mix(in srgb,var(--violet) 14%,var(--surface))} .pod.p2{min-height:126px} .pod.p3{min-height:110px}
 .pod.you{box-shadow:inset 0 0 0 1.5px var(--accent)}
 .kbtn{border:1px solid color-mix(in srgb,var(--violet) 45%,var(--line));background:var(--surface);color:var(--violet);border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:700}
+
+/* Flow editor v2: full-screen canvas, slide-over / bottom-sheet panel, zoom, overview map, step list */
+.bwrap{flex:1;min-height:0;position:relative;display:block}
+.bcanvas{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
+.bcanvas > .flowwrap{flex:1;min-height:0;overflow:auto;margin-top:0;overscroll-behavior:contain}
+.zoomsize{position:relative;overflow:clip}
+@media (min-width:1100px){.bwrap.withpanel .bcanvas{right:390px}}
+.btoolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.zoomctl{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:10px;padding:2px 4px;background:var(--surface)}
+.zoomctl button.zb{width:30px;height:28px;border:0;background:none;font-size:18px;font-weight:700;border-radius:8px}
+.zoomctl button.zb:hover{background:var(--surface-2)}
+.zoomctl span{min-width:46px;text-align:center;font-size:13px;font-variant-numeric:tabular-nums}
+.bpanel{position:absolute;top:0;right:0;bottom:0;width:min(390px,94vw);background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 30px rgba(0,0,0,.12);z-index:6;display:flex;flex-direction:column;animation:slidel .2s ease}
+@keyframes slidel{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.bpanel-head{position:relative;display:flex;align-items:center;gap:8px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--line)}
+.bpanel-head b{flex:1;font-family:var(--font-display);font-size:17px}
+.bpanel-body{flex:1;min-height:0;overflow-y:auto;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.bpanel-body h3{display:none}
+@media (max-width:699px){
+  .bpanel{top:auto;left:0;width:auto;max-height:66%;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -12px 30px rgba(0,0,0,.18);animation:up .22s ease}
+  .bpanel-head{padding-top:18px}
+  .bpanel-head::before{content:"";position:absolute;left:50%;top:7px;width:38px;height:4px;margin-left:-19px;border-radius:4px;background:var(--line)}
+}
+.minimap{position:absolute;right:18px;bottom:18px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.14);z-index:5;cursor:pointer;overflow:hidden}
+.minimap i{position:absolute;border-radius:2px;opacity:.8}
+.minimap .vp{position:absolute;border:2px solid var(--accent);border-radius:3px;background:color-mix(in srgb,var(--accent) 12%,transparent);pointer-events:none}
+@media (min-width:1100px){.bwrap.withpanel .minimap{right:408px}}
+.hintbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px;padding:8px 10px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:8px}
+.page.full{bottom:0}
+.page.full .pagebar{display:none}
+:root.builder-full .tabbar{display:none!important}
+.lane.emptylane{opacity:.65;flex-direction:column;align-items:flex-start;gap:0;padding-block:4px}
+.bcanvas .fnode .ntools{display:none}
+.bcanvas .fnode.sel .ntools{display:flex}
+.navx{display:none}
+.flow.compact .fnode .fm,.flow.compact .fnode .ft,.flow.compact .fnode .ntools,.flow.compact .fnode .dnote,.flow.compact .fnode .note{display:none!important}
+.flow.compact .navx{display:inline-flex}
+.flow.compact .fnode{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px}
+.flow.compact .fnode b{font-size:16px}
+.flow.compact .lane .av{font-size:0;gap:0}
+.flow.compact .lane .av i{width:30px;height:30px;font-size:12px}
+.flow.compact .lane .note{display:none}
+.fnode.dim,.scard.dim{opacity:.32}
+.flowsvg path.dim{opacity:.12}
+.flowsvg text.ll.dim{opacity:0}
+.steplist{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:16px;padding:2px 2px 90px}
+.stepgroup{display:flex;flex-direction:column;gap:8px}
+.stephead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stepnum{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.stepcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-left:13px;padding-left:22px;border-left:2px solid var(--line)}
+.scard{border:1.5px solid var(--line);border-radius:14px;background:var(--surface);padding:10px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:left;min-width:0}
+.scard .sct{font-size:15.5px;line-height:1.25}
+.scard.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.scard.diff-added{border-color:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent)}
+.scard.diff-changed{border-color:var(--warn);box-shadow:0 0 0 3px color-mix(in srgb,var(--warn) 28%,transparent)}
+.scard.diff-removed{border-style:dashed;border-color:var(--hot)}
+.scard.diff-removed .sct{text-decoration:line-through;color:var(--muted)}
+.sctop{display:flex;align-items:center;gap:8px}
+.scrow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12.5px;color:var(--muted)}
+.scrow .chip{font-size:11.5px;color:var(--ink)}
+
+@media (max-width:699px), (max-height:520px){
+  .btoolbar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .btoolbar > *{flex:none}
+  .bcanvas .hint,.diffkey .dk-long{display:none}
+  .bcanvas{padding-top:8px;padding-bottom:8px}
+  .reviewbar{padding:7px 10px;margin-bottom:6px;font-size:13px}
+  .reviewbar svg{display:none}
+}
+@media (max-height:520px){ .diffkey{display:none} .bcanvas .seg button{padding:5px 8px} }
 
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
@@ -1387,8 +1458,9 @@ function initRuntime(){
 let page = null;
 function openPage(kind, crumbs, html, opts){
   opts = opts || {};
-  const r = $('#pageRoot'), again = page && page.kind === kind;
-  const keep = again ? [...r.querySelectorAll('.pagebody,.bcanvas,.bside')].map(x => x.scrollTop) : [];
+  const r = $('#pageRoot'), again = page && page.kind === kind, AREAS = ['.pagebody', '.bcanvas .flowwrap', '.steplist', '.bpanel-body'];
+  const keep = again ? AREAS.map(q => { const x = r.querySelector(q); return x ? [x.scrollTop, x.scrollLeft] : null; }) : [];
+  document.documentElement.classList.remove('builder-full');
   closeSheet(true); closeDrawer(); closeNewMenu();
   r.innerHTML = `<section class="page ${again ? 'still' : ''}" aria-label="${esc(crumbs[crumbs.length-1][0])}">
     <div class="pagebar"><button class="iconbtn" data-act="menu" aria-label="Open menu">${ICON.menu}</button><button class="btn small" data-act="back" aria-label="Back">‹ Back</button>
@@ -1396,11 +1468,11 @@ function openPage(kind, crumbs, html, opts){
       <div class="spacer"></div>${opts.right || ''}</div>
     ${opts.raw ? html : `<div class="pagebody"><div class="inner">${html}</div></div>`}</section>`;
   page = {kind, crumbs, refresh: opts.refresh || null};
-  if (again) [...r.querySelectorAll('.pagebody,.bcanvas,.bside')].forEach((x, i) => x.scrollTop = keep[i] || 0);
+  if (again) AREAS.forEach((q, i) => { const x = r.querySelector(q); if (x && keep[i]){ x.scrollTop = keep[i][0]; x.scrollLeft = keep[i][1]; } });
   else { const pb = r.querySelector('.pagebody'); if (pb) pb.scrollTop = 0; }
   updateTabs();
 }
-function closePage(){ $('#pageRoot').innerHTML = ''; page = null; updateTabs(); render(); }
+function closePage(){ $('#pageRoot').innerHTML = ''; page = null; document.documentElement.classList.remove('builder-full'); updateTabs(); render(); }
 function goBack(){ if (!page) return; const c = page.crumbs; runAct(c.length > 1 ? c[c.length - 2][1] : 'board'); }
 function runAct(a){ const b = document.createElement('button'); b.dataset.act = a; b.style.display = 'none'; document.body.appendChild(b); b.click(); b.remove(); }
 function openDrawer(){
@@ -1619,7 +1691,7 @@ function stageStatus(g){
   if (ts.some(t => !isMine(t) && !t.done)) return 'others';
   return 'active';
 }
-let flowStages = [], flowLinkDiff = null, flowEditable = false;
+let flowStages = [], flowLinkDiff = null, flowEditable = false, flowFocus = null, pinching = false;
 function stageCols(stages){
   const idx = {}, memo = {}; stages.forEach((s, i) => idx[s.id] = i);
   const col = i => { if (memo[i] != null) return memo[i]; memo[i] = 0;
@@ -1634,9 +1706,9 @@ function nodeHTML(stages, i, cols, opts){
   const deps = (s.after || []).length, kids = stages.filter(x => (x.after || []).includes(s.id)).length, par = cols.filter(c => c === cols[i]).length > 1;
   const tools = ed && opts.structure ? `<div class="ntools"><button data-act="bnext" data-i="${i}" title="Add a stage that starts after this one">+ Next</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div><span class="nport" title="Drag onto another stage to connect" aria-hidden="true"></span>` : '';
   const dk = opts.diff && opts.diff.nodes[s.id], act = opts.diffSelect ? `data-act="bdsel" data-sid="${esc(s.id)}"` : ed ? `data-act="bsel" data-i="${i}"` : '';
-  const isSel = (ed && opts.sel === i) || (opts.selSid && opts.selSid === s.id);
-  return `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${isSel?'sel':''} ${dk ? 'diff-' + dk.kind : ''}" data-sid="${esc(s.id)}" ${act} ${dk ? `title="${esc(dk.notes.join('. '))}"` : ''}>
-    ${dk ? `<span class="dtag ${dk.kind}">${dk.kind === 'added' ? 'NEW' : dk.kind === 'removed' ? 'REMOVED' : 'CHANGED'}</span>` : ''}
+  const isSel = (ed && opts.sel === i) || (opts.selSid && opts.selSid === s.id), dim = opts.focus && !opts.focus.has(s.id);
+  return `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${isSel?'sel':''} ${dk ? 'diff-' + dk.kind : ''} ${dim ? 'dim' : ''}" data-sid="${esc(s.id)}" ${act} ${dk ? `title="${esc(dk.notes.join('. '))}"` : ''}>
+    <span class="navx">${avatar(s.role)}</span>${dk ? `<span class="dtag ${dk.kind}">${dk.kind === 'added' ? 'NEW' : dk.kind === 'removed' ? 'REMOVED' : 'CHANGED'}</span>` : ''}
     <span class="fm">Stage ${cols[i]+1}${par ? ' · in parallel' : ''}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
     ${dk && dk.kind === 'changed' && opts.diffSelect ? dk.notes.slice(0, 2).map(t => `<span class="dnote">${esc(t)}</span>`).join('') + (dk.notes.length > 2 ? `<span class="note" style="font-size:11.5px">+${dk.notes.length - 2} more</span>` : '') : ''}
     <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span>
@@ -1648,8 +1720,9 @@ function flowHTML(stages, opts){
   const lanes = opts.lanes || [...new Set(stages.map(s => s.role || 'me'))];
   const cols = stageCols(stages), selCol = opts.edit && stages[opts.sel] ? cols[opts.sel] : -1, ghosts = opts.edit && opts.structure && selCol > -1;
   const ncol = Math.max(0, ...cols, ghosts ? selCol + 1 : 0) + 1;
-  let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${ncol}, 200px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
-  lanes.forEach((r, li) => { html += `<div class="laneband" data-lane="${li}" style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}</div>`; });
+  const used = lanes.map(r => stages.some(s => (s.role || 'me') === r));
+  let html = `<div class="flowwrap"><div class="zoomsize"><div class="flow" style="grid-template-columns:150px repeat(${ncol}, 200px);grid-template-rows:${lanes.map((r, li) => used[li] || ghosts ? 'minmax(84px,auto)' : '46px').join(' ')}">`;
+  lanes.forEach((r, li) => { html += `<div class="laneband" data-lane="${li}" ${opts.blank ? 'data-act="bblank"' : ''} style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane ${used[li] ? '' : 'emptylane'}" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}${used[li] ? '' : '<span class="note" style="font-weight:500;font-size:11.5px">no stages yet</span>'}</div>`; });
   const cells = {};
   stages.forEach((s, i) => { const k = Math.max(0, lanes.indexOf(s.role || 'me')) + ':' + cols[i]; (cells[k] = cells[k] || {list:[]}).list.push(i); });
   if (ghosts) lanes.forEach((r, li) => { const k = li + ':' + (selCol + 1); (cells[k] = cells[k] || {list:[]}).ghost = r; });
@@ -1658,13 +1731,13 @@ function flowHTML(stages, opts){
     html += `<div class="fcell" style="grid-row:${li+1};grid-column:${col+2}">${c.list.map(i => nodeHTML(stages, i, cols, opts)).join('')}${c.ghost ? `<div class="fnode ghost" data-act="baddstage" data-role="${esc(c.ghost)}">+ ${esc(roleOf(c.ghost).name)} starts after "${esc(stages[opts.sel].title)}"</div>` : ''}</div>`;
   });
   html += `<svg class="flowsvg" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
-    <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ahv" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg></div></div>
-    <div class="flowkey"><span><i></i>Next step, same owner</span><span><i class="h"></i>Hand-off to another person or team</span><span>Several arrows out: those stages start at the same time</span><span>Several arrows in: the stage waits for all of them</span></div>`;
+    <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ahv" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg></div></div></div>
+    ${opts.nokey ? '' : '<div class="flowkey"><span><i></i>Next step, same owner</span><span><i class="h"></i>Hand-off to another person or team</span><span>Several arrows out: those stages start at the same time</span><span>Several arrows in: the stage waits for all of them</span></div>'}`;
   return html;
 }
 function drawFlow(){
   const flow = document.querySelector('.flow'); if (!flow) return;
-  const stages = flowStages, svg = flow.querySelector('.flowsvg'), fr = flow.getBoundingClientRect();
+  const stages = flowStages, svg = flow.querySelector('.flowsvg'), fr = flow.getBoundingClientRect(), z = (fr.width / flow.offsetWidth) || 1;
   svg.setAttribute('width', flow.scrollWidth); svg.setAttribute('height', flow.scrollHeight);
   svg.querySelectorAll('path.link,path.handoff,path.hit,text.ll').forEach(n => n.remove());
   const byS = {}; stages.forEach(s => byS[s.id] = s);
@@ -1672,22 +1745,24 @@ function drawFlow(){
     const na = flow.querySelector(`.fnode[data-sid="${CSS.escape(a)}"]`), nb = flow.querySelector(`.fnode[data-sid="${CSS.escape(s.id)}"]`);
     if (!na || !nb || !byS[a]) return;
     const ra = na.getBoundingClientRect(), rb = nb.getBoundingClientRect();
-    const x1 = ra.right - fr.left, y1 = ra.top + ra.height/2 - fr.top, x2 = rb.left - fr.left - 2, y2 = rb.top + rb.height/2 - fr.top, mx = (x1 + x2) / 2;
+    const x1 = (ra.right - fr.left) / z, y1 = (ra.top + ra.height / 2 - fr.top) / z, x2 = (rb.left - fr.left) / z - 2, y2 = (rb.top + rb.height / 2 - fr.top) / z, mx = (x1 + x2) / 2;
     const hand = (byS[a].role || 'me') !== (s.role || 'me'), m = (s.links && s.links[a]) || {}, d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
     const sel = D && flowEditable && D.link && D.link.src === a && D.link.dst === s.id, ld = flowLinkDiff && flowLinkDiff[a + '>' + s.id];
+    const dim = flowFocus && !(flowFocus.has(a) && flowFocus.has(s.id));
     const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', d);
-    p.setAttribute('class', (hand ? 'handoff' : 'link') + (m.type === 'soft' ? ' soft' : m.type === 'same' ? ' same' : '') + (sel ? ' selink' : '') + (ld === 'added' ? ' ladd' : ld === 'removed' ? ' lrem' : '')); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
+    p.setAttribute('class', (hand ? 'handoff' : 'link') + (m.type === 'soft' ? ' soft' : m.type === 'same' ? ' same' : '') + (sel ? ' selink' : '') + (ld === 'added' ? ' ladd' : ld === 'removed' ? ' lrem' : '') + (dim ? ' dim' : ''));
+    p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
     svg.appendChild(p);
     const label = [m.type === 'same' ? 'same time' : '', m.delay ? '+' + m.delay : '', m.cond ? 'if ' + m.cond : '', m.note ? '↳ ' + m.note : ''].filter(Boolean).join(' · ');
-    if (label){ const t = document.createElementNS('http://www.w3.org/2000/svg', 'text'); t.setAttribute('class', 'll'); t.setAttribute('x', mx + 4); t.setAttribute('y', (y1 + y2) / 2 - 4);
+    if (label && z >= 0.7){ const t = document.createElementNS('http://www.w3.org/2000/svg', 'text'); t.setAttribute('class', 'll' + (dim ? ' dim' : '')); t.setAttribute('x', mx + 4); t.setAttribute('y', (y1 + y2) / 2 - 4);
       t.textContent = label.length > 34 ? label.slice(0, 33) + '…' : label; svg.appendChild(t); }
     if (flowEditable){ const h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('d', d); h.setAttribute('class', 'hit');
       h.dataset.act = 'blink'; h.dataset.src = a; h.dataset.dst = s.id; svg.appendChild(h); }
   }));
 }
 function openFlow(title, sub, stages, actions, crumbs){
-  flowStages = stages; flowLinkDiff = null; flowEditable = false;
+  flowStages = stages; flowLinkDiff = null; flowEditable = false; flowFocus = null;
   openPage('flowview', (crumbs || [['Board', 'board'], ['Flows', 'flows']]).concat([[title, '']]), `<h1>${esc(title)}</h1><p class="lede">${esc(sub)}</p>${flowHTML(stages)}<div class="actions">${actions || ''}</div>`);
   requestAnimationFrame(drawFlow);
 }
@@ -1782,6 +1857,7 @@ function openBuilder(tp){
   D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope === 'idea' ? 'mine' : tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', status:tp.status || 'published',
             suggestFor:tp.suggestFor || null, suggestedBy:tp.suggestedBy || '', note:tp.note || '', fromIdea: tp.scope === 'idea', stages:JSON.parse(JSON.stringify(tp.stages)), sel:0, link:null, view: tp.suggestFor ? 'changes' : 'suggested'}
          : {id:null, name:'', desc:'', scope: 'company', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', status:'new', stages:[{id:newSid(), after:[], title:'Kickoff', role:'me', tasks:[]}], sel:0, link:null};
+  D.zoom = null; D.full = innerWidth < 700 || innerHeight < 520; D.mode = null; D.sel = tp ? -1 : 0; D.showDetails = !tp; D.panel = !tp || (!!tp.suggestFor && innerWidth >= 900);
   if (D.fromIdea){ D.id = null; D.status = 'new'; D.name = D.name + ' (my version)'; }
   if (!tp && !canCreateFlows()) D.status = 'suggest';
   D.lanes = [...new Set(D.stages.map(s => s.role))];
@@ -1871,6 +1947,84 @@ function stagePanel(){
       <div class="actions" style="margin-top:6px"><input id="bNewTask" class="inp" placeholder="Or write a new task" style="flex:1;min-width:140px;width:auto"><input id="bNewEst" class="inp" type="number" min="5" step="5" value="30" style="width:74px" aria-label="Minutes"><span class="note">min</span><button class="btn small" data-act="baddtask">Add</button></div>` : ''}
     ${structure && D.stages.length > 1 ? `<div class="actions"><button class="btn small ghost" data-act="bdel" data-i="${D.sel}" style="color:var(--hot)">Delete stage</button></div>` : ''}`;
 }
+function pathSet(stages, sid){
+  if (!sid) return null;
+  const byS = {}; stages.forEach(x => byS[x.id] = x); const set = new Set([sid]);
+  (function up(id){ ((byS[id] || {}).after || []).forEach(a => { if (!set.has(a)){ set.add(a); up(a); } }); })(sid);
+  (function down(id){ stages.filter(x => (x.after || []).includes(id)).forEach(k => { if (!set.has(k.id)){ set.add(k.id); down(k.id); } }); })(sid);
+  return set;
+}
+function canvasParts(){ const wrap = document.querySelector('.bcanvas .flowwrap'), size = wrap && wrap.querySelector('.zoomsize'), flow = size && size.querySelector('.flow'); return {wrap, size, flow}; }
+function applyZoom(){
+  const {size, flow} = canvasParts(); if (!flow) return;
+  const z = D.zoom || 1;
+  flow.classList.toggle('compact', z < 0.7);
+  flow.style.transformOrigin = '0 0'; flow.style.transform = z === 1 ? 'none' : `scale(${z})`;
+  size.style.width = flow.offsetWidth * z + 'px'; size.style.height = flow.offsetHeight * z + 'px';
+  const pc = $('#zoomPct'); if (pc) pc.textContent = Math.round(z * 100) + '%';
+}
+function fitZoom(){
+  const {wrap, flow} = canvasParts(); if (!flow) return;
+  const fit = () => Math.max(0.35, Math.min(1, (wrap.clientWidth - 12) / flow.offsetWidth, (wrap.clientHeight - 12) / flow.offsetHeight));
+  flow.classList.remove('compact'); flow.style.transform = 'none';
+  let z = fit(); if (z < 0.7){ flow.classList.add('compact'); z = fit(); }
+  D.zoom = z; applyZoom(); wrap.scrollLeft = 0; wrap.scrollTop = 0;
+}
+function setZoom(z){ D.zoom = Math.max(0.35, Math.min(1.6, z)); applyZoom(); drawFlow(); drawMinimap(); }
+function drawMinimap(onlyView){
+  const mm = $('#minimap'), {wrap, flow} = canvasParts(); if (!mm || !flow) return;
+  const z = D.zoom || 1, W = flow.offsetWidth, H = flow.offsetHeight;
+  const big = W * z > wrap.clientWidth + 24 || H * z > wrap.clientHeight + 24;
+  mm.hidden = !big || wrap.clientHeight < 240 || wrap.clientWidth < 360; if (mm.hidden) return;
+  const mw = 168, m = mw / W, mh = Math.max(36, Math.round(H * m));
+  if (!onlyView || !mm.querySelector('.vp')){
+    const fr = flow.getBoundingClientRect(), zz = fr.width / W;
+    mm.style.width = mw + 'px'; mm.style.height = mh + 'px';
+    mm.innerHTML = [...flow.querySelectorAll('.fnode:not(.ghost)')].map(n => { const r = n.getBoundingClientRect(), st = flowStages.find(x => x.id === n.dataset.sid) || {};
+      return `<i style="left:${((r.left - fr.left) / zz) * m}px;top:${((r.top - fr.top) / zz) * m}px;width:${Math.max(4, (r.width / zz) * m)}px;height:${Math.max(3, (r.height / zz) * m)}px;background:var(${roleOf(st.role || 'me').c})"></i>`; }).join('') + '<span class="vp"></span>';
+    mm.onclick = e => { const b = mm.getBoundingClientRect(), x = (e.clientX - b.left) / m * z, y = (e.clientY - b.top) / m * z; wrap.scrollTo({left: x - wrap.clientWidth / 2, top: y - wrap.clientHeight / 2, behavior:'smooth'}); };
+  }
+  const vp = mm.querySelector('.vp');
+  vp.style.left = (wrap.scrollLeft / z) * m + 'px'; vp.style.top = (wrap.scrollTop / z) * m + 'px';
+  vp.style.width = Math.min(mw, (wrap.clientWidth / z) * m) + 'px'; vp.style.height = Math.min(mh, (wrap.clientHeight / z) * m) + 'px';
+}
+function bindZoomGestures(){
+  const {wrap} = canvasParts(); if (!wrap) return;
+  wrap.onscroll = () => drawMinimap(true);
+  wrap.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); setZoom((D.zoom || 1) * (e.deltaY < 0 ? 1.06 : 0.94)); }, {passive:false});
+  let start = null; const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  wrap.addEventListener('touchstart', e => { if (e.touches.length === 2){ pinching = true; start = {d: dist(e.touches), z: D.zoom || 1}; } }, {passive:true});
+  wrap.addEventListener('touchmove', e => { if (start && e.touches.length === 2){ e.preventDefault(); setZoom(start.z * dist(e.touches) / start.d); } }, {passive:false});
+  wrap.addEventListener('touchend', e => { if (e.touches.length < 2 && start){ start = null; setTimeout(() => pinching = false, 80); } });
+}
+function listHTML(stages, o){
+  const cols = stageCols(stages), max = Math.max(0, ...cols), byS = {}; stages.forEach(x => byS[x.id] = x);
+  const kidsOf = id => stages.filter(x => (x.after || []).includes(id));
+  let html = '<div class="steplist">';
+  for (let c = 0; c <= max; c++){
+    const group = stages.map((x, i) => i).filter(i => cols[i] === c);
+    html += `<section class="stepgroup"><div class="stephead"><span class="stepnum">${c + 1}</span><b>Step ${c + 1}</b>${group.length > 1 ? `<span class="note">${group.length} stages start at the same time</span>` : ''}</div><div class="stepcards">`;
+    group.forEach(i => {
+      const s2 = stages[i], dk = o.diff && o.diff.nodes[s2.id], kids = kidsOf(s2.id), mins = s2.tasks.reduce((a, t) => a + (t.est || 0), 0);
+      const act = o.diffSelect ? `data-act="bdsel" data-sid="${esc(s2.id)}"` : o.edit ? `data-act="bsel" data-i="${i}"` : '';
+      const isSel = (o.edit && o.sel === i) || (o.selSid && o.selSid === s2.id);
+      const handed = (s2.after || []).map(a => linkOf(s2, a).note).filter(Boolean);
+      html += `<div class="scard ${isSel ? 'sel' : ''} ${dk ? 'diff-' + dk.kind : ''} ${o.focus && !o.focus.has(s2.id) ? 'dim' : ''}" data-sid="${esc(s2.id)}" ${act} ${act ? 'tabindex="0" role="button"' : ''}>
+        <div class="sctop">${avatar(s2.role, true)}${dk ? `<span class="dtag ${dk.kind}" style="margin-left:auto">${dk.kind === 'added' ? 'NEW' : dk.kind === 'removed' ? 'REMOVED' : 'CHANGED'}</span>` : ''}</div>
+        <b class="sct">${esc(s2.title)}</b>
+        <div class="note">${s2.tasks.length ? s2.tasks.map(t => esc(t.title)).join(' · ') : 'No tasks yet'}${mins ? ' · ' + fmtDur(mins) : ''}</div>
+        ${dk && dk.kind === 'changed' ? dk.notes.map(t => `<span class="dnote">${esc(t)}</span>`).join('') : ''}
+        <div class="scrow"><span>${(s2.after || []).length ? (s2.after.length > 1 ? 'Waits for all of:' : 'Starts after:') : 'Starts when the flow begins'}</span>${(s2.after || []).map(a => byS[a] ? `<span class="chip">${esc(byS[a].title)}</span>` : '').join('')}</div>
+        ${kids.length ? `<div class="scrow"><span>${kids.length > 1 ? 'Then starts ' + kids.length + ' at once:' : 'Then starts:'}</span>${kids.map(k => `<span class="chip">${esc(k.title)} · ${esc(roleOf(k.role).name)}</span>`).join('')}</div>` : ''}
+        ${handed.length ? `<div class="scrow"><span>Receives:</span>${handed.map(h => `<span class="chip">${esc(h)}</span>`).join('')}</div>` : ''}
+        ${o.edit && o.structure ? `<div class="actions" style="margin-top:2px"><button class="btn small" data-act="bnext" data-i="${i}">+ Add a stage after this</button></div>` : ''}
+      </div>`;
+    });
+    html += '</div></section>';
+  }
+  if (o.edit && o.structure) html += '<button class="btn" data-act="broot" style="align-self:flex-start">+ Add a stage that starts at the beginning</button>';
+  return html + '</div>';
+}
 function renderBuilder(){
   const structure = canStructure(D), dis = structure ? '' : 'disabled', rev = reviewing();
   const isCo = D.scope === 'company', needsReview = isCo && !canCreateFlows();
@@ -1878,50 +2032,79 @@ function renderBuilder(){
   if (rev) right = `<button class="btn small" data-act="breqchg">Request changes</button><button class="btn small ok" data-act="bapprove">Approve &amp; publish</button>`;
   else if (structure) right = `<button class="btn small" data-act="bdraft">Save draft</button>${D.id && D.status === 'published' && D.scope === 'company' ? '<button class="btn small" data-act="bcopy">Save as my copy</button>' : ''}<button class="btn small primary" data-act="${needsReview ? 'bsend' : 'bsave'}">${needsReview ? 'Send for review' : 'Save &amp; publish'}</button>`;
   else if (D.stages.some(s => canEditStage(D, s))) right = `<button class="btn small primary" data-act="bsave">Save my stage</button>`;
-  const banner = rev ? `<div class="reviewbar">${ICON.idea.replace('<svg', '<svg width="18" height="18"')}<span><b>${esc(D.suggestedBy)}</b> suggested this flow${D.suggestFor ? ' as a change to an existing one' : ''}. Edit anything you like, then approve or send it back.${D.note ? '<br><i>"' + esc(D.note) + '"</i>' : ''}</span></div>`
+  const banner = rev ? `<div class="reviewbar">${ICON.idea.replace('<svg', '<svg width="18" height="18"')}<span><b>${esc(D.suggestedBy)}</b> suggested this flow${D.suggestFor ? ' as a change to an existing one' : ''}. Edit anything you like, then approve or send it back.${D.note ? ' <details style="display:inline"><summary style="cursor:pointer;color:var(--accent);display:inline;font-weight:600">Read their note</summary><i>"' + esc(D.note) + '"</i></details>' : ''}</span></div>`
     : !structure ? `<div class="lockmsg">${ICON.lock}<span>${LV[S.viewAs] >= 1 ? 'This flow belongs to ' + esc(ownerName(D.owner)) + '. You can edit tasks in your own stages.' : 'You can view this flow.'} Want something different? <button class="btn small" data-act="bsuggest">Suggest changes</button></span></div>`
     : needsReview ? `<div class="reviewbar">${ICON.idea.replace('<svg', '<svg width="18" height="18"')}<span>You're suggesting this flow. When you send it, Morgan Blake reviews it before it goes live.</span></div>` : '';
-  const details = `<details class="box" style="padding:10px 12px;margin-bottom:12px" ${!D.name ? 'open' : ''}><summary style="cursor:pointer;font-weight:700">Flow details${D.name ? ': ' + esc(D.name) : ''}</summary>
-    <div class="field" style="margin-top:10px"><label for="bName">Flow name</label><input id="bName" value="${esc(D.name)}" placeholder="e.g. New vendor setup" ${dis}></div>
+  const detailsForm = `<div class="field"><label for="bName">Flow name</label><input id="bName" value="${esc(D.name)}" placeholder="e.g. New vendor setup" ${dis}></div>
     <div class="field"><label for="bScope">Type</label><select id="bScope" ${dis}><option value="company" ${isCo ? 'selected' : ''}>Company process${canCreateFlows() ? '' : ' (sent for review)'}</option><option value="family" ${D.scope === 'family' ? 'selected' : ''}>Family flow</option><option value="mine" ${D.scope === 'mine' ? 'selected' : ''}>My template</option></select></div>
     <div class="field"><label>Time frame</label><div class="estrow"><input id="bHn" type="number" min="1" value="${D.horizon.n}" aria-label="Amount" ${dis}><select id="bHu" aria-label="Unit" ${dis}>${['days', 'weeks', 'months'].map(u => `<option ${D.horizon.unit === u ? 'selected' : ''}>${u}</option>`).join('')}</select></div></div>
     <div class="field"><label for="bDesc">Description</label><input id="bDesc" value="${esc(D.desc)}" placeholder="What this process gets done" ${dis}></div>
     ${needsReview || D.status === 'suggest' ? `<div class="field"><label for="bNote">Note for your manager</label><input id="bNote" value="${esc(D.note || '')}" placeholder="Why this would help the team"></div>` : ''}
-    ${rev ? `<div class="field"><label for="bReview">Note back to ${esc(D.suggestedBy)}</label><input id="bReview" placeholder="Needed if you request changes"></div>` : ''}</details>`;
+    ${rev ? `<div class="field"><label for="bReview">Note back to ${esc(D.suggestedBy)}</label><input id="bReview" value="${esc(D.reviewNote || '')}" placeholder="Needed if you request changes"></div>` : ''}
+    <div class="actions"><button class="btn small primary" data-act="bclose">Done</button></div>`;
   const orig = D.suggestFor && S.templates.find(t => t.id === D.suggestFor);
   const diff = orig ? flowDiff(orig, D.stages) : (rev ? {nodes:Object.fromEntries(D.stages.map(x => [x.id, {kind:'added', notes:['New stage']}])), links:{}, list:[]} : null);
   const view = orig ? (D.view || 'changes') : 'suggested';
   const viewBar = orig ? `<div class="actions" style="margin:0 0 6px"><div class="seg" role="group" aria-label="Compare versions">${[['changes', 'Changes highlighted'], ['suggested', 'Suggested version'], ['original', 'Current live version']].map(([v, l]) => `<button data-act="bview" data-v="${v}" aria-pressed="${view === v}">${l}</button>`).join('')}</div></div>
-    ${view !== 'original' ? `<div class="diffkey"><span><i style="background:var(--ok)"></i>New</span><span><i style="background:var(--warn)"></i>Changed</span><span><i style="background:var(--hot)"></i>Removed</span><span>Green line: new connection · red dashed line: removed connection</span></div>` : '<p class="hint" style="margin:0 0 8px">This is the version people use today. It doesn\'t change until you approve.</p>'}` : rev ? '<p class="hint" style="margin:0 0 8px">This is a brand-new flow, so every stage is marked new.</p>' : '';
+    ${view !== 'original' ? `<div class="diffkey"><span><i style="background:var(--ok)"></i>New</span><span><i style="background:var(--warn)"></i>Changed</span><span><i style="background:var(--hot)"></i>Removed</span><span class="dk-long">Green line: new connection · red dashed line: removed connection</span></div>` : '<p class="hint" style="margin:0 0 8px">This is the version people use today. It doesn\'t change until you approve.</p>'}` : rev ? '<p class="hint" style="margin:0 0 8px">This is a brand-new flow, so every stage is marked new.</p>' : '';
   const connectBar = D.connectFrom ? `<div class="connectbar">Tap the stage that should start after "${esc((D.stages.find(x => x.id === D.connectFrom) || {}).title || '')}"<button class="btn small" data-act="bcancelconn">Cancel</button></div>` : '';
-  const top = structure && view === 'suggested' ? `<div class="btool"><button class="btn small" data-act="broot">+ Stage at the start</button><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane…</option>${roleOptions('', D.lanes)}</select>
-    <span class="hint">Drag a stage into another lane to change its owner. Drag from the round handle onto another stage to connect them, or on a phone tap the handle and then tap the next stage. Click any line to edit how two stages relate.</span></div>` : '';
-  let canvas, side;
-  if (view === 'changes'){ const disp = diffDisplay(orig, D.stages); flowStages = disp; flowLinkDiff = diff.links; flowEditable = false;
-    canvas = flowHTML(disp, {edit:false, diff, diffSelect:true, selSid:D.diffSel, lanes:[...new Set(disp.map(x => x.role))]}); side = changesPanel(diff); }
-  else if (view === 'original'){ flowStages = orig.stages; flowLinkDiff = null; flowEditable = false;
-    canvas = flowHTML(orig.stages, {}); side = `<h3>Current live version</h3><p class="note">Published by ${esc(ownerName(orig.owner))}. Switch to "Changes highlighted" to compare it with the suggestion.</p>`; }
-  else { flowStages = D.stages; flowLinkDiff = diff ? diff.links : null; flowEditable = true;
-    canvas = flowHTML(D.stages, {edit:true, structure, sel: D.link ? -1 : D.sel, lanes:D.lanes, link:D.link, diff}); side = D.link ? linkPanel() : stagePanel(); }
+  const phonePortrait = innerWidth < 700 && innerHeight > innerWidth;
+  const mode = D.mode || S.builderMode || (phonePortrait ? 'list' : 'diagram');
+  const selSid = view === 'changes' ? D.diffSel : view === 'suggested' && !D.link && D.stages[D.sel] ? D.stages[D.sel].id : null;
+  let shown, o;
+  if (view === 'changes'){ shown = diffDisplay(orig, D.stages); flowLinkDiff = diff.links; flowEditable = false; o = {edit:false, diff, diffSelect:true, selSid:D.diffSel, lanes:[...new Set(shown.map(x => x.role))]}; }
+  else if (view === 'original'){ shown = orig.stages; flowLinkDiff = null; flowEditable = false; o = {}; }
+  else { shown = D.stages; flowLinkDiff = diff ? diff.links : null; flowEditable = true; o = {edit:true, structure, sel: D.link ? -1 : D.sel, lanes:D.lanes, link:D.link, diff}; }
+  flowStages = shown;
+  flowFocus = view === 'suggested' && D.link ? new Set([D.link.src, D.link.dst]) : pathSet(shown, selSid);
+  o.focus = flowFocus; o.nokey = true; o.blank = true;
+  const toolbar = `<div class="btoolbar">
+    ${D.full ? '<button class="btn small" data-act="back" aria-label="Back to flows">‹ Back</button>' : ''}
+    <div class="seg" role="group" aria-label="Layout"><button data-act="bmode" data-v="diagram" aria-pressed="${mode === 'diagram'}">Diagram</button><button data-act="bmode" data-v="list" aria-pressed="${mode === 'list'}">Step list</button></div>
+    ${mode === 'diagram' ? `<div class="zoomctl" role="group" aria-label="Zoom"><button class="zb" data-act="bzoomout" aria-label="Zoom out">−</button><span id="zoomPct">${Math.round((D.zoom || 1) * 100)}%</span><button class="zb" data-act="bzoomin" aria-label="Zoom in">+</button><button class="btn small ghost" data-act="bfit">Fit</button></div>` : ''}
+    <button class="btn small" data-act="bfull" aria-pressed="${!!D.full}">${D.full ? 'Exit full screen' : 'Full screen'}</button>
+    <button class="btn small" data-act="bdetails">Flow details</button>
+    ${view === 'changes' ? `<button class="btn small" data-act="bchanges">What changed (${diff.list.length})</button>` : ''}
+    ${structure && view === 'suggested' ? `<button class="btn small" data-act="broot">+ Stage</button><select id="bLane" class="inp" style="width:auto;padding:6px 8px" aria-label="Add a lane"><option value="">+ Lane…</option>${roleOptions('', D.lanes)}</select>` : ''}
+    ${D.full ? `<div class="spacer"></div>${right}` : ''}</div>`;
+  const hint = mode === 'diagram' && structure && view === 'suggested' && !phonePortrait ? '<p class="hint" style="margin:0 0 8px">Drag a stage between lanes to change its owner. Drag its round handle onto another stage to connect them, or tap the handle and then the next stage. Click a line to edit it. Pinch or use − and + to zoom. Tap a stage to highlight everything it affects.</p>' : '';
+  const rotate = phonePortrait && mode === 'diagram' && !S.settings.noRotateHint ? `<div class="hintbar"><span style="flex:1;min-width:160px">Turn your phone sideways for more room, or use the step list.</span><button class="btn small" data-act="bmode" data-v="list">Step list</button><button class="btn small ghost" data-act="bnorotate">Don't show again</button></div>` : '';
+  const body = mode === 'list' ? listHTML(shown, o) : flowHTML(shown, o) + '<div class="minimap" id="minimap" hidden title="Overview: tap to jump"></div>';
+  let panelTitle = '', side = '';
+  if (D.showDetails){ panelTitle = 'Flow details'; side = detailsForm; }
+  else if (view === 'changes'){ panelTitle = 'What changed'; side = changesPanel(diff); }
+  else if (view === 'original'){ panelTitle = 'Current live version'; side = `<p class="note">Published by ${esc(ownerName(orig.owner))}. Switch to "Changes highlighted" to compare it with the suggestion.</p>`; }
+  else if (D.link){ panelTitle = 'Connection'; side = linkPanel(); }
+  else if (D.stages[D.sel]){ panelTitle = D.stages[D.sel].title; side = stagePanel(); }
+  const panelOpen = D.panel && side;
   openPage('builder', [['Board', 'board'], ['Flows', 'flows'], [D.name || (D.status === 'suggest' ? 'Suggested flow' : 'New flow'), '']],
-    `<div class="bwrap"><div class="bcanvas">${banner}${viewBar}${connectBar}${top}${canvas}</div><aside class="bside" aria-label="Editor">${details}${side}</aside></div>`,
+    `<div class="bwrap ${panelOpen ? 'withpanel' : ''}"><div class="bcanvas">${banner}${viewBar}${connectBar}${rotate}${toolbar}${hint}${body}</div>
+     ${panelOpen ? `<aside class="bpanel" aria-label="${esc(panelTitle)}"><div class="bpanel-head"><b>${esc(panelTitle)}</b><button class="iconbtn" data-act="bclose" aria-label="Close panel">✕</button></div><div class="bpanel-body">${side}</div></aside>` : ''}</div>`,
     {raw:true, right});
-  requestAnimationFrame(() => { drawFlow(); if (view === 'suggested') bindBuilderDrag();
-    if (view === 'changes' && D.diffSel){ const n = document.querySelector(`.bcanvas .fnode[data-sid="${CSS.escape(D.diffSel)}"]`); if (n) n.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'}); } });
+  document.querySelector('.page').classList.toggle('full', !!D.full);
+  document.documentElement.classList.toggle('builder-full', !!D.full);
+  requestAnimationFrame(() => {
+    if (mode === 'diagram'){
+      if (D.zoom == null) fitZoom(); else applyZoom();
+      drawFlow(); drawMinimap(); bindZoomGestures(); if (view === 'suggested') bindBuilderDrag();
+      const tgt = D.scrollTo && selSid && document.querySelector(`.bcanvas .fnode[data-sid="${CSS.escape(selSid)}"]`); if (tgt) tgt.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
+    } else { const tgt = D.scrollTo && selSid && document.querySelector(`.scard[data-sid="${CSS.escape(selSid)}"]`); if (tgt) tgt.scrollIntoView({block:'nearest', behavior:'smooth'}); }
+    D.scrollTo = false;
+  });
   const st = D.stages[D.sel], on = (id, evn, fn) => { const el = $(id); if (el) el.addEventListener(evn, ev => fn(ev.target)); };
-  on('#bName', 'input', el => D.name = el.value); on('#bDesc', 'input', el => D.desc = el.value); on('#bNote', 'input', el => D.note = el.value);
+  on('#bName', 'input', el => D.name = el.value); on('#bDesc', 'input', el => D.desc = el.value); on('#bNote', 'input', el => D.note = el.value); on('#bReview', 'input', el => D.reviewNote = el.value);
   on('#bName', 'change', () => renderBuilder());
   on('#bScope', 'change', el => { D.scope = el.value; D.ctx = el.value === 'family' ? 'home' : D.ctx; renderBuilder(); });
   on('#bHn', 'change', el => D.horizon.n = Math.max(1, +el.value || 1)); on('#bHu', 'change', el => D.horizon.unit = el.value);
-  on('#bLane', 'change', el => { if (el.value){ D.lanes.push(el.value); renderBuilder(); } });
-  if (st && !D.link && view === 'suggested'){
+  on('#bLane', 'change', el => { if (el.value){ D.lanes.push(el.value); D.zoom = null; renderBuilder(); } });
+  if (st && !D.link && view === 'suggested' && !D.showDetails){
     on('#bConn', 'change', el => { if (el.value){ connect(st.id, el.value); renderBuilder(); } });
     on('#bsTitle', 'change', el => { st.title = el.value.trim() || st.title; renderBuilder(); });
     on('#bsRole', 'change', el => { st.role = el.value; if (!D.lanes.includes(el.value)) D.lanes.push(el.value); renderBuilder(); });
-    on('#bBranch', 'change', el => { if (!el.value) return; D.stages.push({id:newSid(), after:[st.id], title:'New stage', role:el.value, tasks:[]}); if (!D.lanes.includes(el.value)) D.lanes.push(el.value); D.sel = D.stages.length - 1; renderBuilder(); });
+    on('#bBranch', 'change', el => { if (!el.value) return; D.stages.push({id:newSid(), after:[st.id], title:'New stage', role:el.value, tasks:[]}); if (!D.lanes.includes(el.value)) D.lanes.push(el.value); D.sel = D.stages.length - 1; D.scrollTo = true; renderBuilder(); });
     document.querySelectorAll('[data-dep]').forEach(cb => cb.addEventListener('change', () => { const id = cb.dataset.dep; st.after = cb.checked ? [...new Set([...(st.after || []), id])] : (st.after || []).filter(a => a !== id); if (!cb.checked && st.links) delete st.links[id]; renderBuilder(); }));
   }
-  if (D.link){
+  if (D.link && !D.showDetails){
     const dst = D.stages.find(x => x.id === D.link.dst), setM = (k, v) => { dst.links = dst.links || {}; dst.links[D.link.src] = {...linkOf(dst, D.link.src), [k]: v}; };
     document.querySelectorAll('input[name="lt"]').forEach(r => r.addEventListener('change', () => { setM('type', r.value); renderBuilder(); }));
     on('#lkDelay', 'change', el => { setM('delay', el.value); renderBuilder(); }); on('#lkNote', 'change', el => { setM('note', el.value.trim()); renderBuilder(); }); on('#lkCond', 'change', el => { setM('cond', el.value.trim()); renderBuilder(); });
@@ -1936,7 +2119,7 @@ function connect(src, dst){
   const s = D.stages.find(x => x.id === src), d = D.stages.find(x => x.id === dst);
   if ((d.after || []).includes(src)){ D.link = {src, dst}; toast('Already connected', 'Edit the connection on the right.'); return; }
   if (upstream(src, dst)){ toast('That would make a loop', '"' + s.title + '" already waits on "' + d.title + '".'); return; }
-  d.after = [...(d.after || []), src]; D.link = {src, dst};
+  d.after = [...(d.after || []), src]; D.link = {src, dst}; D.panel = true; D.showDetails = false;
   toast('Connected', '"' + d.title + '" now starts after "' + s.title + '". Choose how they relate on the right.');
 }
 function bindBuilderDrag(){
@@ -1950,12 +2133,13 @@ function bindBuilderDrag(){
     document.addEventListener('touchmove', noScroll, {passive:false});
     const laneAt = y => [...flow.querySelectorAll('.laneband')].findIndex(b => { const r = b.getBoundingClientRect(); return y >= r.top && y < r.bottom; });
     const move = ev => {
+      if (pinching){ if (ghost) ghost.remove(); if (line) line.remove(); node.classList.remove('dragging'); moved = false; ghost = line = null; return; }
       if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
       if (!moved){ moved = true;
         if (port){ line = document.createElementNS('http://www.w3.org/2000/svg', 'path'); line.setAttribute('class', 'handoff'); svg.appendChild(line); }
         else { ghost = document.createElement('div'); ghost.className = 'dragghost'; ghost.textContent = node.querySelector('b').textContent; document.body.appendChild(ghost); node.classList.add('dragging'); } }
       if (port){
-        const fr = flow.getBoundingClientRect(), nr = node.getBoundingClientRect(), x1 = nr.right - fr.left, y1 = nr.top + nr.height / 2 - fr.top, x2 = ev.clientX - fr.left, y2 = ev.clientY - fr.top;
+        const fr = flow.getBoundingClientRect(), zz = (fr.width / flow.offsetWidth) || 1, nr = node.getBoundingClientRect(), x1 = (nr.right - fr.left) / zz, y1 = (nr.top + nr.height / 2 - fr.top) / zz, x2 = (ev.clientX - fr.left) / zz, y2 = (ev.clientY - fr.top) / zz;
         line.setAttribute('d', `M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}`);
         const t = document.elementFromPoint(ev.clientX, ev.clientY), n = t && t.closest('.fnode[data-sid]');
         if (over && over !== n) over.classList.remove('droptarget'); over = n && n !== node ? n : null; if (over) over.classList.add('droptarget');
@@ -1966,7 +2150,7 @@ function bindBuilderDrag(){
     };
     const up = ev => {
       window.removeEventListener('pointermove', move); window.removeEventListener('pointercancel', up); document.removeEventListener('touchmove', noScroll);
-      if (!moved){ if (port){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); D.connectFrom = sid; D.link = null; renderBuilder(); } return; }
+      if (!moved || pinching){ if (port && !pinching){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); D.connectFrom = sid; D.link = null; renderBuilder(); } return; }
       dragSuppress = true; setTimeout(() => dragSuppress = false, 60);
       if (ghost) ghost.remove(); if (line) line.remove(); node.classList.remove('dragging');
       if (port){ if (over) connect(sid, over.dataset.sid); }
@@ -1978,7 +2162,7 @@ function bindBuilderDrag(){
   };
 }
 function builderSave(kind){
-  if (!D.name.trim()){ toast('Give the flow a name', 'Open "Flow details" at the top right.'); const d = document.querySelector('.bside details'); if (d) d.open = true; $('#bName') && $('#bName').focus(); return; }
+  if (!D.name.trim()){ toast('Give the flow a name', 'Add it in Flow details.'); D.showDetails = true; D.panel = true; renderBuilder(); setTimeout(() => $('#bName') && $('#bName').focus(), 60); return; }
   const base = {scope:D.scope, name:D.name.trim(), desc:D.desc.trim(), horizon:{...D.horizon}, ctx: D.scope === 'family' ? 'home' : D.ctx, stages:JSON.parse(JSON.stringify(D.stages))};
   if (kind === 'copy'){ S.templates.push({...base, id:newId('tp'), owner:'me', scope: D.scope === 'company' ? 'mine' : D.scope, name: base.name + ' (my copy)', status:'published'}); save(); openFlows('templates'); toast('Saved your copy', 'Find it under My templates.'); return; }
   let tp = D.id ? S.templates.find(t => t.id === D.id) : null;
@@ -1991,8 +2175,8 @@ function builderSave(kind){
     save(); openFlows('templates'); confetti(innerWidth / 2, innerHeight / 3, 90, 7); chime(true); toast('Approved and published', D.suggestedBy + ' will see it in their notifications.'); return;
   }
   if (kind === 'changes'){
-    const r = ($('#bReview') && $('#bReview').value.trim()) || '';
-    if (!r){ toast('Add a note for ' + D.suggestedBy, 'Say what to change in "Flow details".'); const d = document.querySelector('.bside details'); if (d) d.open = true; $('#bReview') && $('#bReview').focus(); return; }
+    const r = (D.reviewNote || '').trim();
+    if (!r){ toast('Add a note for ' + D.suggestedBy, 'Say what to change, then press Request changes again.'); D.showDetails = true; D.panel = true; renderBuilder(); setTimeout(() => $('#bReview') && $('#bReview').focus(), 60); return; }
     Object.assign(tp, base, {status:'changes', review:r}); save(); openFlows('suggest'); toast('Sent back to ' + D.suggestedBy, 'They\'ll see your note.'); return;
   }
   if (kind === 'send'){
@@ -2007,18 +2191,28 @@ function builderSave(kind){
 function builderAct(a, el){
   const i = +el.dataset.i, st = D.stages[D.sel];
   switch (a){
-    case 'bsel': if (D.connectFrom){ const from = D.connectFrom; D.connectFrom = null; if (D.stages[i] && D.stages[i].id !== from) connect(from, D.stages[i].id); break; } D.sel = i; D.link = null; break;
-    case 'bview': D.view = el.dataset.v; D.link = null; D.connectFrom = null; break;
-    case 'bdsel': D.diffSel = el.dataset.sid; break;
+    case 'bsel': if (D.connectFrom){ const from = D.connectFrom; D.connectFrom = null; if (D.stages[i] && D.stages[i].id !== from) connect(from, D.stages[i].id); break; } D.sel = i; D.link = null; D.panel = true; D.showDetails = false; break;
+    case 'bview': D.view = el.dataset.v; D.link = null; D.connectFrom = null; D.showDetails = false; D.zoom = null;
+      D.panel = el.dataset.v === 'changes' ? innerWidth >= 900 : el.dataset.v === 'suggested' ? D.sel >= 0 : false; break;
+    case 'bdsel': D.diffSel = el.dataset.sid; D.panel = true; D.showDetails = false; D.scrollTo = true; break;
+    case 'bmode': D.mode = el.dataset.v; S.builderMode = el.dataset.v; D.connectFrom = null; save(); break;
+    case 'bzoomin': setZoom((D.zoom || 1) * 1.2); return;
+    case 'bzoomout': setZoom((D.zoom || 1) / 1.2); return;
+    case 'bfit': fitZoom(); drawFlow(); drawMinimap(); return;
+    case 'bfull': D.full = !D.full; D.zoom = null; break;
+    case 'bdetails': D.showDetails = true; D.panel = true; break;
+    case 'bchanges': D.showDetails = false; D.panel = true; D.diffSel = null; break;
+    case 'bclose': case 'bblank': if (a === 'bblank' && D.connectFrom){ D.connectFrom = null; break; } D.panel = false; D.showDetails = false; D.link = null; D.sel = -1; D.diffSel = null; break;
+    case 'bnorotate': S.settings.noRotateHint = true; save(); break;
     case 'bcancelconn': D.connectFrom = null; break;
-    case 'blink': D.link = {src:el.dataset.src, dst:el.dataset.dst}; break;
+    case 'blink': D.link = {src:el.dataset.src, dst:el.dataset.dst}; D.panel = true; D.showDetails = false; break;
     case 'bup': case 'bdown': { const li = D.lanes.indexOf(D.stages[i].role) + (a === 'bup' ? -1 : 1); if (li >= 0 && li < D.lanes.length) D.stages[i].role = D.lanes[li]; D.sel = i; D.link = null; break; }
     case 'bdel': { const del = D.stages.splice(i, 1)[0];
       D.stages.forEach(x => { if ((x.after || []).includes(del.id)){ x.after = [...new Set(x.after.filter(a2 => a2 !== del.id).concat(del.after || []))]; if (x.links) delete x.links[del.id]; } });
       if (!D.stages.length) D.stages.push({id:newSid(), after:[], title:'New stage', role:'me', tasks:[]}); D.sel = Math.max(0, Math.min(D.sel, D.stages.length - 1)); D.link = null; break; }
-    case 'baddstage': { const prev = D.stages[D.sel]; D.stages.push({id:newSid(), after: prev ? [prev.id] : [], title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; D.link = null; break; }
-    case 'bnext': { const prev = D.stages[i]; D.stages.push({id:newSid(), after:[prev.id], title:'New stage', role:prev.role, tasks:[]}); D.sel = D.stages.length - 1; D.link = null; break; }
-    case 'broot': D.stages.push({id:newSid(), after:[], title:'New stage', role: D.lanes[0] || 'me', tasks:[]}); D.sel = D.stages.length - 1; D.link = null; break;
+    case 'baddstage': { const prev = D.stages[D.sel]; D.stages.push({id:newSid(), after: prev ? [prev.id] : [], title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; D.link = null; D.panel = true; D.showDetails = false; D.scrollTo = true; break; }
+    case 'bnext': { const prev = D.stages[i]; D.stages.push({id:newSid(), after:[prev.id], title:'New stage', role:prev.role, tasks:[]}); D.sel = D.stages.length - 1; D.link = null; D.panel = true; D.showDetails = false; D.scrollTo = true; break; }
+    case 'broot': D.stages.push({id:newSid(), after:[], title:'New stage', role: D.lanes[0] || 'me', tasks:[]}); D.sel = D.stages.length - 1; D.link = null; D.panel = true; D.showDetails = false; D.scrollTo = true; break;
     case 'bdeltask': st.tasks.splice(+el.dataset.ti, 1); break;
     case 'bpick': { const v = $('#bPick').value; if (!v) return;
       if (v.startsWith('t:')){ const tp = TEMPLATES[v.slice(2)]; st.tasks.push({title:tp.title.replace(/:\s*$/, ''), est:SPANS[tp.span][1], steps:tp.steps.map(x => x[0]), cadence: tp.cadence ? +tp.cadence : null, cadLabel: tp.cadence ? 'Every 2 days until done' : null}); }
@@ -2342,7 +2536,7 @@ document.addEventListener('click', ev => {
   if (el.dataset.nav){ S.viewDay = Math.max(0, Math.min(6, S.viewDay + +el.dataset.nav)); render(); return; }
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
   const a = el.dataset.act, cur = byId(S.currentId), gid = el.dataset.goal, tpl = S.templates.find(t => t.id === el.dataset.tpl);
-  if (D && page && page.kind === 'builder' && /^(b(sel|link|up|down|del|addstage|next|root|deltask|pick|addtask|save|draft|send|copy|approve|reqchg|suggest|view|dsel|cancelconn)|lk(sug|rev|del))$/.test(a)){ builderAct(a, el); return; }
+  if (D && page && page.kind === 'builder' && /^(b(sel|link|up|down|del|addstage|next|root|deltask|pick|addtask|save|draft|send|copy|approve|reqchg|suggest|view|dsel|cancelconn|mode|zoomin|zoomout|fit|full|details|changes|close|blank|norotate)|lk(sug|rev|del))$/.test(a)){ builderAct(a, el); return; }
   switch (a){
     case 'startday': closeSheet(); startNext(); break;
     case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
@@ -2494,7 +2688,7 @@ $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned tod
 $('#playBtn').onclick = () => { S.running = !S.running; render(); };
 $('#endDayBtn').onclick = endDay;
 $('#resetBtn').onclick = () => { S = seed(); S.templates.forEach(ensureStageIds); initRuntime(); render.scrolled = false; closeSheet(true); closeDrawer(); if (page) closePage(); render(); toast('Demo reset'); };
-let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { render(); if (page && ['flowview', 'builder'].includes(page.kind)) drawFlow(); }, 150); });
+let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { render(); if (page && page.kind === 'builder') renderBuilder(); else if (page && page.kind === 'flowview') drawFlow(); }, 150); });
 
 initRuntime();
 render();

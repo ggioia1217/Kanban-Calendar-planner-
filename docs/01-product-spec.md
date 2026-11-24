@@ -378,3 +378,10 @@ CRM · Android/desktop native apps (web covers desktop first).
 ### 12.12 Reviewing suggested changes
 - Three views: changes highlighted, suggested version, current live version.
 - Stage badges NEW / CHANGED / REMOVED with the specific edits listed on the card and in a "What changed" panel; connection lines colored for added and removed.
+
+### 12.13 Flow editor layout
+- Diagram fills the screen. Editor = slide-over panel (wide) or bottom sheet (phone), only when something is selected.
+- Zoom: Fit, − / +, pinch; simplified cards below 70%; overview map for large flows.
+- Full screen mode (default on phones and short landscape screens).
+- Step list: a top-to-bottom reading of the flow by step, parallel stages grouped; default on upright phones.
+- Selecting a stage highlights its upstream and downstream path.

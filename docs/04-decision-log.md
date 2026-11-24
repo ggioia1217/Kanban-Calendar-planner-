@@ -63,6 +63,12 @@
 | D58 | **Reviewing suggested changes**: switch between "Changes highlighted", "Suggested version" and "Current live version". New stages green, changed amber with what changed on the card, removed red and crossed out; new connections green, removed connections red dashed; a "What changed" list jumps to each change |
 | D59 | **+ New** menu opens aligned to the button's left edge and shifts to stay on screen |
 | D60 | **Builder on phones**: tap a stage's round handle, then tap the stage that should follow (tap-to-connect); drag also supports touch; "When this is done, also start an existing stage…" gives a no-drag way to connect |
+| D61 | **Flow editor layout**: the diagram fills the screen; the editor is a slide-over panel on wide screens and a bottom sheet on phones, shown only when a stage, connection, flow details or change list is open |
+| D62 | **Zoom**: Fit to screen, − / + and pinch or trackpad zoom; below 70% cards switch to a simplified view (title and owner). An overview map shows where you are and jumps on tap when the flow is bigger than the screen |
+| D63 | **Full screen** hides the page bar and tab bar; it is on by default on phones and short landscape screens, with Back and Save in the toolbar |
+| D64 | **Step list** view: the same flow read top to bottom by step, parallel stages grouped, with waits-for / then-starts / receives on each card; editable. Default on phones held upright; a one-time hint suggests turning sideways |
+| D65 | **Path highlight**: selecting a stage highlights everything it waits on and everything it starts; the rest fades. Clicking empty canvas clears it |
+| D66 | Empty lanes collapse to a thin row; long hints and legends hide on small screens; the suggester's note folds behind "Read their note" |
 
 ## Open
 | # | Question |
