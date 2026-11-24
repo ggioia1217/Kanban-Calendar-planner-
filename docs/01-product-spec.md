@@ -294,3 +294,33 @@ threshold · Span bands · default proof rule.
 ## 11. Out of scope for now
 Themes/personality per board (planned Phase 4 visual pass) · two-way calendar write-back ·
 CRM · Android/desktop native apps (web covers desktop first).
+
+---
+
+## 12. Additions from prototype reviews (Nov 2026)
+
+### 12.1 Time horizons
+- **Goals** use days / weeks / months (e.g. "Lose 15 pounds · 3 months"). Sub-goals can have their own,
+  shorter horizon.
+- **Tasks and routines** use minutes / hours (e.g. "Log meals · 10 min · daily", "Exercise · 1 hr · 3× a week",
+  "Weigh-in · 5 min · weekly").
+- Goal card: progress ring, "Day X of Y", end date, and a bar comparing progress to time passed
+  ("On pace" / "A little behind. Today's routines catch you up").
+- Routine progress = completions ÷ expected completions over the goal's horizon, so daily practice
+  visibly builds the long-term goal.
+
+### 12.2 Template library & workflows
+- **Company processes**: stages owned by roles (Recruiter, Credentialing, HR, Payroll, AR, Vendor, You).
+- **My templates**: saved from any goal ("Save as template").
+- Shown as a **swimlane flow**: one lane per person/team, stages left to right, dashed arrows for hand-offs.
+- Using a process creates the goal tree. Your stages land on your board; a stage that follows someone
+  else's waits ("Waiting on HR: Background check") and unblocks automatically when that stage completes.
+- Phase 6 makes this real across coworkers (assignment, notifications, proof hand-off, CRM ownership).
+
+### 12.3 Card interaction
+- Cards show the next step as a checkbox; checking it advances to the following step.
+- When every step is checked, a **Complete** button appears to verify the task is done (resolution + proof).
+
+### 12.4 Edge light
+- Every visible card has a light that runs along its top edge, peaking at the center and fading out on the right.
+- Urgency changes color (accent → amber → red), speed (9s → 1.6s) and thickness/glow.

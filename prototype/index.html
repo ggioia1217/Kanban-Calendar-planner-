@@ -4,12 +4,13 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: one-screen app. Header + board (7 day columns in landscape, one day in portrait) + demo clock bar.
-   Card color = what the card needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey). */
+   Card color = what the card needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey).
+   Edge light: a glow runs along each visible card's top edge; color, speed and thickness rise with urgency. */
 :root{
   --bg:#ECEFF5; --surface:#FFFFFF; --surface-2:#F4F6FA; --ink:#172033; --muted:#5D667A; --line:#D8DDE7;
   --accent:#3B55F0; --accent-soft:#E3E8FE; --accent-ink:#FFFFFF;
-  --work:#0F8B8D; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A; --rest:#1E9E6A;
-  --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45); --flare-core:rgba(255,186,64,.75); --flare-glow:rgba(255,200,90,.28); --ghost-a:rgba(59,85,240,.22); --ghost-b:rgba(224,67,74,.2);
+  --work:#0F8B8D; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A; --rest:#1E9E6A; --violet:#8A4FD8;
+  --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45);
   --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --font-body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
@@ -18,13 +19,13 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
-  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F;
-  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare-core:rgba(255,244,214,.7); --flare-glow:rgba(255,230,170,.18); --ghost-a:rgba(129,147,255,.32); --ghost-b:rgba(255,160,90,.28); color-scheme:dark}}
+  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F; --violet:#B38BFF;
+  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
-  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F;
-  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare-core:rgba(255,244,214,.7); --flare-glow:rgba(255,230,170,.18); --ghost-a:rgba(129,147,255,.32); --ghost-b:rgba(255,160,90,.28); color-scheme:dark}
+  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F; --violet:#B38BFF;
+  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); color-scheme:dark}
 
 html,body{height:100%}
 [hidden]{display:none!important}
@@ -37,7 +38,7 @@ button:disabled{cursor:not-allowed;opacity:.5}
 .app{display:flex;flex-direction:column;height:100%}
 
 /* Header */
-header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-block:10px;
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding-block:10px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   background:var(--surface);border-bottom:1px solid var(--line)}
 .brand{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-.02em;display:flex;align-items:baseline;gap:8px}
@@ -49,6 +50,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .btn{border:1px solid var(--line);background:var(--surface);padding:8px 12px;border-radius:10px;font-weight:600;font-size:14px}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 .btn.rest{background:var(--rest);color:#fff;border-color:transparent}
+.btn.ok{background:var(--ok);color:#fff;border-color:transparent}
 .btn.ghost{background:transparent}
 .btn.small{padding:5px 9px;font-size:13px}
 .iconbtn{border:1px solid var(--line);background:var(--surface);width:36px;height:36px;border-radius:10px;display:grid;place-items:center}
@@ -77,13 +79,12 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .dayprog .row{display:flex;justify-content:space-between;color:var(--muted)}
 .dayprog .row b{color:var(--ink)}
 
-/* Progress bars */
-.bar{height:8px;border-radius:999px;background:var(--pie-track);overflow:hidden}
+.bar{height:8px;border-radius:999px;background:var(--pie-track);overflow:hidden;position:relative}
 .bar i{display:block;height:100%;background:var(--ok);border-radius:999px;transition:width .5s ease}
 .bar.thin{height:4px}
 
-/* Big panels: Now / Break / Start my day */
-.panel{border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;border:1.5px solid var(--accent);
+/* Big panels */
+.panel{position:relative;overflow:hidden;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;border:1.5px solid var(--accent);
   background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
 .panel.restp{border-color:var(--rest);background:color-mix(in srgb,var(--rest) 10%,var(--surface))}
 .panel.latep{border-color:var(--hot);background:color-mix(in srgb,var(--hot) 7%,var(--surface))}
@@ -95,8 +96,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .panel .words{font-weight:600}
 .panel .sub{font-size:13px;color:var(--muted);line-height:1.4}
 .panel .row{display:flex;gap:6px;flex-wrap:wrap}
-.panel .steps li{padding:4px 2px}
-.panel .steps li.nextup{background:var(--surface);border-radius:8px;padding:6px 6px;font-weight:600}
+.panel .steps li.nextup{background:var(--surface);border-radius:8px;font-weight:600}
 .checkin{background:color-mix(in srgb,var(--warn) 18%,var(--surface));border-radius:10px;padding:8px 10px;font-size:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .brkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
 .brkopt{border:1px solid color-mix(in srgb,var(--rest) 40%,var(--line));background:var(--surface);border-radius:12px;padding:9px 10px;text-align:left;display:flex;flex-direction:column;gap:2px}
@@ -118,9 +118,13 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .diff{margin-left:auto;display:inline-flex;gap:2px}
 .diff i{width:5px;height:10px;border-radius:2px;background:var(--line)}
 .diff i.on{background:var(--ink)}
-.card .title{font-weight:700;line-height:1.25;font-size:15px;min-width:0;overflow-wrap:anywhere}
-.card .next{grid-column:1/2;font-size:13.5px;color:var(--muted);line-height:1.3;min-width:0;overflow-wrap:anywhere}
+.card .title{grid-column:1/2;font-weight:700;line-height:1.25;font-size:15px;min-width:0;overflow-wrap:anywhere}
+.card .next{grid-column:1/2;font-size:13.5px;color:var(--muted);line-height:1.3;min-width:0;overflow-wrap:anywhere;margin-top:2px}
 .card .next b{color:var(--ink);font-weight:600}
+.nextck{display:flex;gap:8px;align-items:flex-start;cursor:pointer;color:var(--ink);font-weight:600}
+.nextck input{width:20px;height:20px;margin:0;flex:none;accent-color:var(--ok)}
+.card .ready{color:var(--ok);font-weight:700}
+.verify{grid-column:2;grid-row:2/4;align-self:center;border:0;background:var(--ok);color:#fff;font-weight:700;font-size:13px;padding:7px 11px;border-radius:999px}
 .card .meta{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--muted)}
 .card .meta svg{width:14px;height:14px}
 .card .prog{grid-column:1/-1;margin:8px -10px 0 -12px;height:4px;background:var(--pie-track)}
@@ -128,11 +132,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .chip{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:12px;font-weight:600;white-space:nowrap}
 .chip.hot{color:var(--hot);border-color:color-mix(in srgb,var(--hot) 40%,var(--line))}
 .chip.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
-.check{grid-row:2/4;grid-column:2;align-self:center;width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;transition:transform .15s}
-.check:hover{border-color:var(--ok);transform:scale(1.08)}
-.check svg{width:16px;height:16px;color:var(--ok);opacity:0}
-.check:hover svg{opacity:.6}
-.locked .check{border-style:dashed}
+.chip.okc{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
 .card.pop{animation:pop .5s ease}
 @keyframes pop{0%{transform:scale(.92);opacity:.2}60%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
 
@@ -157,7 +157,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .brkcard span{font-size:12.5px;color:var(--muted)}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:16px 8px}
 
-/* Cue levels: glow, periodic shake, lens flare */
+/* Cue levels: outer glow + periodic shake */
 .card.lvl-1{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 35%,transparent)}
 .card.lvl-2{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 65%,transparent)}
 .card.lvl-3{box-shadow:0 0 0 2px color-mix(in srgb,var(--hot) 65%,transparent)}
@@ -165,22 +165,6 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .motion .card.lvl-2{animation:shake 5s ease-in-out infinite}
 .motion .card.lvl-3{animation:shake 3s ease-in-out infinite;--k:1.6}
 .motion .card.lvl-4{animation:shake 1.8s ease-in-out infinite;--k:2.4}
-.card::after,.panel.flare::after{content:"";position:absolute;inset:-60%;pointer-events:none;opacity:0;
-  background:
-    radial-gradient(circle at 30% 35%, var(--flare-core) 0, var(--flare-core) 5px, var(--flare-glow) 14px, transparent 46px),
-    radial-gradient(ellipse 110px 2px at 30% 35%, var(--flare-core), transparent),
-    radial-gradient(ellipse 2px 46px at 30% 35%, var(--flare-glow), transparent),
-    radial-gradient(circle at 52% 53%, transparent 9px, var(--ghost-a) 11px, transparent 14px),
-    radial-gradient(circle at 60% 59%, var(--ghost-b) 0, var(--ghost-b) 5px, transparent 7px),
-    radial-gradient(circle at 70% 67%, transparent 16px, var(--ghost-a) 19px, transparent 23px),
-    radial-gradient(circle at 76% 72%, var(--flare-glow) 0, var(--flare-glow) 3px, transparent 5px)}
-.flare-on .card.lvl-2::after{animation:flare 5s ease-in-out .9s infinite}
-.flare-on .card.lvl-3::after{animation:flare 3s ease-in-out .7s infinite}
-.flare-on .card.lvl-4::after{animation:flare 1.8s ease-in-out .5s infinite}
-.panel{position:relative;overflow:hidden}
-.flare-on .panel.flare::after{animation:flare 4s ease-in-out infinite}
-/* Lens flare: a bright glint with a streak and ghost rings drifts across the card, then fades */
-@keyframes flare{0%{transform:translate(-22%,-14%);opacity:0}6%{opacity:1}24%{transform:translate(18%,12%);opacity:0}100%{transform:translate(18%,12%);opacity:0}}
 @keyframes shake{
   0%,14%,100%{transform:translateX(0) rotate(0)}
   2%{transform:translateX(calc(var(--amp)*var(--k,1)*-1)) rotate(-.6deg)}
@@ -188,6 +172,26 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
   6%{transform:translateX(calc(var(--amp)*var(--k,1)*-1)) rotate(-.4deg)}
   8%{transform:translateX(calc(var(--amp)*var(--k,1))) rotate(.4deg)}
   10%{transform:translateX(calc(var(--amp)*var(--k,1)*-.5))}
+}
+/* Edge light: travels the top edge left to right, brightest at the card's center, fades out at the right */
+.card,.panel{--ec:var(--accent);--es:9s;--eh:2px;--eg:5px}
+.card.lvl-1{--ec:var(--warn);--es:7s;--eh:3px;--eg:6px}
+.card.lvl-2{--ec:#F59E0B;--es:4.5s;--eh:3px;--eg:9px}
+.card.lvl-3{--ec:var(--hot);--es:2.8s;--eh:4px;--eg:11px}
+.card.lvl-4{--ec:var(--hot);--es:1.6s;--eh:5px;--eg:15px}
+.panel{--ec:var(--accent);--es:5s;--eh:3px;--eg:9px}
+.panel.restp{--ec:var(--rest);--es:3.5s}
+.panel.latep{--ec:var(--hot);--es:2s;--eh:4px;--eg:12px}
+.card::after,.panel::after{content:"";position:absolute;top:0;left:0;width:46%;height:var(--eh);pointer-events:none;opacity:0;border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,transparent 0%,var(--ec) 30%,color-mix(in srgb,var(--ec) 55%,#fff) 50%,var(--ec) 70%,transparent 100%);
+  box-shadow:0 0 var(--eg) calc(var(--eh) / 2) color-mix(in srgb,var(--ec) 70%,transparent);transform:translateX(-100%)}
+.edge-on .inview::after{animation:edge var(--es) linear var(--ed,0s) infinite}
+@keyframes edge{
+  0%{transform:translateX(-100%);opacity:0}
+  6%{opacity:.25}
+  24%{transform:translateX(59%);opacity:1}
+  42%{transform:translateX(217%);opacity:0}
+  100%{transform:translateX(217%);opacity:0}
 }
 
 /* Demo clock bar */
@@ -201,6 +205,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .scrim{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;z-index:40}
 .sheet{background:var(--surface);width:100%;max-width:640px;max-height:88%;overflow-y:auto;border-radius:18px 18px 0 0;
   padding:18px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));animation:up .25s ease}
+.sheet.wide{max-width:980px}
 @media (min-width:700px){.scrim{align-items:center}.sheet{border-radius:18px;max-height:86%}}
 @keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
 .sheet h2{font-family:var(--font-display);font-size:22px;margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
@@ -213,7 +218,7 @@ button.crumb:hover{color:var(--accent);text-decoration:underline}
 .steps li{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px}
 .steps li.done .t{color:var(--muted);text-decoration:line-through}
 .steps input[type=checkbox]{width:22px;height:22px;accent-color:var(--ok);flex:none}
-.steps label{flex:1;min-width:0;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.steps label{flex:1;min-width:0;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;cursor:pointer}
 .stype{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
 .when{font-size:11px;color:var(--muted);font-family:var(--font-mono)}
 details.donesteps{margin-top:8px}
@@ -221,6 +226,7 @@ details.donesteps summary{cursor:pointer;font-size:13px;color:var(--muted);font-
 .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .field label{font-size:12.5px;font-weight:600;color:var(--muted)}
 .field input,.field select,.field textarea,.inp{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 10px;width:100%}
+.estrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
 @media (max-width:420px){.grid2{grid-template-columns:1fr}}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
@@ -232,18 +238,66 @@ details.donesteps summary{cursor:pointer;font-size:13px;color:var(--muted);font-
 .sw{width:28px;height:18px;border-radius:6px;border:1px solid var(--line)}
 a{color:var(--accent)}
 
-/* Goals tree */
-.goal{border-left:2px solid var(--line);padding-left:10px;margin:6px 0}
-.goal > summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr 80px 38px;gap:8px;align-items:center;padding:6px 0}
-.goal > summary::-webkit-details-marker{display:none}
-.goal > summary::before{content:"▸";color:var(--muted);transition:transform .2s}
-.goal[open] > summary::before{transform:rotate(90deg)}
-.goal .gt{font-weight:700;min-width:0;overflow-wrap:anywhere}
-.goal .pct{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
-.gbody{padding-left:14px}
-.gtask{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:7px 10px;margin:4px 0;font-size:14px}
-.gtask span{color:var(--muted);font-size:12px;white-space:nowrap}
-.gtask.isdone{opacity:.65}
+/* Avatars for people and roles */
+.av{--c:var(--accent);display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;white-space:nowrap;color:var(--ink)}
+.av i{width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.02em;text-shadow:0 1px 1px rgba(0,0,0,.25);flex:none}
+
+/* Goals */
+.ring{--p:0;--rc:var(--ok);position:relative;width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;
+  background:radial-gradient(closest-side,var(--surface) 76%,transparent 78% 100%),conic-gradient(var(--rc) calc(var(--p)*1turn),var(--pie-track) 0)}
+.ring.sm{width:26px;height:26px;font-size:0}
+.gcard{border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--surface);margin-bottom:14px}
+.ghead{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.gtitle{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.15;margin:0}
+.gmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.why{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.why b{color:var(--ink)}
+.tline{margin-top:12px}
+.tline .bar{height:10px;overflow:visible}
+.tline .bar i{border-radius:999px}
+.tline .elapsed{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);border-radius:2px}
+.tline .legendrow{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:5px}
+.gchildren{margin:12px 0 0 12px;padding-left:16px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.gsub{position:relative}
+.gsub::before{content:"";position:absolute;left:-18px;top:16px;width:14px;height:2px;background:var(--line)}
+.grow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.grow b{font-size:15px}
+.grow .pct{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.trow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:8px 10px;font-size:14px}
+.trow .tic{width:18px;height:18px;color:var(--muted)}
+.trow .tic svg{width:18px;height:18px}
+.trow .tt{min-width:0;overflow-wrap:anywhere}
+.trow .tt small{display:block;color:var(--muted);font-size:12px;margin-top:1px}
+.trow.isdone{opacity:.6}
+.gacts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Template library */
+.tpl{border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.tplgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.tpl h3{margin:0;font-family:var(--font-display);font-size:18px}
+.tpl .lanes{display:flex;gap:8px;flex-wrap:wrap}
+.scope{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+
+/* Workflow diagram (swimlanes) */
+.flowwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);margin-top:10px}
+.flow{position:relative;display:grid;gap:0;min-width:max-content;padding:10px 14px 10px 0}
+.lane{display:flex;align-items:center;gap:6px;padding:10px 12px;font-size:13px;font-weight:700;position:sticky;left:0;z-index:2;background:var(--surface-2);border-right:1px solid var(--line)}
+.laneband{border-bottom:1px dashed var(--line);z-index:0}
+.fnode{position:relative;z-index:2;margin:10px 20px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:9px 11px;font-size:13px;display:flex;flex-direction:column;gap:4px;align-self:center}
+.fnode b{font-size:14px;line-height:1.2}
+.fnode .fm{color:var(--muted);font-size:12px}
+.fnode.st-done{border-color:var(--ok)}
+.fnode.st-active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.fnode.st-waiting{border-style:dashed}
+.fnode.st-others{border-color:color-mix(in srgb,var(--violet) 55%,var(--line))}
+.flowsvg{position:absolute;top:0;left:0;pointer-events:none;z-index:1;overflow:visible}
+.flowsvg path.link{fill:none;stroke:var(--muted);stroke-width:1.6}
+.flowsvg path.handoff{fill:none;stroke:var(--violet);stroke-width:2;stroke-dasharray:5 4}
+.flowsvg .ah{fill:var(--muted)} .flowsvg .ahv{fill:var(--violet)}
+.flowkey{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:8px}
+.flowkey span{display:inline-flex;align-items:center;gap:6px}
+.flowkey i{display:inline-block;width:22px;height:0;border-top:2px solid var(--muted)}
+.flowkey i.h{border-top:2px dashed var(--violet)}
 
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
@@ -264,6 +318,7 @@ a{color:var(--accent)}
     </div>
     <div class="spacer"></div>
     <button class="btn" id="goalsBtn">Goals</button>
+    <button class="btn" id="libBtn">Library</button>
     <button class="btn primary" id="addBtn">+ Add task</button>
     <button class="iconbtn" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
@@ -294,6 +349,7 @@ const SPANS = {quick:['Quick',15], short:['Short',30], standard:['Standard',60],
 const DIFF = ['', 'Light', 'Medium', 'Heavy'];
 const PRIO = ['', 'Low', 'Medium', 'High', 'Urgent'];
 const MILESTONES = [10, 25, 50, 100, 250, 500, 1000];
+const UNIT_DAYS = {days:1, weeks:7, months:30};
 const DAY_START = 8*60, DAY_END = 21*60;
 const BREAKS = [
   {k:'water', label:'Water', min:3, tip:'Drink a full glass and refill your bottle.'},
@@ -304,12 +360,17 @@ const BREAKS = [
   {k:'social', label:'Social', min:15, tip:'Chat with a coworker or text a friend.'},
   {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'}
 ];
+const ROLES = {
+  me:{name:'You', c:'--accent'}, recruiter:{name:'Recruiter', c:'--home'}, cred:{name:'Credentialing', c:'--warn'},
+  hr:{name:'HR', c:'--work'}, payroll:{name:'Payroll', c:'--hot'}, ar:{name:'Billing (AR)', c:'--rest'}, vendor:{name:'Vendor', c:'--violet'}
+};
 const ICON = {
   repeat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
+  dot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>',
+  done:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>',
   mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
   tmpl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
   pause:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5v14M15 5v14"/></svg>',
-  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg>',
   leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"/><path d="M5 19l7-7"/></svg>',
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>',
@@ -317,24 +378,50 @@ const ICON = {
 };
 
 /* ---------- sample data ---------- */
+function seedTemplates(){
+  return [
+    {id:'tp1', scope:'company', name:'Nurse onboarding', desc:'From accepted offer to first shift. Each team owns its stage and hands off to the next.', horizon:{n:3,unit:'weeks'}, ctx:'work', stages:[
+      {title:'Offer accepted', role:'recruiter', tasks:[{title:'Send and collect the offer packet', est:30, steps:['Send offer letter','Collect signed offer']}]},
+      {title:'Credentialing', role:'cred', tasks:[{title:'Verify license and certifications', est:45, steps:['Collect RN license copy','Verify on the state board site','Verify BLS card']},{title:'Collect health records', est:30, steps:['TB test result','Immunization records']}]},
+      {title:'Background check', role:'hr', tasks:[{title:'Run background check', est:20, steps:['Submit vendor form','Save confirmation number']}]},
+      {title:'Payroll setup', role:'payroll', tasks:[{title:'I-9 and direct deposit', est:30, steps:['Verify I-9 documents','Enter direct deposit']}]},
+      {title:'Orientation', role:'me', tasks:[{title:'Schedule orientation', est:20, steps:['Pick a date with the unit manager','Send the calendar invite']},{title:'Send welcome packet', est:30, steps:['Fill in the welcome letter','Add the shift schedule','Email the packet']}]},
+      {title:'First-shift check-in', role:'me', tasks:[{title:'Check in after the first shift', est:15, steps:['Call the nurse','Log feedback']}]}
+    ]},
+    {id:'tp2', scope:'company', name:'Missing-time billing correction', desc:'Get missing hours corrected with proof so AR can bill.', horizon:{n:1,unit:'weeks'}, ctx:'work', stages:[
+      {title:'Identify the gap', role:'ar', tasks:[{title:'Flag missing hours', est:15, steps:['Run the missing-time report','Send the list to the account owner']}]},
+      {title:'Request the fix', role:'me', tasks:[{title:'Contact the customer or vendor', est:15, cadence:2, cadLabel:'Every 2 days until done', steps:['Email the contact','Call if no reply in 2 days']}]},
+      {title:'Record corrected', role:'vendor', tasks:[{title:'Correct the record', est:30, steps:['Update the hours','Send a screenshot']}]},
+      {title:'Verify proof', role:'me', tasks:[{title:'Verify proof and close the loop', est:15, steps:['Check the screenshot matches the hours','Forward the proof to AR']}]},
+      {title:'Bill', role:'ar', tasks:[{title:'Bill the corrected hours', est:20, steps:['Create the invoice','Send the invoice']}]}
+    ]},
+    {id:'tp3', scope:'mine', name:'Lose 15 pounds', desc:'A months-long goal broken into small routines you can do today.', horizon:{n:3,unit:'months'}, ctx:'home', stages:[
+      {title:'Track food', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Log meals', est:10, cadence:1, cadLabel:'Daily', steps:['Log breakfast','Log lunch','Log dinner']}]},
+      {title:'Move more', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Exercise session', est:60, cadence:2, cadLabel:'3× a week', steps:['Warm up for 5 minutes','Main workout','Stretch']}]},
+      {title:'Check progress', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Weekly weigh-in', est:5, cadence:7, cadLabel:'Weekly', steps:['Weigh in before breakfast','Log the number']}]},
+      {title:'Plan ahead', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Sunday meal prep', est:90, cadence:7, cadLabel:'Weekly', steps:['Plan 5 meals','Shop','Prep and portion']}]}
+    ]}
+  ];
+}
 function seed(){
   return {
     day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
     currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
-    settings:{cue:2, flare:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
+    settings:{cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
+    templates: seedTemplates(),
     goals:[
-      {id:'g1', title:'Close November billing gaps', parent:null, why:'Every missing hour is revenue we can\'t bill.'},
-      {id:'g2', title:'Acme Staffing', parent:'g1'},
-      {id:'g3', title:'Riverside Clinic', parent:'g1'},
-      {id:'g4', title:'Onboard nurse Jordan Lee', parent:null, why:'Jordan starts shifts Dec 7.'},
-      {id:'g5', title:'Credentialing', parent:'g4'},
-      {id:'g5a', title:'Background check', parent:'g5'},
-      {id:'g6', title:'Orientation', parent:'g4'},
-      {id:'g7', title:'Renew Riverside contract', parent:null},
-      {id:'g8', title:'Run a 5K by spring', parent:null, why:'More energy and a clearer head in the afternoons.'},
-      {id:'g9', title:'Walk daily (weeks 1-4)', parent:'g8'}
+      {id:'g1', title:'Close November billing gaps', parent:null, why:'Every missing hour is revenue we can\'t bill.', horizon:{n:2,unit:'weeks'}, start:-3},
+      {id:'g2', title:'Acme Staffing', parent:'g1', horizon:{n:1,unit:'weeks'}, start:-1},
+      {id:'g3', title:'Riverside Clinic', parent:'g1', horizon:{n:1,unit:'weeks'}, start:0},
+      {id:'g4', title:'Onboard nurse Jordan Lee', parent:null, why:'Jordan starts shifts Dec 7.', horizon:{n:3,unit:'weeks'}, start:-5},
+      {id:'g5', title:'Credentialing', parent:'g4', horizon:{n:10,unit:'days'}, start:-5},
+      {id:'g5a', title:'Background check', parent:'g5', role:'hr', horizon:{n:3,unit:'days'}, start:0},
+      {id:'g6', title:'Orientation', parent:'g4', horizon:{n:1,unit:'weeks'}, start:2},
+      {id:'g7', title:'Renew Riverside contract', parent:null, horizon:{n:1,unit:'weeks'}, start:-1},
+      {id:'g8', title:'Run a 5K by spring', parent:null, why:'More energy and a clearer head in the afternoons.', horizon:{n:4,unit:'months'}, start:-20},
+      {id:'g9', title:'Walk daily', parent:'g8', horizon:{n:4,unit:'weeks'}, start:-20}
     ],
     tasks:[
       {id:'t1', title:'Follow up: Acme vendor record update', ctx:'work', diff:1, span:'quick', est:null, aiEst:15, aiRuns:11, prio:3, due:2,
@@ -354,9 +441,8 @@ function seed(){
       {id:'t3', title:'Onboard Jordan Lee: credentialing', ctx:'work', diff:2, span:'standard', est:null, aiEst:50, aiRuns:4, prio:3, due:4, day:1, source:'template',
         goalId:'g5', doneWhen:'All credential documents verified in the HR system', proof:true, notes:'Orientation target is Dec 7.',
         steps:[{t:'Collect RN license copy', done:true, at:'Mon 10:02 AM'},{t:'Verify TB test and immunizations'},{t:'Confirm I-9 documents'}]},
-      {id:'t3b', title:'Submit Jordan\'s background check', ctx:'work', diff:1, span:'quick', est:20, prio:3, due:2, day:2, source:'template',
-        goalId:'g5a', doneWhen:'Background check submitted and confirmation saved', proof:true,
-        steps:[{t:'Fill out the vendor form'},{t:'Save the confirmation number', type:'proof'}]},
+      {id:'t3b', title:'Run Jordan\'s background check', ctx:'work', diff:1, span:'quick', est:20, prio:3, due:2, day:null, owner:'hr', source:'template',
+        goalId:'g5a', doneWhen:'Background check cleared', proof:true, steps:[{t:'Submit vendor form'},{t:'Save confirmation number'}]},
       {id:'t4', title:'Reconcile payroll exceptions', ctx:'work', diff:3, span:'standard', est:90, prio:2, due:3, day:1, source:'manual',
         doneWhen:'Exception report shows 0 open items', proof:true,
         steps:[{t:'Export the exception report'},{t:'Match missing punches to timesheets'},{t:'Email managers for approvals', type:'contact'},{t:'Re-run the report'}]},
@@ -369,7 +455,7 @@ function seed(){
         doneWhen:'Washed, dried and put away', proof:false, steps:[{t:'Start a load'},{t:'Move it to the dryer'},{t:'Fold and put away'}], completions:18},
       {id:'t8', title:'20-minute walk', ctx:'home', diff:1, span:'short', est:20, prio:2, cadence:{every:1,label:'Daily'}, day:1, source:'manual',
         goalId:'g9', doneWhen:'Walked for 20 minutes', proof:false, evidence:true,
-        steps:[{t:'Shoes on, step outside'},{t:'Walk for 20 minutes'}], completions:9},
+        steps:[{t:'Shoes on, step outside'},{t:'Walk for 20 minutes'}], completions:19},
       {id:'t10', title:'Follow up: Riverside timesheets', ctx:'work', diff:1, span:'quick', est:null, aiEst:15, aiRuns:6, prio:3, due:3, day:2, source:'email',
         cadence:{every:2,label:'Every 2 days until done'}, person:'mara', goalId:'g3', doneWhen:'Corrected timesheets received from Riverside', proof:true,
         sourceText:'From Mara (Riverside): "We\'ll send corrected sheets by Wednesday."',
@@ -402,34 +488,61 @@ function seed(){
          {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'},{title:'Break: Walk', day:0, kind:'break'}]
   };
 }
-const STORE = 'cueue-proto-v2';
+const STORE = 'cueue-proto-v3';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
-if (!S.tasks || !S.goals) S = seed();
+if (!S.tasks || !S.goals || !S.templates) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const byId = id => S.tasks.find(t => t.id === id);
+const newId = p => p + (S.nextId++);
 function fmt(m){ m = Math.round(m); let h = Math.floor(m/60)%24, mm = m%60; const ap = h>=12?'PM':'AM'; h = h%12||12; return h+':'+String(mm).padStart(2,'0')+' '+ap; }
-function dayLabel(i){ const d = new Date(WEEK_START); d.setDate(d.getDate()+i); return {name:DAYS[i%7], num:d.getDate(), mon:d.toLocaleString('en-US',{month:'short'})}; }
+function fmtDur(m){ m = Math.round(m); if (m < 60) return m + ' min'; const h = Math.floor(m/60), r = m%60; return h + ' hr' + (r ? ' ' + r + ' min' : ''); }
+function dateOf(i){ const d = new Date(WEEK_START); d.setDate(d.getDate()+i); return d; }
+function dayLabel(i){ const d = dateOf(i); return {name:DAYS[((i%7)+7)%7], num:d.getDate(), mon:d.toLocaleString('en-US',{month:'short'})}; }
 function stamp(){ return DAYS[S.day]+' '+fmt(S.now); }
 function estOf(t){ return t.est ?? t.aiEst ?? SPANS[t.span][1]; }
+function spanFor(m){ return m <= 15 ? 'quick' : m <= 30 ? 'short' : m <= 60 ? 'standard' : m <= 120 ? 'long' : 'marathon'; }
 function nextStep(t){ return t.steps.find(s => !s.done); }
 function stepsDone(t){ return t.steps.filter(s => s.done).length; }
 function frac(t){ return t.done ? 1 : stepsDone(t) / Math.max(1, t.steps.length); }
+const isMine = t => !t.owner || t.owner === 'me';
 function isWeek(){ if (S.view==='week') return true; if (S.view==='day') return false; return innerWidth > innerHeight && innerWidth >= 700; }
 function locked(){ return S.settings.breakLock && (S.breakDue || S.brk); }
 function motionOK(){ return !S.settings.reduce && !matchMedia('(prefers-reduced-motion: reduce)').matches; }
+function roleOf(k){ return ROLES[k] || {name:k, c:'--muted'}; }
+function avatar(k, withName){ const r = roleOf(k), ini = k === 'me' ? 'ME' : r.name.split(/[\s(]+/).filter(Boolean).map(w => w[0]).join('').slice(0,2).toUpperCase();
+  return `<span class="av" style="--c:var(${r.c})" title="${esc(r.name)}"><i>${ini}</i>${withName ? esc(r.name) : ''}</span>`; }
+function estInputs(prefix, min){
+  const hr = min != null && min >= 60;
+  return `<div class="estrow"><input id="${prefix}N" type="number" min="0.25" step="${hr?0.25:5}" value="${min == null ? '' : hr ? +(min/60).toFixed(2) : min}" placeholder="${min == null ? 'Blank = AI' : ''}" aria-label="Estimate amount">
+    <select id="${prefix}U" aria-label="Estimate unit"><option value="min" ${!hr?'selected':''}>minutes</option><option value="hr" ${hr?'selected':''}>hours</option></select></div>`;
+}
+function readEst(prefix){ const n = parseFloat($('#'+prefix+'N').value); if (!n || n <= 0) return null; return Math.round(n * ($('#'+prefix+'U').value === 'hr' ? 60 : 1)); }
 
 /* goals */
 const goalById = id => S.goals.find(g => g.id === id);
 function goalPath(id){ const out = []; let g = goalById(id); while (g){ out.unshift(g.title); g = goalById(g.parent); } return out.join(' › '); }
 const goalKids = id => S.goals.filter(g => g.parent === id);
 const goalTasks = id => S.tasks.filter(t => t.goalId === id);
-function goalProgress(id){ const fr = []; (function walk(gid){ goalTasks(gid).forEach(t => fr.push(frac(t))); goalKids(gid).forEach(k => walk(k.id)); })(id);
+function routineTarget(t, g){ // how many times a routine should happen across its goal's time frame
+  let h = g; while (h && !h.horizon) h = goalById(h.parent);
+  const days = h ? h.horizon.n * UNIT_DAYS[h.horizon.unit] : 30;
+  const perDay = t.cadence.label === '3× a week' ? 3/7 : t.cadence.label === 'Weekdays' ? 5/7 : 1 / (t.cadence.every || 1);
+  return Math.max(1, Math.round(days * perDay));
+}
+function goalProgress(id){ const fr = []; (function walk(gid){ goalTasks(gid).forEach(t => fr.push(t.cadence ? Math.min(1, (t.completions||0) / routineTarget(t, goalById(gid))) : frac(t))); goalKids(gid).forEach(k => walk(k.id)); })(id);
   return fr.length ? fr.reduce((a,b) => a+b, 0) / fr.length : 0; }
+function horizonLabel(g){ if (!g.horizon) return ''; const {n, unit} = g.horizon; return n + ' ' + (n === 1 ? unit.replace(/s$/,'') : unit); }
+function goalTime(g){
+  if (!g.horizon) return null;
+  const total = g.horizon.n * UNIT_DAYS[g.horizon.unit], start = g.start ?? S.day, dayN = Math.max(1, S.day - start + 1);
+  const end = dateOf(start + total - 1);
+  return {total, dayN: Math.min(dayN, total), frac: Math.min(1, (dayN-1)/total), end: end.toLocaleString('en-US',{month:'short', day:'numeric'})};
+}
 function goalOptions(sel){ const out = ['<option value="">No goal</option>'];
   (function walk(pid, d){ goalKids(pid).forEach(g => { out.push(`<option value="${g.id}" ${g.id===sel?'selected':''}>${'— '.repeat(d)}${esc(g.title)}</option>`); walk(g.id, d+1); }); })(null, 0);
   return out.join(''); }
@@ -471,11 +584,11 @@ function schedule(day){
   const st = S.settings, isToday = day === S.day;
   const fixed = eventsFor(day);
   let t = isToday ? Math.max(DAY_START, Math.ceil(S.now/5)*5) : DAY_START;
-  const pool = S.tasks.filter(x => x.day === day && !x.done && x.status !== 'waiting')
+  const pool = S.tasks.filter(x => x.day === day && isMine(x) && !x.done && x.status !== 'waiting')
     .map(x => ({task:x, rem:Math.max(5, estOf(x) - (x.spent||0))}));
   const blocks = []; let sinceBreak = isToday ? S.workSince : 0, breakN = 0;
   const curIdx = pool.findIndex(p => p.task.id === S.currentId);
-  if (isToday && S.brk){ const left = Math.max(1, S.brk.min - S.brk.spent); t += left; }
+  if (isToday && S.brk){ t += Math.max(1, S.brk.min - S.brk.spent); }
   if (isToday && curIdx > -1){
     const p = pool.splice(curIdx,1)[0];
     blocks.push({kind:'task', task:p.task, start:t, dur:p.rem, current:true});
@@ -510,6 +623,7 @@ function schedule(day){
 function firstUp(){ const it = schedule(S.day).items.find(i => i.kind === 'task' && !i.current); return it ? it.task : null; }
 
 /* ---------- rendering ---------- */
+const edgeDelay = () => `--ed:-${(Math.random()*6).toFixed(2)}s`;
 function pieHTML(t, big){
   const e = estOf(t), p = Math.min(1, (t.spent||0)/e);
   return `<span class="pie ${big?'big':''} ${(t.spent||0) > e ? 'over':''} ${S.settings.pies ? '' : 'off'}" data-pie="${t.id}" style="--p:${p.toFixed(3)}" aria-label="Time used"></span>`;
@@ -523,19 +637,24 @@ function dueChip(t){
   return `<span class="chip">Due ${DAYS[t.due] || 'later'}</span>`;
 }
 function stepLI(t, s, i, extra){
-  return `<li class="${s.done?'done':''} ${extra||''}"><input type="checkbox" id="st-${t.id}-${i}-${extra?'n':'d'}" data-task="${t.id}" data-step="${i}" ${s.done?'checked':''}>
-    <label for="st-${t.id}-${i}-${extra?'n':'d'}">${s.type&&s.type!=='plain'?`<span class="stype">${s.type==='contact'?'Contact':'Proof'}</span>`:''}<span class="t">${esc(s.t)}</span></label>${s.at?`<span class="when">${esc(s.at)}</span>`:''}</li>`;
+  const uid = `st-${t.id}-${i}-${extra?'n':'d'}`;
+  return `<li class="${s.done?'done':''} ${extra||''}"><input type="checkbox" id="${uid}" data-task="${t.id}" data-step="${i}" ${s.done?'checked':''}>
+    <label for="${uid}">${s.type&&s.type!=='plain'?`<span class="stype">${s.type==='contact'?'Contact':'Proof'}</span>`:''}<span class="t">${esc(s.t)}</span></label>${s.at?`<span class="when">${esc(s.at)}</span>`:''}</li>`;
 }
 function cardHTML(t, start, dayIdx, chunk){
-  const ns = nextStep(t), lvl = level(t, dayIdx), st = stateOf(t, lvl);
+  const ns = nextStep(t), nsIdx = t.steps.indexOf(ns), lvl = level(t, dayIdx), st = stateOf(t, lvl);
   const diff = [1,2,3].map(i => `<i class="${i<=t.diff?'on':''}"></i>`).join('');
   const src = t.source === 'email' ? `<span title="From email">${ICON.mail}</span>` : t.source === 'template' ? `<span title="From template">${ICON.tmpl}</span>` : '';
   const timeTxt = S.settings.times && start != null ? `<span class="time">~${fmt(start)}</span>` : '';
-  return `<div class="card lvl-${lvl} ${st?'s-'+st:''}" data-id="${t.id}" data-ctx="${t.ctx}" tabindex="0" role="button" aria-label="${esc(t.title)}">
+  let next;
+  if (t.status === 'waiting') next = `<div class="next">Waiting on <b>${esc(t.waitingOn)}</b></div>`;
+  else if (ns) next = `<div class="next"><label class="nextck">${locked()?`<span style="width:20px;height:20px;color:var(--muted);flex:none">${ICON.lock}</span>`:`<input type="checkbox" data-task="${t.id}" data-step="${nsIdx}" aria-label="Check off: ${esc(ns.t)}">`}<span>${esc(ns.t)}</span></label></div>`;
+  else next = `<div class="next"><span class="ready">All steps done</span></div>`;
+  return `<div class="card lvl-${lvl} ${st?'s-'+st:''}" data-id="${t.id}" data-ctx="${t.ctx}" tabindex="0" role="button" aria-label="${esc(t.title)}" style="${edgeDelay()}">
     <div class="top">${timeTxt}<span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span>${chunk?`<span>· part ${chunk}</span>`:''}<span class="diff" title="${DIFF[t.diff]}">${diff}</span></div>
     <div class="title">${esc(t.title)}</div>
-    ${t.status==='waiting' ? `<div class="next">Waiting on <b>${esc(t.waitingOn)}</b></div>` : `<div class="next">${ns ? '→ <b>'+esc(ns.t)+'</b>' : 'All steps done. Confirm it\'s done'}</div>`}
-    ${t.status==='waiting' ? '' : `<button class="check" data-check="${t.id}" aria-label="Check off next step">${locked()?ICON.lock:ICON.check}</button>`}
+    ${next}
+    ${!ns && t.status !== 'waiting' ? `<button class="verify" data-finish="${t.id}">Complete</button>` : ''}
     <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}</div>
     <div class="prog" aria-label="${stepsDone(t)} of ${t.steps.length} steps"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
   </div>`;
@@ -545,47 +664,42 @@ function breakOptions(star){
   return `<div class="brkgrid">${BREAKS.map(b => `<button class="brkopt ${b.k===star?'star':''}" data-brk="${b.k}"><b>${b.label}</b><span>${b.min} min</span></button>`).join('')}</div>`;
 }
 function topPanel(){
-  // 1. Break in progress
   if (S.brk){
     const b = BREAKS.find(x => x.k === S.brk.k), p = Math.min(1, S.brk.spent / S.brk.min), ready = S.brk.spent >= S.brk.min;
-    return `<div class="panel restp ${ready?'flare':''}" id="brkPanel"><div class="ph"><span class="tag">On a break</span></div>
+    return `<div class="panel restp" id="brkPanel" style="${edgeDelay()}"><div class="ph"><span class="tag">On a break</span></div>
       <div class="main"><span class="pie big rest" id="brkPie" style="--p:${p.toFixed(3)}"></span><div style="min-width:0"><h3>${b.label}</h3>
       <div class="sub">${esc(b.tip)}</div>${b.link?`<div class="sub"><a href="${b.link}" target="_blank" rel="noopener">Find a ${b.min}-minute video</a></div>`:''}
-      <div class="words" id="brkWords" style="margin-top:6px">${ready ? 'Break complete. Welcome back.' : 'Enjoy it. The timer is running.'}</div></div></div>
-      <div class="row"><button class="btn rest" data-act="endbrk" id="endBrkBtn" ${!ready && S.settings.breakLock ? 'disabled' : ''}>I'm back</button><button class="btn small" data-act="brkmore">+5 min</button></div>
+      <div class="words" style="margin-top:6px">${ready ? 'Break complete. Welcome back.' : 'Enjoy it. The timer is running.'}</div></div></div>
+      <div class="row"><button class="btn rest" data-act="endbrk" ${!ready && S.settings.breakLock ? 'disabled' : ''}>I'm back</button><button class="btn small" data-act="brkmore">+5 min</button></div>
       ${!ready && S.settings.breakLock ? '<div class="sub">Break lock is on, so "I\'m back" unlocks when the timer finishes.</div>' : ''}</div>`;
   }
-  // 2. Break due
   if (S.breakDue){
-    return `<div class="panel restp flare"><div class="ph"><span class="tag">Break time</span>${S.settings.breakLock?`<span style="margin-left:auto;display:inline-flex;gap:4px;align-items:center">${ICON.lock.replace('<svg','<svg width="14" height="14"')} Check-offs paused</span>`:''}</div>
+    return `<div class="panel restp" style="${edgeDelay()}"><div class="ph"><span class="tag">Break time</span>${S.settings.breakLock?`<span style="margin-left:auto;display:inline-flex;gap:4px;align-items:center">${ICON.lock.replace('<svg','<svg width="14" height="14"')} Check-offs paused</span>`:''}</div>
       <h3>${esc(S.breakDue.reason)}</h3><div class="sub">Pick a break. The timer starts right away.</div>
       ${breakOptions(S.breakDue.reward ? 'reward' : 'water')}
       ${S.settings.breakLock ? '' : '<div class="row"><button class="btn small ghost" data-act="snooze">Remind me in 15 min</button></div>'}</div>`;
   }
-  // 3. Current task
   const t = byId(S.currentId);
   if (t){
     const e = estOf(t), r = (t.spent||0)/e, open = t.steps.map((s,i) => [s,i]).filter(([s]) => !s.done);
     const lvl = level(t, S.day);
-    return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel">
+    return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel" style="${edgeDelay()}">
       <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
       <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
         <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
       ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="stop">Switch</button></div>`:''}
-      <ul class="steps">${open.slice(0,4).map(([s,i],k) => stepLI(t, s, i, k===0?'nextup':'')).join('')}</ul>
-      ${open.length > 4 ? `<div class="sub">+${open.length-4} more steps</div>` : ''}
+      ${open.length ? `<ul class="steps">${open.slice(0,4).map(([s,i],k) => stepLI(t, s, i, k===0?'nextup':'')).join('')}</ul>${open.length > 4 ? `<div class="sub">+${open.length-4} more steps</div>` : ''}`
+        : `<div class="row"><button class="btn ok" data-finish="${t.id}">All steps done. Complete the task</button></div>`}
       ${t.notes ? `<div class="sub">${esc(t.notes)}</div>` : ''}
       <div class="bar thin"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
-      <div class="row"><button class="btn small primary" data-check="${t.id}">${locked()?'Break first':'Check next step'}</button>
-        <button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
+      <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
         <button class="btn small" data-open="${t.id}">Details</button>
         <button class="btn small ghost" data-act="stop">Switch task</button></div></div>`;
   }
-  // 4. Start my day / next
   const up = firstUp();
   if (!up) return '';
-  return `<div class="panel"><div class="ph"><span class="tag">${S.dayMode?'Ready for the next one':'Good morning'}</span></div>
+  return `<div class="panel" style="${edgeDelay()}"><div class="ph"><span class="tag">${S.dayMode?'Ready for the next one':'Good morning'}</span></div>
     <h3>${S.dayMode?'Up next: ':'First up: '}${esc(up.title)}</h3>
     <div class="sub">${S.settings.autoNext?'When you finish a task, the next one starts on its own. Turn this off in Settings.':'Tasks start when you tap them.'}</div>
     <div class="row"><button class="btn primary" data-act="startday">${S.dayMode?'Start next task':'Start my day'}</button><button class="btn small rest" data-act="brkpick">Take a break first</button></div></div>`;
@@ -595,10 +709,8 @@ function columnHTML(day, single){
   let body = '', count = '';
   const doneHere = S.log.filter(l => l.day === day);
   const doneTasks = doneHere.filter(l => l.kind === 'task').length, doneSteps = doneHere.filter(l => l.kind === 'step').length, breaks = doneHere.filter(l => l.kind === 'break').length;
-  if (past){
-    body = '<div class="empty">Day wrapped up.</div>';
-    count = doneTasks + ' done';
-  } else {
+  if (past){ body = '<div class="empty">Day wrapped up.</div>'; count = doneTasks + ' done'; }
+  else {
     const {items, overflow} = schedule(day);
     if (isToday) body += topPanel();
     body += items.map(it => {
@@ -610,23 +722,24 @@ function columnHTML(day, single){
     }).join('') || '<div class="empty">Nothing planned. Enjoy the space.</div>';
     if (overflow.length) body += '<div class="label">Doesn\'t fit today</div>' + overflow.map(t => cardHTML(t, null, day)).join('');
     if (isToday){
-      const waiting = S.tasks.filter(t => t.status === 'waiting' && !t.done);
+      const waiting = S.tasks.filter(t => t.status === 'waiting' && !t.done && isMine(t));
       if (waiting.length) body += '<div class="label">Waiting on others</div>' + waiting.map(t => cardHTML(t, null, day)).join('');
     }
-    const n = S.tasks.filter(t => t.day === day && !t.done).length;
+    const n = S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length;
     count = n + (n === 1 ? ' task' : ' tasks');
   }
   if (isToday || past){
-    const left = past ? 0 : S.tasks.filter(t => t.day === day && !t.done).length, total = doneTasks + left;
+    const left = past ? 0 : S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length, total = doneTasks + left;
     body += `<button class="dayprog" data-donelist="${day}"><div class="row"><span><b>${doneTasks}</b> tasks · <b>${doneSteps}</b> steps · <b>${breaks}</b> breaks</span><span>View done ›</span></div><div class="bar"><i style="width:${total?Math.round(100*doneTasks/total):0}%"></i></div></button>`;
   }
   const nav = single ? `<div class="nav"><button class="iconbtn" data-nav="-1" aria-label="Previous day">${ICON.left}</button><button class="iconbtn" data-nav="1" aria-label="Next day">${ICON.right}</button></div>` : '';
-  return `<section class="col ${isToday?'today':''} ${past?'past':''} ${isToday&&locked()?'locked':''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span></div><div class="colbody">${body}</div></section>`;
+  return `<section class="col ${isToday?'today':''} ${past?'past':''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span></div><div class="colbody">${body}</div></section>`;
 }
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('inview', e.isIntersecting)), {threshold:.15}) : null;
 function render(){
   const root = document.documentElement;
   root.classList.toggle('motion', motionOK() && S.settings.cue > 0);
-  root.classList.toggle('flare-on', motionOK() && S.settings.flare && S.settings.cue > 0);
+  root.classList.toggle('edge-on', motionOK() && S.settings.edge);
   root.style.setProperty('--amp', (S.settings.cue * 1.2) + 'px');
   document.querySelectorAll('[data-focus]').forEach(b => b.setAttribute('aria-pressed', b.dataset.focus === S.focus));
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === S.view));
@@ -639,6 +752,8 @@ function render(){
   board.innerHTML = week ? [0,1,2,3,4,5,6].map(d => columnHTML(d,false)).join('') : columnHTML(S.viewDay, true);
   board.querySelectorAll('.colbody').forEach((c,i) => c.scrollTop = scrollPos[i] || 0);
   if (week && !render.scrolled){ render.scrolled = true; const tc = board.querySelector('.col.today'); if (tc) board.scrollLeft = Math.max(0, tc.offsetLeft - 16); }
+  if (io){ io.disconnect(); board.querySelectorAll('.card,.panel').forEach(el => io.observe(el)); }
+  else board.querySelectorAll('.card,.panel').forEach(el => el.classList.add('inview'));
   const {overflow} = schedule(S.day), ban = $('#banner');
   if (overflow.length){ ban.hidden = false; ban.innerHTML = `<strong>Today is overbooked.</strong> ${overflow.length} task${overflow.length>1?'s don\'t':' doesn\'t'} fit. <button class="btn small" data-act="pushlater">Move later-due tasks to tomorrow</button>`; }
   else ban.hidden = true;
@@ -666,9 +781,8 @@ let last = performance.now();
 function tick(){
   const nowMs = performance.now(), dtSec = Math.min(1, (nowMs - last)/1000); last = nowMs;
   if (S.running && S.now < DAY_END){
-    const dMin = dtSec * S.speed / 60;
+    const dMin = dtSec * S.speed / 60, st = S.settings;
     S.now = Math.min(DAY_END, S.now + dMin);
-    const st = S.settings;
     if (S.brk){
       S.brk.spent += dMin;
       if (S.brk.spent >= S.brk.min && !S.brk.ready){ S.brk.ready = true; chime(true); cue(2); toast('Break complete', 'Tap "I\'m back" when you\'re ready.'); render(); }
@@ -724,19 +838,16 @@ function toast(msg, sub){
 
 /* ---------- actions ---------- */
 function lockedToast(){ toast('Break first', 'Check-offs unlock after your break. Pick one at the top of Today.'); cue(2); }
-function checkStep(t, idx, originEl){
+function checkStep(t, i, originEl){
   if (locked()){ lockedToast(); render(); return false; }
-  const i = idx ?? t.steps.findIndex(s => !s.done);
-  if (i < 0){ openComplete(t); return false; }
-  const s = t.steps[i]; if (s.done) return false;
+  const s = t.steps[i]; if (!s || s.done) return false;
   s.done = true; s.at = stamp();
   if (s.type === 'contact'){ const p = S.people[s.who || t.person]; t.contacts = t.contacts || []; t.contacts.unshift({who: p ? p.name : 'Contact', how:'Logged', when:s.at}); }
   S.log.push({title: s.t, day: S.day, taskId: t.id, kind:'step'});
   const r = originEl ? originEl.getBoundingClientRect() : {left:innerWidth/2, top:innerHeight/2, width:0, height:0};
   confetti(r.left + r.width/2, r.top + r.height/2, 22, 5); chime(false); cue(1);
-  toast('Nice. Step ' + stepsDone(t) + ' of ' + t.steps.length + ' done', s.type === 'contact' ? 'Contact logged at ' + s.at : nextStep(t) ? 'Next: ' + nextStep(t).t : 'All steps done. Confirm it\'s done.');
+  toast('Nice. Step ' + stepsDone(t) + ' of ' + t.steps.length + ' done', s.type === 'contact' ? 'Contact logged at ' + s.at : nextStep(t) ? 'Next: ' + nextStep(t).t : 'All steps done. Tap Complete to confirm the task is finished.');
   render();
-  if (!nextStep(t)) setTimeout(() => openComplete(t), 500);
   return true;
 }
 function uncheckStep(t, i){
@@ -758,8 +869,7 @@ function completeTask(t, note, files){
   t.completions = (t.completions||0) + 1;
   t.resolution = note; t.proofFiles = files;
   S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task'});
-  const wasCurrent = S.currentId === t.id;
-  if (wasCurrent){
+  if (S.currentId === t.id){
     if (t.est == null && t.spent){ t.aiEst = Math.round((t.aiEst*(t.aiRuns||1) + t.spent) / ((t.aiRuns||1)+1)); t.aiRuns = (t.aiRuns||1)+1; }
     S.currentId = null; S.paused = false;
   }
@@ -774,11 +884,26 @@ function completeTask(t, note, files){
   } else {
     t.done = true; t.doneDay = S.day; t.status = null;
     toast(m ? 'Milestone: ' + m + '!' : 'Task complete!', 'Resolution saved' + (files && files.length ? ' with ' + files.length + ' proof file' + (files.length>1?'s':'') : '') + '.');
+    unblockAfter(t);
   }
   if (t.diff === 3) S.breakDue = {reason:'You finished a heavy task. Take a reward break.', reward:true};
   else if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for a while'};
   closeSheet(); render();
   if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId) setTimeout(startNext, 900);
+}
+function unblockAfter(t){
+  // when every task in a stage is done, tasks waiting on that stage are released
+  const stage = t.goalId; if (!stage || goalTasks(stage).some(x => !x.done)) return [];
+  const freed = S.tasks.filter(x => x.waitStage === stage && x.status === 'waiting');
+  freed.forEach(x => { x.status = null; x.day = isMine(x) ? S.day : null; x.waitStage = null; });
+  return freed;
+}
+function othersDone(t){
+  t.done = true; t.doneDay = S.day; t.steps.forEach(s => { s.done = true; s.at = stamp(); });
+  const freed = unblockAfter(t).filter(isMine);
+  toast(roleOf(t.owner).name + ' finished: ' + t.title, freed.length ? 'Your next step is unblocked: ' + freed[0].title : 'Handed off to the next stage.');
+  if (freed.length){ confetti(innerWidth/2, innerHeight/3, 60, 6); chime(false); }
+  render();
 }
 function startBreak(k){
   const b = BREAKS.find(x => x.k === k);
@@ -790,15 +915,14 @@ function endBreak(){
   S.log.push({title:'Break: ' + b.label, day:S.day, kind:'break'});
   S.brk = null; S.workSince = 0;
   confetti(innerWidth/2, innerHeight/3, 50, 6); chime(false);
-  toast('Welcome back', 'Breaks count as wins too.');
-  render();
+  toast('Welcome back', 'Breaks count as wins too.'); render();
   if (S.dayMode && S.settings.autoNext && !S.currentId) setTimeout(startNext, 600);
 }
 function endDay(){
   if (S.day >= 6) return;
   const today = S.day; let moved = 0;
   S.tasks.forEach(t => {
-    if (t.done || t.day !== today) return;
+    if (t.done || t.day !== today || !isMine(t)) return;
     t.day = today + 1; t.rolled = (t.rolled||0) + 1; moved++;
     if (t.cadence) t.missed = (t.missed||0) + 1;
   });
@@ -807,16 +931,68 @@ function endDay(){
   render();
 }
 
+/* templates -> goals */
+function instantiate(tp, subject){
+  const root = {id:newId('g'), title: tp.name + (subject ? ': ' + subject : ''), parent:null, horizon:{...tp.horizon}, start:S.day, fromTemplate:tp.id, why:tp.desc};
+  S.goals.push(root);
+  let prevStage = null, prevRole = null, created = 0;
+  tp.stages.forEach((st, i) => {
+    const g = {id:newId('g'), title:st.title, parent:root.id, role:st.role, start:S.day, horizon: st.horizon ? {...st.horizon} : null};
+    S.goals.push(g);
+    st.tasks.forEach(tt => {
+      const mine = st.role === 'me', waiting = prevStage && prevRole !== st.role;
+      const t = {id:newId('n'), title:tt.title, ctx: tp.ctx || 'work', diff: tt.est >= 60 ? 2 : 1, span: spanFor(tt.est), est: tt.est, prio:2,
+        owner: st.role, goalId: g.id, steps: tt.steps.map(s => ({t:s})), doneWhen: tt.doneWhen || aiDone(tt.title), proof: tp.scope === 'company', source:'template',
+        cadence: tt.cadence ? {every:tt.cadence, label: tt.cadLabel || 'Every ' + tt.cadence + ' days'} : null,
+        day: null, status: null, notes:''};
+      if (waiting){ t.status = 'waiting'; t.waitingOn = roleOf(prevRole).name + ': ' + tp.stages[i-1].title; t.waitStage = prevStage; }
+      else if (mine) t.day = S.day;
+      S.tasks.push(t); created++;
+    });
+    prevStage = g.id; prevRole = st.role;
+  });
+  return {root, created};
+}
+function taskToTpl(t){ return {title:t.title, est:estOf(t), steps:t.steps.map(s => s.t), cadence: t.cadence ? t.cadence.every : null, cadLabel: t.cadence ? t.cadence.label : null}; }
+function templateFromGoal(g){
+  const stages = [];
+  if (goalTasks(g.id).length) stages.push({title:g.title, role:goalTasks(g.id)[0].owner || 'me', tasks:goalTasks(g.id).map(taskToTpl)});
+  goalKids(g.id).forEach(k => {
+    const ts = []; (function walk(id){ goalTasks(id).forEach(t => ts.push(t)); goalKids(id).forEach(x => walk(x.id)); })(k.id);
+    stages.push({title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, tasks: ts.map(taskToTpl)});
+  });
+  const tp = {id:newId('tp'), scope:'mine', name:g.title, desc:g.why || 'Saved from your goals.', horizon: g.horizon || {n:1,unit:'weeks'}, ctx: (S.tasks.find(t => t.goalId === g.id) || {}).ctx || 'work', stages};
+  S.templates.push(tp); return tp;
+}
+const ROUTINE_SETS = [
+  {re:/weight|lose|pound|lbs|fit|diet|health/i, tp:'tp3'},
+  {re:/run|5k|marathon|walk/i, stages:[{title:'Build the habit', tasks:[{title:'Run/walk intervals', est:30, cadence:2, cadLabel:'3× a week', steps:['Warm up','Intervals','Cool down']}]},{title:'Track it', tasks:[{title:'Log your runs', est:5, cadence:7, cadLabel:'Weekly', steps:['Log distance and time']}]}]},
+  {re:/learn|study|read|course|certif/i, stages:[{title:'Practice', tasks:[{title:'Study session', est:25, cadence:1, cadLabel:'Daily', steps:['Open the material','25 focused minutes','Write 3 takeaways']}]},{title:'Review', tasks:[{title:'Weekly review quiz', est:30, cadence:7, cadLabel:'Weekly', steps:['Quiz yourself','Note weak spots']}]}]}
+];
+function suggestRoutines(g){
+  const set = ROUTINE_SETS.find(r => r.re.test(g.title));
+  const stages = set ? (set.tp ? S.templates.find(t => t.id === set.tp).stages : set.stages)
+    : [{title:'Daily progress', tasks:[{title:'15 minutes toward ' + g.title, est:15, cadence:1, cadLabel:'Daily', steps:['Pick one small action','Do it for 15 minutes']}]},
+       {title:'Weekly check-in', tasks:[{title:'Review progress', est:20, cadence:7, cadLabel:'Weekly', steps:['What worked?','What gets in the way?','Adjust next week']}]}];
+  const ctx = /weight|lose|run|walk|fit|health|5k|read|pound/i.test(g.title) ? 'home' : 'work';
+  stages.forEach(st => {
+    const sg = {id:newId('g'), title:st.title, parent:g.id, start:S.day, horizon: g.horizon ? {...g.horizon} : null}; S.goals.push(sg);
+    st.tasks.forEach(tt => S.tasks.push({id:newId('n'), title:tt.title, ctx, diff: tt.est >= 60 ? 2 : 1, span:spanFor(tt.est), est:tt.est, prio:2, goalId:sg.id, day:S.day,
+      steps:tt.steps.map(s => ({t:s})), doneWhen:aiDone(tt.title), proof:false, source:'template', cadence: tt.cadence ? {every:tt.cadence, label:tt.cadLabel} : null, notes:''}));
+  });
+  return stages.length;
+}
+
 /* ---------- sheets ---------- */
-function openSheet(html, kind, taskId){ const r = $('#sheetRoot'); r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
+function openSheet(html, kind, taskId, wide){ const r = $('#sheetRoot'); r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet ${wide?'wide':''}" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
 function closeSheet(){ const r = $('#sheetRoot'); r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; }
 function relatedTasks(e){
   const words = (e.title + ' ' + e.desc + ' ' + e.who.join(' ')).match(/\b[A-Z][a-z]{3,}\b/g) || [];
   const keys = [...new Set(words)].filter(w => !['Review','Bring','Questions','Check','Team','Client','Yesterday','Credentialing'].includes(w));
-  return S.tasks.filter(t => !t.done && keys.some(k => (t.title + ' ' + goalPath(t.goalId)).includes(k)));
+  return S.tasks.filter(t => !t.done && isMine(t) && keys.some(k => (t.title + ' ' + goalPath(t.goalId)).includes(k)));
 }
 function openTask(t){
-  const e = estOf(t), m = MILESTONES.find(x => x > (t.completions||0));
+  const m = MILESTONES.find(x => x > (t.completions||0));
   const person = t.person && S.people[t.person];
   const openSteps = t.steps.map((s,i) => [s,i]).filter(([s]) => !s.done), doneSteps = t.steps.map((s,i) => [s,i]).filter(([s]) => s.done);
   const prev = t.completions ? `<div class="sec"><h4>Milestones</h4><div class="kv"><span>Completed</span><span>${t.completions} times</span></div><div class="bar"><i style="width:${Math.round(100*t.completions/m)}%"></i></div><p class="note">${m - t.completions} more to your ${m} badge.</p></div>` : '';
@@ -825,10 +1001,13 @@ function openTask(t){
   openSheet(`
     ${t.goalId ? `<button class="crumb" data-act="goals">${esc(goalPath(t.goalId))}</button>` : ''}
     <h2>${esc(t.title)}</h2>
-    <div class="chips">${t.done?'<span class="chip" style="color:var(--ok)">Completed</span>':''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
+    <div class="chips">${t.done?'<span class="chip okc">Completed</span>':''}${!isMine(t)?avatar(t.owner,true):''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
+    ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
     ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
-    <div class="field"><label for="estInput">Time estimate (minutes) ${t.est==null?`· AI estimate, learned from ${t.aiRuns||1} past run${(t.aiRuns||1)>1?'s':''}`:'· set by you'}</label><input id="estInput" type="number" min="5" step="5" value="${e}"></div>
-    <div class="field"><label for="goalSel">Goal</label><select id="goalSel">${goalOptions(t.goalId)}</select></div>
+    <div class="grid2">
+      <div class="field"><label>Time estimate ${t.est==null?`· AI, learned from ${t.aiRuns||1} run${(t.aiRuns||1)>1?'s':''}`:'· set by you'}</label>${estInputs('dEst', estOf(t))}</div>
+      <div class="field"><label for="goalSel">Goal</label><select id="goalSel">${goalOptions(t.goalId)}</select></div>
+    </div>
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}${t.proof?' · <i>proof required</i>':''}</div>
     <div class="sec"><h4>Steps</h4>
       <div class="bar" style="margin-bottom:8px"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
@@ -842,47 +1021,147 @@ function openTask(t){
     ${t.evidence ? `<div class="sec"><h4>Why this routine works</h4><p class="note">In a study of 96 adults, a new daily habit took about 66 days on average to feel automatic, and missing a single day didn't undo progress (Lally et al., 2010, <i>European Journal of Social Psychology</i>). A meta-analysis of 8 trials found aerobic exercise improved attention in children with ADHD (Cerrillo-Urbina et al., 2015). <a href="https://pubmed.ncbi.nlm.nih.gov/25988743/" target="_blank" rel="noopener">Read the study</a></p></div>` : ''}
     ${prev}${hist}${stuck}
     <div class="actions">
-      ${t.done ? `<button class="btn primary" data-act="reopen">Reopen task</button>` :
+      ${t.done ? `<button class="btn primary" data-act="reopen">Reopen task</button>` : !isMine(t) ? `<button class="btn" data-act="othersdone" data-task="${t.id}">Mark done as ${esc(roleOf(t.owner).name)} (demo)</button>` :
         `${S.currentId===t.id ? `<button class="btn" data-act="stop">Stop working on it</button>` : `<button class="btn primary" data-act="start">Start now</button>`}
          ${t.status==='waiting' ? `<button class="btn" data-act="unblock">Unblock</button>` : `<button class="btn" data-act="wait">Waiting on someone</button>`}
-         <button class="btn" data-act="complete">Mark done</button>`}
+         <button class="btn ${nextStep(t)?'':'ok'}" data-finish="${t.id}">Complete</button>`}
       <div class="spacer"></div><button class="btn ghost" data-close="1">Close</button>
     </div>`, 'task', t.id);
-  $('#estInput').addEventListener('change', ev => { const v = +ev.target.value; if (v >= 5){ t.est = v; t.warned1 = t.warned2 = false; toast('Estimate updated', 'Re-planned today.'); render(); } });
+  const upd = () => { const v = readEst('dEst'); if (v){ t.est = v; t.span = spanFor(v); t.warned1 = t.warned2 = false; toast('Estimate updated: ' + fmtDur(v), 'Re-planned today.'); render(); } };
+  $('#dEstN').addEventListener('change', upd); $('#dEstU').addEventListener('change', upd);
   $('#goalSel').addEventListener('change', ev => { t.goalId = ev.target.value || null; openTask(t); render(); });
   $('#notesInput').addEventListener('input', ev => { t.notes = ev.target.value; save(); });
   $('#attachInput').addEventListener('change', ev => { t.files = (t.files||[]).concat([...ev.target.files].map(f => f.name)); $('#attachList').textContent = t.files.join(', '); save(); });
 }
 function openComplete(t){
   if (locked()){ lockedToast(); return; }
+  const left = t.steps.filter(s => !s.done).length;
   openSheet(`<h2>Finish: ${esc(t.title)}</h2>
+    ${left ? `<p class="note">${left} step${left>1?'s are':' is'} still unchecked. You can still complete the task if it's done.</p>` : ''}
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}</div>
     <div class="field" style="margin-top:12px"><label for="resNote">What happened? ${t.proof?'(required)':'(optional)'}</label><textarea id="resNote" rows="3" placeholder="e.g. Dana confirmed the record is fixed and sent a screenshot of the timekeeping system">${esc(t.resolution||'')}</textarea></div>
     <div class="field"><label for="proofFile">Proof ${t.proof?'(photo, file or forwarded email)':'(optional)'}</label><input type="file" id="proofFile" multiple></div>
     <p class="note" id="resErr" hidden style="color:var(--hot)">Add a short note so future you (and your team) knows how this got resolved.</p>
-    <div class="actions"><button class="btn primary" data-act="confirmdone">Complete</button><button class="btn ghost" data-close="1">Not yet</button></div>`, 'complete', t.id);
+    <div class="actions"><button class="btn ok" data-act="confirmdone">Complete</button><button class="btn ghost" data-close="1">Not yet</button></div>`, 'complete', t.id);
 }
 function openDoneList(day){
   const items = S.log.filter(l => l.day === day);
-  const row = l => `<button class="gtask" ${l.taskId?`data-open="${l.taskId}"`:''}>${esc(l.title)}<span>${l.kind==='task'?'Task':l.kind==='step'?'Step · '+esc((byId(l.taskId)||{}).title||''):'Break'}</span></button>`;
+  const row = l => `<button class="trow" ${l.taskId?`data-open="${l.taskId}"`:''}><span class="tic">${l.kind==='break'?ICON.leaf:ICON.done}</span><span class="tt">${esc(l.title)}${l.kind==='step'?`<small>Step of ${esc((byId(l.taskId)||{}).title||'')}</small>`:''}</span><span></span></button>`;
   openSheet(`<h2>Done ${day===S.day?'today':'on '+DAYS[day]}</h2><p class="note">Tap a task or step to see its details, add notes, or uncheck something done by mistake.</p>
-    ${['task','step','break'].map(k => { const g = items.filter(l => l.kind === k); return g.length ? `<div class="sec"><h4>${k==='task'?'Tasks':k==='step'?'Steps':'Breaks'} · ${g.length}</h4>${g.map(row).join('')}</div>` : ''; }).join('') || '<p class="empty">Nothing yet. Your first check-off shows up here.</p>'}
+    ${['task','step','break'].map(k => { const g = items.filter(l => l.kind === k); return g.length ? `<div class="sec"><h4>${k==='task'?'Tasks':k==='step'?'Steps':'Breaks'} · ${g.length}</h4><div style="display:flex;flex-direction:column;gap:6px">${g.map(row).join('')}</div></div>` : ''; }).join('') || '<p class="empty">Nothing yet. Your first check-off shows up here.</p>'}
     <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'done');
 }
-function goalNode(g, depth){
-  const pct = Math.round(goalProgress(g.id)*100), kids = goalKids(g.id), tasks = goalTasks(g.id);
-  return `<details class="goal" open><summary><span class="gt">${esc(g.title)}</span><span class="bar thin"><i style="width:${pct}%"></i></span><span class="pct">${pct}%</span></summary>
-    <div class="gbody">${g.why?`<p class="note" style="margin:0 0 4px">Why: ${esc(g.why)}</p>`:''}
-    ${tasks.map(t => `<button class="gtask ${t.done?'isdone':''}" data-open="${t.id}">${esc(t.title)}<span>${t.done?'Done':stepsDone(t)+'/'+t.steps.length+' steps'}${t.cadence?' · '+esc(t.cadence.label):''}</span></button>`).join('')}
-    ${kids.map(k => goalNode(k, depth+1)).join('')}
-    <div class="actions" style="margin-top:6px" id="ga-${g.id}"><button class="btn small" data-act="addsub" data-goal="${g.id}">+ Sub-goal</button><button class="btn small" data-act="addgtask" data-goal="${g.id}">+ Task</button></div></div></details>`;
+
+/* Goals view */
+function taskRow(t){
+  const meta = [fmtDur(estOf(t)) + (t.cadence ? ' · ' + t.cadence.label : '')];
+  if (t.cadence && t.completions) meta.push(t.completions + ' done so far');
+  if (t.status === 'waiting') meta.push('Waiting on ' + t.waitingOn);
+  return `<button class="trow ${t.done?'isdone':''}" data-open="${t.id}"><span class="tic">${t.done?ICON.done:t.cadence?ICON.repeat:ICON.dot}</span>
+    <span class="tt">${esc(t.title)}<small>${esc(meta.join(' · '))}</small></span>${avatar(t.owner || 'me')}</button>`;
+}
+function subNode(g){
+  const pct = goalProgress(g.id), kids = goalKids(g.id), tasks = goalTasks(g.id);
+  return `<div class="gsub"><div class="grow"><span class="ring sm" style="--p:${pct.toFixed(3)}"></span><b>${esc(g.title)}</b>${g.horizon?`<span class="chip">${esc(horizonLabel(g))}</span>`:''}${g.role?avatar(g.role,true):''}<span class="pct">${Math.round(pct*100)}%</span></div>
+    <div class="gchildren">${tasks.map(taskRow).join('')}${kids.map(subNode).join('')}
+      <div class="gacts" id="ga-${g.id}"><button class="btn small" data-act="addsub" data-goal="${g.id}">+ Sub-goal</button><button class="btn small" data-act="addgtask" data-goal="${g.id}">+ Task</button></div></div></div>`;
+}
+function goalCard(g){
+  const pct = goalProgress(g.id), tm = goalTime(g), kids = goalKids(g.id), tasks = goalTasks(g.id);
+  const pace = tm ? (pct + .05 >= tm.frac ? '<span class="chip okc">On pace</span>' : '<span class="chip warn">A little behind. Today\'s routines catch you up</span>') : '';
+  const roles = new Set(); (function walk(id){ goalTasks(id).forEach(t => roles.add(t.owner || 'me')); goalKids(id).forEach(k => walk(k.id)); })(g.id);
+  return `<article class="gcard">
+    <div class="ghead"><span class="ring" style="--p:${pct.toFixed(3)}">${Math.round(pct*100)}%</span>
+      <div style="min-width:0"><h3 class="gtitle">${esc(g.title)}</h3><div class="gmeta">${tm ? `<span class="chip">${esc(horizonLabel(g))}</span><span class="chip">Day ${tm.dayN} of ${tm.total}</span>` : ''}${pace}${roles.size > 1 ? [...roles].map(r => avatar(r)).join('') : ''}</div></div></div>
+    ${g.why ? `<p class="why"><b>Why:</b> ${esc(g.why)}</p>` : ''}
+    ${tm ? `<div class="tline"><div class="bar"><i style="width:${Math.round(pct*100)}%"></i><span class="elapsed" style="left:${(tm.frac*100).toFixed(1)}%"></span></div>
+      <div class="legendrow"><span>Progress (green) vs time passed (line)</span><span>Ends ${tm.end}</span></div></div>` : ''}
+    <div class="gchildren">${tasks.map(taskRow).join('')}${kids.map(subNode).join('')}</div>
+    <div class="gacts" id="ga-${g.id}" style="margin-top:12px"><button class="btn small" data-act="addsub" data-goal="${g.id}">+ Sub-goal</button><button class="btn small" data-act="addgtask" data-goal="${g.id}">+ Task</button>
+      <button class="btn small" data-act="suggest" data-goal="${g.id}">Suggest routines (AI)</button>
+      ${kids.length ? `<button class="btn small" data-act="goalflow" data-goal="${g.id}">View flow</button>` : ''}
+      <button class="btn small ghost" data-act="savetpl" data-goal="${g.id}">Save as template</button></div>
+  </article>`;
+}
+function horizonInputs(prefix){
+  return `<input id="${prefix}N" class="inp" type="number" min="1" value="1" style="width:70px" aria-label="Time frame amount"><select id="${prefix}U" class="inp" style="width:auto" aria-label="Time frame unit"><option value="days">days</option><option value="weeks" selected>weeks</option><option value="months">months</option></select>`;
 }
 function openGoals(){
-  openSheet(`<h2>Goals</h2><p class="note">Goals can hold sub-goals as deep as you need. Progress rolls up from every task underneath.</p>
-    <div class="actions" style="margin-top:8px"><input id="newGoal" class="inp" placeholder="New goal, e.g. Launch the onboarding SOP" style="flex:1;min-width:0;width:auto"><button class="btn small primary" data-act="savegoal">Add goal</button></div>
-    <div class="sec">${goalKids(null).map(g => goalNode(g, 0)).join('')}</div>
-    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'goals');
+  openSheet(`<h2>Goals</h2><p class="note">Big goals get a time frame in days, weeks or months. The routines and tasks inside them use minutes and hours, so the long goal turns into something you can do today.</p>
+    <div class="actions" style="margin-top:8px"><input id="newGoal" class="inp" placeholder="New goal, e.g. Lose 15 pounds" style="flex:1;min-width:180px;width:auto">${horizonInputs('ng')}<button class="btn small primary" data-act="savegoal">Add goal</button></div>
+    <div class="sec">${goalKids(null).slice().reverse().map(goalCard).join('')}</div>
+    <div class="actions"><button class="btn" data-act="library">Browse the template library</button><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'goals', null, true);
 }
+
+/* Library + flow */
+function stageStatus(g){
+  const ts = []; (function walk(id){ goalTasks(id).forEach(t => ts.push(t)); goalKids(id).forEach(k => walk(k.id)); })(g.id);
+  if (!ts.length) return '';
+  if (ts.every(t => t.done)) return 'done';
+  if (ts.some(t => t.status === 'waiting')) return 'waiting';
+  if (ts.some(t => !isMine(t) && !t.done)) return 'others';
+  return 'active';
+}
+let flowStages = [];
+function flowHTML(stages){
+  const lanes = [...new Set(stages.map(s => s.role || 'me'))];
+  let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${stages.length}, 185px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
+  lanes.forEach((r, li) => { html += `<div class="laneband" style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}</div>`; });
+  stages.forEach((s, i) => {
+    const mins = s.tasks.reduce((a, t) => a + (t.est || 0), 0), routines = s.tasks.filter(t => t.cadence).length;
+    const stLabel = {done:'Done', active:'In progress', waiting:'Waiting', others:'With ' + roleOf(s.role).name}[s.status] || '';
+    html += `<div class="fnode st-${s.status || ''}" style="grid-row:${lanes.indexOf(s.role || 'me')+1};grid-column:${i+2}">
+      <span class="fm">Stage ${i+1}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
+      <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span></div>`;
+  });
+  html += `<svg class="flowsvg" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ahv" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg></div></div>
+    <div class="flowkey"><span><i></i>Next step, same owner</span><span><i class="h"></i>Hand-off to another person or team</span></div>`;
+  return html;
+}
+function drawFlow(){
+  const flow = document.querySelector('.flow'); if (!flow) return;
+  const stages = flowStages, svg = flow.querySelector('.flowsvg'), fr = flow.getBoundingClientRect();
+  svg.setAttribute('width', flow.scrollWidth); svg.setAttribute('height', flow.scrollHeight);
+  svg.querySelectorAll('path.link,path.handoff').forEach(n => n.remove());
+  const nodes = [...flow.querySelectorAll('.fnode')];
+  for (let i = 0; i < nodes.length - 1; i++){
+    const a = nodes[i].getBoundingClientRect(), b = nodes[i+1].getBoundingClientRect();
+    const x1 = a.right - fr.left, y1 = a.top + a.height/2 - fr.top, x2 = b.left - fr.left - 2, y2 = b.top + b.height/2 - fr.top;
+    const hand = (stages[i].role || 'me') !== (stages[i+1].role || 'me'), mx = (x1 + x2) / 2;
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+    p.setAttribute('class', hand ? 'handoff' : 'link'); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
+    svg.appendChild(p);
+  }
+}
+function openFlow(title, sub, stages, actions){
+  flowStages = stages;
+  openSheet(`<h2>${esc(title)}</h2><p class="note">${esc(sub)}</p>${flowHTML(stages)}<div class="actions">${actions||''}<div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'flow', null, true);
+  requestAnimationFrame(drawFlow);
+}
+function goalStages(g){
+  return goalKids(g.id).map(k => {
+    const ts = []; (function walk(id){ goalTasks(id).forEach(t => ts.push(t)); goalKids(id).forEach(x => walk(x.id)); })(k.id);
+    return {title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, status: stageStatus(k), tasks: ts.map(t => ({est:estOf(t), cadence:t.cadence}))};
+  });
+}
+function tplCard(tp){
+  const lanes = [...new Set(tp.stages.map(s => s.role))], tasks = tp.stages.reduce((a,s) => a + s.tasks.length, 0);
+  return `<div class="tpl"><span class="scope">${tp.scope === 'company' ? 'Company process' : 'My template'}</span><h3>${esc(tp.name)}</h3>
+    <p class="note" style="margin:0">${esc(tp.desc || '')}</p>
+    <div class="chips" style="margin:0"><span class="chip">${esc(horizonLabel(tp))}</span><span class="chip">${tp.stages.length} stages · ${tasks} tasks</span></div>
+    <div class="lanes">${lanes.map(r => avatar(r, true)).join('')}</div>
+    <div class="actions" style="margin-top:4px" id="tu-${tp.id}"><button class="btn small" data-act="tplflow" data-tpl="${tp.id}">Preview flow</button><button class="btn small primary" data-act="tpluse" data-tpl="${tp.id}">Use</button></div></div>`;
+}
+function openLibrary(){
+  const co = S.templates.filter(t => t.scope === 'company'), mine = S.templates.filter(t => t.scope !== 'company');
+  openSheet(`<h2>Template library</h2><p class="note">Company processes are shared by your organization and show who owns each stage. Your templates are ones you saved from your own goals. Using one creates the goal, its sub-goals and tasks. Your tasks go on your board, and teammates' stages show who you're waiting on.</p>
+    <div class="sec"><h4>Company processes (sample)</h4><div class="tplgrid">${co.map(tplCard).join('')}</div></div>
+    <div class="sec"><h4>My templates</h4><div class="tplgrid">${mine.map(tplCard).join('') || '<p class="note">Save any goal as a template from the Goals view.</p>'}</div></div>
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'library', null, true);
+}
+
 function openEvent(e){
   const rel = relatedTasks(e);
   openSheet(`<div class="crumb">${DAYS[e.day]} · ${fmt(e.start)}–${fmt(e.end)}</div><h2>${esc(e.title)}</h2>
@@ -892,7 +1171,7 @@ function openEvent(e){
       <li>Purpose: ${esc(e.desc.split('.')[0] || e.title)}.</li>
       ${rel.map(t => `<li>${esc(t.title)}: ${stepsDone(t)}/${t.steps.length} steps done${nextStep(t)?', next is "'+esc(nextStep(t).t)+'"':''}.</li>`).join('')}
       <li>Bring: open questions and any proof you've collected.</li></ul></div>
-      <div class="sec"><h4>Related tasks</h4>${rel.map(t => `<button class="gtask" data-open="${t.id}">${esc(t.title)}<span>${stepsDone(t)}/${t.steps.length}</span></button>`).join('') || '<p class="note">None found.</p>'}</div>
+      <div class="sec"><h4>Related tasks</h4><div style="display:flex;flex-direction:column;gap:6px">${rel.map(taskRow).join('') || '<p class="note">None found.</p>'}</div></div>
       <div class="sec"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="prepToggle" ${e.prep?'checked':''}> Add a 15-minute prep block before this meeting</label></div>`:''}
     <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'event');
   const pt = $('#prepToggle'); if (pt) pt.addEventListener('change', ev => { e.prep = ev.target.checked; render(); });
@@ -921,44 +1200,61 @@ function aiDone(title){
   if (/follow|check in|chase/.test(s)) return 'They confirmed it\'s done and sent proof';
   if (/agreement|contract/.test(s)) return 'Agreement sent and signed';
   if (/call|email|text/.test(s)) return 'Message sent and reply logged';
+  if (/log|track|weigh/.test(s)) return 'Logged for today';
   return 'The result exists and you can show it to someone';
 }
 function openAdd(goalId){
   const dayOpts = [...Array(7).keys()].filter(i => i >= S.day).map(i => `<option value="${i}">${i===S.day?'Today':DAYS[i]}</option>`).join('');
+  const procOpts = S.templates.map(tp => `<option value="p:${tp.id}">${esc(tp.name)} (${tp.scope==='company'?'company':'mine'}, ${esc(horizonLabel(tp))})</option>`).join('');
   openSheet(`<h2>New task</h2>
   <div class="field"><label for="fTitle">Goal (title)</label><input id="fTitle" placeholder="e.g. Follow up with Riverside on missing hours"></div>
-  <div class="grid2">
+  <div class="field"><label for="fTmpl">Start from a template</label><select id="fTmpl"><option value="">None</option>
+    <optgroup label="Task templates"><option value="followup">Follow up with someone</option><option value="billing">Missing-time billing correction (single task)</option><option value="agreement">Service agreement</option><option value="onboard">Nurse onboarding checklist</option></optgroup>
+    <optgroup label="Processes from the library (creates a whole goal)">${procOpts}</optgroup></select></div>
+  <div id="procNote" class="quote" hidden style="margin-bottom:10px"></div>
+  <div class="grid2" id="taskFields">
     <div class="field"><label for="fGoal">Part of goal</label><select id="fGoal">${goalOptions(goalId)}</select></div>
-    <div class="field"><label for="fTmpl">Start from a template</label><select id="fTmpl"><option value="">None</option><option value="followup">Follow up with someone</option><option value="billing">Missing-time billing correction</option><option value="agreement">Service agreement</option><option value="onboard">Nurse onboarding</option></select></div>
     <div class="field"><label for="fCtx">Area</label><select id="fCtx"><option value="work">Work</option><option value="home">Home</option></select></div>
-    <div class="field"><label for="fType">Schedule</label><select id="fType"><option value="due">One-off with a due date</option><option value="1">Routine: daily</option><option value="w">Routine: weekdays</option><option value="2">Routine: every 2 days</option><option value="3">Routine: every 3 days</option><option value="7">Routine: weekly</option></select></div>
+    <div class="field"><label for="fType">Schedule</label><select id="fType"><option value="due">One-off with a due date</option><option value="1">Routine: daily</option><option value="w">Routine: weekdays</option><option value="2">Routine: every 2 days</option><option value="3x">Routine: 3× a week</option><option value="3">Routine: every 3 days</option><option value="7">Routine: weekly</option></select></div>
     <div class="field"><label for="fDue">Due / first day</label><select id="fDue">${dayOpts}</select></div>
     <div class="field"><label for="fDiff">Difficulty (mental load)</label><select id="fDiff"><option value="1">Light</option><option value="2" selected>Medium</option><option value="3">Heavy (goes in your fresh hours)</option></select></div>
-    <div class="field"><label for="fSpan">Span</label><select id="fSpan">${Object.entries(SPANS).map(([k,v]) => `<option value="${k}" ${k==='standard'?'selected':''}>${v[0]} (~${v[1]>=60?v[1]/60+' hr':v[1]+' min'}${k==='marathon'?'+':''})</option>`).join('')}</select></div>
     <div class="field"><label for="fPrio">Priority</label><select id="fPrio"><option value="1">Low</option><option value="2" selected>Medium</option><option value="3">High</option><option value="4">Urgent</option></select></div>
-    <div class="field"><label for="fEst">Your estimate (min)</label><input id="fEst" type="number" min="5" step="5" placeholder="Leave blank for AI"></div>
+    <div class="field"><label>Your time estimate</label>${estInputs('fEst', null)}</div>
+    <div class="field"><label for="fDone">Done when…</label><input id="fDone" placeholder="Blank = AI suggests one"></div>
   </div>
-  <div class="field"><label for="fDone">Done when…</label><input id="fDone" placeholder="Leave blank and AI suggests one"></div>
-  <label style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><input type="checkbox" id="fSplit"> Split into chunks across the day</label>
-  <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="fProof" checked> Proof required to finish</label>
-  <div class="actions"><button class="btn primary" data-act="saveadd">Add and re-plan</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'add');
-  $('#fTmpl').addEventListener('change', ev => { const tp = TEMPLATES[ev.target.value]; if (!tp) return;
-    if (!$('#fTitle').value) $('#fTitle').value = tp.title; $('#fDiff').value = tp.diff; $('#fSpan').value = tp.span; $('#fDone').value = tp.doneWhen; if (tp.cadence) $('#fType').value = tp.cadence; $('#fTitle').focus(); });
+  <div id="taskChecks"><label style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><input type="checkbox" id="fSplit"> Split into chunks across the day</label>
+  <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="fProof" checked> Proof required to finish</label></div>
+  <div class="actions"><button class="btn primary" data-act="saveadd" id="saveAddBtn">Add and re-plan</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'add');
+  if (goalId){ let r = goalById(goalId); while (r.parent) r = goalById(r.parent); if (/weight|walk|run|5k|home|meal|pound/i.test(r.title)) $('#fCtx').value = 'home'; }
+  $('#fTmpl').addEventListener('change', ev => {
+    const v = ev.target.value, isProc = v.startsWith('p:');
+    $('#taskFields').hidden = isProc; $('#taskChecks').hidden = isProc; $('#procNote').hidden = !isProc;
+    $('#saveAddBtn').textContent = isProc ? 'Create goal from process' : 'Add and re-plan';
+    if (isProc){ const tp = S.templates.find(t => t.id === v.slice(2)); $('#fTitle').placeholder = 'Who or what is it for? e.g. Jordan Lee';
+      $('#procNote').innerHTML = `<b>${esc(tp.name)}</b> creates a ${esc(horizonLabel(tp))} goal with ${tp.stages.length} stages: ${tp.stages.map(s => esc(s.title) + ' (' + esc(roleOf(s.role).name) + ')').join(' → ')}.`; return; }
+    $('#fTitle').placeholder = 'e.g. Follow up with Riverside on missing hours';
+    const tp = TEMPLATES[v]; if (!tp) return;
+    if (!$('#fTitle').value) $('#fTitle').value = tp.title; $('#fDiff').value = tp.diff; $('#fDone').value = tp.doneWhen; if (tp.cadence) $('#fType').value = tp.cadence; $('#fTitle').focus(); });
   setTimeout(() => $('#fTitle') && $('#fTitle').focus(), 50);
 }
 function saveAdd(){
-  const title = $('#fTitle').value.trim(); if (!title){ $('#fTitle').focus(); return; }
-  const tmpl = TEMPLATES[$('#fTmpl').value], type = $('#fType').value, first = +$('#fDue').value;
-  const span = $('#fSpan').value, diff = +$('#fDiff').value, estIn = +$('#fEst').value || null;
-  const cadMap = {'1':{every:1,label:'Daily'}, w:{every:1,label:'Weekdays'}, '2':{every:2,label:'Every 2 days'}, '3':{every:3,label:'Every 3 days'}, '7':{every:7,label:'Weekly'}};
+  const v = $('#fTmpl').value, title = $('#fTitle').value.trim();
+  if (v.startsWith('p:')){ const tp = S.templates.find(t => t.id === v.slice(2)); const {root, created} = instantiate(tp, title); closeSheet(); render(); openGoals();
+    toast('Created: ' + root.title, created + ' tasks across ' + tp.stages.length + ' stages. Yours are on your board.'); return; }
+  if (!title){ $('#fTitle').focus(); return; }
+  const tmpl = TEMPLATES[v], type = $('#fType').value, first = +$('#fDue').value;
+  const diff = +$('#fDiff').value, estIn = readEst('fEst');
+  const cadMap = {'1':{every:1,label:'Daily'}, w:{every:1,label:'Weekdays'}, '2':{every:2,label:'Every 2 days'}, '3x':{every:2,label:'3× a week'}, '3':{every:3,label:'Every 3 days'}, '7':{every:7,label:'Weekly'}};
   const steps = (tmpl ? tmpl.steps : aiSteps(title)).map(([t,type]) => ({t, type}));
-  const t = {id:'n' + (S.nextId++), title, ctx:$('#fCtx').value, diff, span, est:estIn, aiEst:estIn?null:Math.round(SPANS[span][1] * (diff===3?1.2:1)), aiRuns:0,
+  const aiGuess = tmpl ? SPANS[tmpl.span][1] : (diff === 3 ? 90 : diff === 2 ? 45 : 20);
+  const est = estIn ?? aiGuess;
+  const t = {id:newId('n'), title, ctx:$('#fCtx').value, diff, span: spanFor(est), est:estIn, aiEst:estIn?null:aiGuess, aiRuns:0,
     prio:+$('#fPrio').value, due: type==='due' ? first : null, cadence: type==='due' ? null : cadMap[type], day: type==='due' ? S.day : first, goalId: $('#fGoal').value || null,
-    source: tmpl ? 'template' : 'manual', doneWhen: $('#fDone').value.trim() || aiDone(title), proof: $('#fProof').checked, split: $('#fSplit').checked || span==='marathon', steps, notes:''};
+    source: tmpl ? 'template' : 'manual', doneWhen: $('#fDone').value.trim() || aiDone(title), proof: $('#fProof').checked, split: $('#fSplit').checked || est >= 240, steps, notes:''};
   if (type === 'due' && first > S.day && diff < 3 && t.prio < 3) t.day = first;
   S.tasks.push(t); closeSheet(); render();
   const el = document.querySelector(`.card[data-id="${t.id}"]`); if (el){ el.classList.add('pop'); el.scrollIntoView({block:'nearest', behavior:'smooth'}); }
-  toast('Added: ' + title, (estIn ? '' : 'AI estimated it and ') + 'Cueue re-planned ' + (t.day===S.day?'today':DAYS[t.day]) + '.');
+  toast('Added: ' + title, (estIn ? '' : 'AI estimated ' + fmtDur(aiGuess) + ' and ') + 'Cueue re-planned ' + (t.day===S.day?'today':DAYS[t.day]) + '.');
 }
 function openSettings(){
   const st = S.settings, hh = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
@@ -968,10 +1264,10 @@ function openSettings(){
     ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
     ${cb('sLock', st.breakLock, 'Break lock: pause check-offs until I take a due break')}</div>
   <div class="sec"><h4>Cues and feedback</h4>
-    <div class="field"><label for="sCue">Attention cue intensity: ${['Off','Gentle','Medium','Strong'][st.cue]}</label><input id="sCue" type="range" min="0" max="3" value="${st.cue}"></div>
-    ${cb('sFlare', st.flare, 'Lens flare on urgent cards')}
+    <div class="field"><label for="sCue">Shake intensity: ${['Off','Gentle','Medium','Strong'][st.cue]}</label><input id="sCue" type="range" min="0" max="3" value="${st.cue}"></div>
+    ${cb('sEdge', st.edge, 'Edge light: a glow runs along the top of each card. It gets faster, brighter and redder as urgency rises')}
     ${cb('sSound', st.sound, 'Sounds')}${cb('sHap', st.haptics, 'Vibration (on phones that support it)')}
-    ${cb('sReduce', st.reduce, 'Reduce motion (no shaking, flare or confetti)')}${cb('sPies', st.pies, 'Pie timers on cards')}${cb('sTimes', st.times, 'Show approximate start times')}</div>
+    ${cb('sReduce', st.reduce, 'Reduce motion (no shaking, edge light or confetti)')}${cb('sPies', st.pies, 'Pie timers on cards')}${cb('sTimes', st.times, 'Show approximate start times')}</div>
   <div class="sec"><h4>What the colors mean</h4><div class="legend">
     <span class="sw" style="background:color-mix(in srgb,var(--accent) 12%,var(--surface));border-color:var(--accent)"></span><span>Now: what you're working on</span>
     <span class="sw" style="background:color-mix(in srgb,var(--warn) 18%,var(--surface))"></span><span>Due today: needs attention soon</span>
@@ -990,8 +1286,8 @@ function openSettings(){
   <div class="actions"><button class="btn primary" data-close="1">Done</button></div>`, 'settings');
   const toMin = v => { const [h,m] = v.split(':').map(Number); return h*60+m; };
   const bind = (id, fn, evn='change') => $(id).addEventListener(evn, ev => { fn(ev.target); render(); });
-  bind('#sCue', el => { st.cue = +el.value; el.previousElementSibling.textContent = 'Attention cue intensity: ' + ['Off','Gentle','Medium','Strong'][st.cue]; }, 'input');
-  bind('#sAuto', el => st.autoNext = el.checked); bind('#sLock', el => st.breakLock = el.checked); bind('#sFlare', el => st.flare = el.checked);
+  bind('#sCue', el => { st.cue = +el.value; el.previousElementSibling.textContent = 'Shake intensity: ' + ['Off','Gentle','Medium','Strong'][st.cue]; }, 'input');
+  bind('#sAuto', el => st.autoNext = el.checked); bind('#sLock', el => st.breakLock = el.checked); bind('#sEdge', el => st.edge = el.checked);
   bind('#sSound', el => st.sound = el.checked); bind('#sHap', el => st.haptics = el.checked); bind('#sReduce', el => st.reduce = el.checked);
   bind('#sPies', el => st.pies = el.checked); bind('#sTimes', el => st.times = el.checked); bind('#sPrep', el => st.prepAll = el.checked);
   bind('#sFs', el => st.freshStart = toMin(el.value)); bind('#sFe', el => st.freshEnd = toMin(el.value));
@@ -1001,11 +1297,12 @@ function openSettings(){
 
 /* ---------- events ---------- */
 document.addEventListener('click', ev => {
-  const el = ev.target.closest('[data-check],[data-open],[data-act],[data-ev],[data-brk],[data-donelist],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
+  if (ev.target.closest('.nextck')) return; // step checkboxes on cards are handled by the change event
+  const el = ev.target.closest('[data-finish],[data-open],[data-act],[data-ev],[data-brk],[data-donelist],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
   if (!el) return;
   const root = $('#sheetRoot'), sheetTask = byId(root.dataset.task);
   if (el.dataset.close !== undefined){ if (ev.target === el || el.tagName === 'BUTTON') closeSheet(); return; }
-  if (el.dataset.check){ ev.stopPropagation(); checkStep(byId(el.dataset.check), null, el); return; }
+  if (el.dataset.finish){ ev.stopPropagation(); openComplete(byId(el.dataset.finish)); return; }
   if (el.dataset.open){ const t = byId(el.dataset.open); if (t) openTask(t); return; }
   if (el.dataset.ev){ openEvent(S.events.find(e => e.id === el.dataset.ev)); return; }
   if (el.dataset.brk){ startBreak(el.dataset.brk); return; }
@@ -1015,7 +1312,7 @@ document.addEventListener('click', ev => {
   if (el.dataset.speed){ S.speed = +el.dataset.speed; render(); return; }
   if (el.dataset.nav){ S.viewDay = Math.max(0, Math.min(6, S.viewDay + +el.dataset.nav)); render(); return; }
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
-  const a = el.dataset.act, cur = byId(S.currentId);
+  const a = el.dataset.act, cur = byId(S.currentId), gid = el.dataset.goal, tpl = S.templates.find(t => t.id === el.dataset.tpl);
   switch (a){
     case 'startday': closeSheet(); startNext(); break;
     case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
@@ -1024,12 +1321,12 @@ document.addEventListener('click', ev => {
     case 'resume': S.paused = false; render(); break;
     case 'more15': if (cur){ cur.est = estOf(cur) + 15; cur.warned1 = false; cur.warned2 = false; render(); } break;
     case 'finish': if (cur) openComplete(cur); break;
-    case 'complete': openComplete(sheetTask); break;
-    case 'reopen': sheetTask.done = false; sheetTask.day = S.day; const li = S.log.map(l => l.taskId === sheetTask.id && l.kind === 'task').lastIndexOf(true); if (li > -1) S.log.splice(li,1); openTask(sheetTask); render(); toast('Task reopened', 'It\'s back on today\'s board.'); break;
+    case 'reopen': { sheetTask.done = false; sheetTask.day = S.day; const li = S.log.map(l => l.taskId === sheetTask.id && l.kind === 'task').lastIndexOf(true); if (li > -1) S.log.splice(li,1); openTask(sheetTask); render(); toast('Task reopened', 'It\'s back on today\'s board.'); break; }
     case 'confirmdone': {
       const note = $('#resNote').value.trim(), files = [...$('#proofFile').files].map(f => f.name);
       if (sheetTask.proof && note.length < 3){ $('#resErr').hidden = false; $('#resNote').focus(); return; }
       completeTask(sheetTask, note, files); break; }
+    case 'othersdone': closeSheet(); othersDone(byId(el.dataset.task)); break;
     case 'brkpick': openBreakPicker(); break;
     case 'endbrk': endBreak(); break;
     case 'brkmore': if (S.brk){ S.brk.min += 5; S.brk.ready = false; render(); } break;
@@ -1046,22 +1343,34 @@ document.addEventListener('click', ev => {
     case 'aisteps': { const have = new Set(sheetTask.steps.map(s => s.t)); aiSteps(sheetTask.title).forEach(([t,type]) => { if (!have.has(t)) sheetTask.steps.push({t, type}); }); openTask(sheetTask); render(); toast('Suggested steps added', 'Edit or remove any that don\'t fit.'); break; }
     case 'saveadd': saveAdd(); break;
     case 'goals': openGoals(); break;
+    case 'library': openLibrary(); break;
     case 'savegoal': case 'savesub': {
-      const inp = a === 'savegoal' ? $('#newGoal') : $('#newSub'); const v = inp.value.trim(); if (!v){ inp.focus(); return; }
-      S.goals.push({id:'g' + (S.nextId++), title:v, parent: a === 'savesub' ? inp.dataset.parent : null});
-      openGoals(); save(); toast(a === 'savegoal' ? 'Goal added' : 'Sub-goal added', 'Add tasks to it with "+ Task".'); break; }
+      const isGoal = a === 'savegoal', inp = isGoal ? $('#newGoal') : $('#newSub'), v = inp.value.trim(); if (!v){ inp.focus(); return; }
+      const pre = isGoal ? 'ng' : 'ns', n = Math.max(1, +$('#'+pre+'N').value || 1), unit = $('#'+pre+'U').value;
+      S.goals.push({id:newId('g'), title:v, parent: isGoal ? null : inp.dataset.parent, horizon:{n, unit}, start:S.day});
+      openGoals(); save(); toast(isGoal ? 'Goal added: ' + n + ' ' + unit : 'Sub-goal added', isGoal ? 'Try "Suggest routines" to break it into daily steps.' : 'Add tasks to it with "+ Task".'); break; }
     case 'addsub': {
       document.querySelectorAll('.subrow').forEach(n => n.remove());
-      const row = document.createElement('div'); row.className = 'actions subrow';
-      row.innerHTML = `<input id="newSub" class="inp" data-parent="${el.dataset.goal}" placeholder="Sub-goal of ${esc(goalById(el.dataset.goal).title)}" style="flex:1;min-width:0;width:auto"><button class="btn small primary" data-act="savesub">Add</button>`;
-      $('#ga-' + el.dataset.goal).after(row); $('#newSub').focus(); break; }
-    case 'addgtask': openAdd(el.dataset.goal); break;
+      const row = document.createElement('div'); row.className = 'actions subrow'; row.style.marginTop = '6px';
+      row.innerHTML = `<input id="newSub" class="inp" data-parent="${gid}" placeholder="Sub-goal of ${esc(goalById(gid).title)}" style="flex:1;min-width:160px;width:auto">${horizonInputs('ns')}<button class="btn small primary" data-act="savesub">Add</button>`;
+      $('#ga-' + gid).after(row); $('#newSub').focus(); break; }
+    case 'addgtask': openAdd(gid); break;
+    case 'suggest': { const g = goalById(gid), n = suggestRoutines(g); render(); openGoals(); toast('Added ' + n + ' routine sub-goals to ' + g.title, 'Each one has a small daily or weekly task on your board.'); break; }
+    case 'savetpl': { const tp = templateFromGoal(goalById(gid)); save(); toast('Saved as a template: ' + tp.name, 'Find it under My templates in the Library.'); break; }
+    case 'goalflow': { const g = goalById(gid); openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it. Dashed arrows are hand-offs.', goalStages(g), `<button class="btn" data-act="goals">Back to goals</button>`); break; }
+    case 'tplflow': openFlow(tpl.name, (tpl.scope==='company'?'Company process':'My template') + ' · ' + horizonLabel(tpl) + '. ' + (tpl.desc||''), tpl.stages.map(s => ({...s})), `<button class="btn" data-act="library">Back to library</button><button class="btn primary" data-act="tpluse" data-tpl="${tpl.id}">Use this process</button>`); break;
+    case 'tpluse': {
+      if ($('#tplFor')){ const {root, created} = instantiate(tpl, $('#tplFor').value.trim()); closeSheet(); render(); openGoals(); toast('Created: ' + root.title, created + ' tasks across ' + tpl.stages.length + ' stages. Yours are on your board.'); break; }
+      const host = $('#tu-' + tpl.id) || el.closest('.actions');
+      const row = document.createElement('div'); row.className = 'actions'; row.style.marginTop = '6px';
+      row.innerHTML = `<input id="tplFor" class="inp" placeholder="${tpl.scope==='company'?'Who is it for? e.g. Jordan Lee':'Optional name, e.g. by spring'}" style="flex:1;min-width:150px;width:auto"><button class="btn small primary" data-act="tpluse" data-tpl="${tpl.id}">Create goal</button>`;
+      host.after(row); $('#tplFor').focus(); break; }
     case 'pushlater': {
       const {overflow} = schedule(S.day); let n = 0;
       overflow.filter(t => t.due == null || t.due > S.day).sort((a,b) => (b.due ?? 99) - (a.due ?? 99)).forEach(t => { if (S.day < 6){ t.day = S.day + 1; n++; } });
       render(); toast(n ? 'Moved ' + n + ' task' + (n>1?'s':'') + ' to tomorrow' : 'Nothing could move', n ? 'Tasks due soonest stayed on today.' : 'Everything left is due today.'); break; }
     case 'breakdown': toast('Tip', 'Add a smaller first step below, something you can do in 5 minutes.'); $('#newStep') && $('#newStep').focus(); break;
-    case 'delegate': toast('Hand-offs come with team workspaces', 'Phase 6 in the roadmap.'); break;
+    case 'delegate': toast('Hand-offs come with team workspaces', 'Phase 6 in the roadmap. Company processes in the Library preview how it works.'); break;
     case 'resched': sheetTask.day = Math.min(6, S.day + 2); sheetTask.rolled = 0; closeSheet(); render(); toast('Moved to ' + DAYS[sheetTask.day], 'Rollover count reset.'); break;
     case 'drop': S.tasks = S.tasks.filter(t => t !== sheetTask); if (S.currentId === sheetTask.id) S.currentId = null; closeSheet(); render(); toast('Dropped', 'Letting go is a valid choice.'); break;
   }
@@ -1071,7 +1380,7 @@ document.addEventListener('change', ev => {
   const t = byId(el.dataset.task), i = +el.dataset.step;
   if (el.checked) checkStep(t, i, el); else uncheckStep(t, i);
   const root = $('#sheetRoot');
-  if (root.dataset.kind === 'task' && root.dataset.task === t.id && (nextStep(t) || !el.checked || locked())) openTask(t);
+  if (root.dataset.kind === 'task' && root.dataset.task === t.id) openTask(t);
 });
 document.addEventListener('keydown', ev => {
   if (ev.key === 'Escape') closeSheet();
@@ -1082,11 +1391,12 @@ document.addEventListener('keydown', ev => {
 });
 $('#addBtn').onclick = () => openAdd(null);
 $('#goalsBtn').onclick = openGoals;
+$('#libBtn').onclick = openLibrary;
 $('#settingsBtn').onclick = openSettings;
 $('#playBtn').onclick = () => { S.running = !S.running; render(); };
 $('#endDayBtn').onclick = endDay;
 $('#resetBtn').onclick = () => { S = seed(); render.scrolled = false; closeSheet(); render(); toast('Demo reset'); };
-let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(render, 150); });
+let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { render(); if ($('#sheetRoot').dataset.kind === 'flow') drawFlow(); }, 150); });
 
 render();
 requestAnimationFrame(tick);

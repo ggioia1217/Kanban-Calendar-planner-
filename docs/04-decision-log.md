@@ -22,7 +22,7 @@
 | D17 | Offline-capable; AI queues when offline |
 | D18 | Subscription for AI; one-time purchase for bring-your-own-AI |
 | D19 | Team/org features last (Phase 6), but data model multi-user from day one |
-| D20 | Urgent cards get a lens flare (glint, streak and ghost rings) in addition to the periodic shake (both adjustable) |
+| D20 | Urgency cue = **edge light**: a glow travels each visible card's top edge left to right, brightest at the center, fading at the right; faster, thicker and redder as urgency rises (plus the periodic shake) |
 | D21 | Card color = what it needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey dashed); a dot still shows Work/Home |
 | D22 | Breaks are timed items with options (water, bathroom, meditation, yoga, walk, social, reward); optional **break lock** pauses check-offs until a due break is taken |
 | D23 | Heavy task completion triggers a reward break; working past the break interval triggers a break |
@@ -30,6 +30,12 @@
 | D25 | Current task gets an expanded Now card (goal path, pie, done-when, next steps, notes, pause/break/switch) |
 | D26 | "Start my day" mode: first task starts its timer; finishing a task auto-starts the next (toggle) |
 | D27 | Goals view: unlimited nested sub-goals, progress rolls up from tasks, add tasks directly under any goal |
+| D28 | No separate "check next step" button: step checkboxes only (also on the card itself). A **Complete** button appears once all steps are checked, to verify the task is done |
+| D29 | Goals have time frames in **days / weeks / months**; routines and tasks inside use **minutes / hours**. Goal cards show progress vs. time passed and "Day X of Y" |
+| D30 | Routine progress toward a goal = completions vs. how many times the routine should happen in the goal's time frame |
+| D31 | "Suggest routines (AI)" breaks a long goal (e.g. weight loss) into routine sub-goals with small daily/weekly tasks |
+| D32 | **Template library**: company processes (shared, role-owned stages) and personal templates (saved from any goal). Usable from Add task or the Library |
+| D33 | Company processes render as a **swimlane flow** (lanes = people/teams, dashed arrows = hand-offs). Using one creates the goal tree; my stages go on my board, stages after a teammate's wait until that stage is done |
 
 ## Open
 | # | Question |
