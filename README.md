@@ -10,4 +10,4 @@ progress.
 3. [Roadmap, tech stack & App Store path](docs/03-roadmap-and-publishing.md)
 4. [Decision log & open questions](docs/04-decision-log.md)
 
-Status: planning (Phase 0 — prototype next).
+Status: Phase 0 — clickable prototype in [`prototype/index.html`](prototype/index.html).

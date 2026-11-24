@@ -27,7 +27,7 @@
 | # | Question |
 |---|---|
 | O1 | Final name for "Span" |
-| O2 | App name (see suggestions in chat / README) |
+| O2 | App name: working name **Cueue** (Cue, Kairo taken; Day One conflicts with the journaling app). Trademark check pending |
 | O3 | Rollover prompt threshold (start at 3) — tune after real use |
 | O4 | Exact cue escalation levels and defaults — tune in prototype |
 | O5 | Exact re-plan behavior when the current task runs long — test in prototype |
