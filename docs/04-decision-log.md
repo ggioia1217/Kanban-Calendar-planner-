@@ -44,6 +44,9 @@
 | D39 | **Org chart and job levels** (Admin, Manager, Team lead, Member). Anyone who manages people can create company flows. The flow owner controls order, owners and hand-offs; departments edit the tasks in their own stages |
 | D40 | **CRM**: contacts (candidates, vendors, clients) and their owners. An "Account owner (CRM)" lane assigns that stage to the contact's owner when a flow starts |
 | D41 | Family flows use the same builder, with lanes for family members |
+| D42 | **Branching flows**: one stage can start several stages at once (fan-out), and a stage can wait until all of its prerequisite stages are done (fan-in). Example: Offer approved starts Recruiting, Compliance, HR and Payroll in parallel; Orientation waits for all four |
+| D43 | Flow diagram columns = how far along the chain a stage is, so parallel stages line up in the same column marked "in parallel" |
+| D44 | Builder: "+ Next" on a stage, dashed boxes in every lane, and "When this is done, also start a stage for…" all add stages after the selected one. "Starts when these are done" sets what a stage waits for (loops are prevented) |
 
 ## Open
 | # | Question |

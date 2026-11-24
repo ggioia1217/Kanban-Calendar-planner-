@@ -283,7 +283,8 @@ a{color:var(--accent)}
 .flow{position:relative;display:grid;gap:0;min-width:max-content;padding:10px 14px 10px 0}
 .lane{display:flex;align-items:center;gap:6px;padding:10px 12px;font-size:13px;font-weight:700;position:sticky;left:0;z-index:2;background:var(--surface-2);border-right:1px solid var(--line)}
 .laneband{border-bottom:1px dashed var(--line);z-index:0}
-.fnode{position:relative;z-index:2;margin:10px 20px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:9px 11px;font-size:13px;display:flex;flex-direction:column;gap:4px;align-self:center}
+.fcell{position:relative;z-index:2;margin:10px 18px;display:flex;flex-direction:column;gap:8px;align-self:center}
+.fnode{position:relative;z-index:2;margin:0;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:9px 11px;font-size:13px;display:flex;flex-direction:column;gap:4px;align-self:center}
 .fnode b{font-size:14px;line-height:1.2}
 .fnode .fm{color:var(--muted);font-size:12px}
 .fnode.st-done{border-color:var(--ok)}
@@ -312,6 +313,10 @@ a{color:var(--accent)}
 .fnode.ghost{border-style:dashed;background:transparent;color:var(--muted);align-items:center;justify-content:center;min-height:56px;cursor:pointer;font-weight:600}
 .fnode.ghost:hover{border-color:var(--accent);color:var(--accent)}
 .fnode .ft{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.depgrid{display:flex;flex-wrap:wrap;gap:6px}
+.dep{display:inline-flex;gap:6px;align-items:center;white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;background:var(--surface-2);cursor:pointer}
+.dep small{color:var(--muted)}
+.dep:has(input:checked){border-color:var(--violet);background:color-mix(in srgb,var(--violet) 10%,var(--surface))}
 .stageed{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;background:var(--surface)}
 .handoff-note{font-size:13.5px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--violet) 10%,var(--surface));margin:6px 0 10px}
 .btask{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);margin-bottom:6px;font-size:14px}
@@ -400,7 +405,7 @@ const BREAKS = [
   {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'}
 ];
 const ROLES = {
-  me:{name:'You', c:'--accent', group:'Team'}, recruiter:{name:'Recruiting', c:'--home', group:'Team'}, cred:{name:'Credentialing', c:'--warn', group:'Team'},
+  me:{name:'You', c:'--accent', group:'Team'}, recruiter:{name:'Recruiting', c:'--home', group:'Team'}, cred:{name:'Compliance', c:'--warn', group:'Team'},
   hr:{name:'HR', c:'--work', group:'Team'}, payroll:{name:'Payroll', c:'--hot', group:'Team'}, ar:{name:'Billing (AR)', c:'--rest', group:'Team'},
   crmowner:{name:'Account owner (CRM)', c:'--violet', group:'From the CRM'}, vendor:{name:'Vendor', c:'--violet', group:'External'},
   partner:{name:'Partner', c:'--home', group:'Family'}, kids:{name:'Kids', c:'--warn', group:'Family'}
@@ -423,13 +428,14 @@ const ICON = {
 /* ---------- sample data ---------- */
 function seedTemplates(){
   return [
-    {id:'tp1', scope:'company', owner:'p-morgan', name:'Nurse onboarding', desc:'From accepted offer to first shift. Each team owns its stage and hands off to the next.', horizon:{n:3,unit:'weeks'}, ctx:'work', stages:[
-      {title:'Offer accepted', role:'recruiter', tasks:[{title:'Send and collect the offer packet', est:30, steps:['Send offer letter','Collect signed offer']}]},
-      {title:'Credentialing', role:'cred', tasks:[{title:'Verify license and certifications', est:45, steps:['Collect RN license copy','Verify on the state board site','Verify BLS card']},{title:'Collect health records', est:30, steps:['TB test result','Immunization records']}]},
-      {title:'Background check', role:'hr', tasks:[{title:'Run background check', est:20, steps:['Submit vendor form','Save confirmation number']}]},
-      {title:'Payroll setup', role:'payroll', tasks:[{title:'I-9 and direct deposit', est:30, steps:['Verify I-9 documents','Enter direct deposit']}]},
-      {title:'Orientation', role:'me', tasks:[{title:'Schedule orientation', est:20, steps:['Pick a date with the unit manager','Send the calendar invite']},{title:'Send welcome packet', est:30, steps:['Fill in the welcome letter','Add the shift schedule','Email the packet']}]},
-      {title:'First-shift check-in', role:'me', tasks:[{title:'Check in after the first shift', est:15, steps:['Call the nurse','Log feedback']}]}
+    {id:'tp1', scope:'company', owner:'p-morgan', name:'Nurse onboarding', desc:'One approved offer starts four teams at once. Orientation waits until all of them are done.', horizon:{n:3,unit:'weeks'}, ctx:'work', stages:[
+      {id:'offer', after:[], title:'Offer approved', role:'recruiter', tasks:[{title:'Get the offer approved and signed', est:30, steps:['Send the offer letter','Collect the signed offer']}]},
+      {id:'reach', after:['offer'], title:'Welcome the nurse', role:'recruiter', tasks:[{title:'Call the nurse with next steps', est:20, steps:['Congratulate them','Explain what happens next','Confirm the start date']}]},
+      {id:'comp', after:['offer'], title:'Compliance packet', role:'cred', tasks:[{title:'Build and assign the compliance packet', est:45, steps:['Collect RN license copy','Request TB test and immunizations','Assign required trainings']}]},
+      {id:'hrsys', after:['offer'], title:'HR system setup', role:'hr', tasks:[{title:'Create the employee record', est:30, steps:['Enter personal details','Run the background check','Create system logins']}]},
+      {id:'pay', after:['offer'], title:'Payroll setup', role:'payroll', tasks:[{title:'Set up payroll', est:30, steps:['Verify I-9 documents','Enter direct deposit','Assign the pay rate']}]},
+      {id:'orient', after:['reach','comp','hrsys','pay'], title:'Orientation', role:'me', tasks:[{title:'Schedule orientation', est:20, steps:['Pick a date with the unit manager','Send the calendar invite']},{title:'Send welcome packet', est:30, steps:['Fill in the welcome letter','Add the shift schedule','Email the packet']}]},
+      {id:'first', after:['orient'], title:'First-shift check-in', role:'me', tasks:[{title:'Check in after the first shift', est:15, steps:['Call the nurse','Log feedback']}]}
     ]},
     {id:'tp2', scope:'company', owner:'me', name:'Missing-time billing correction', desc:'Get missing hours corrected with proof so AR can bill.', horizon:{n:1,unit:'weeks'}, ctx:'work', stages:[
       {title:'Identify the gap', role:'ar', tasks:[{title:'Flag missing hours', est:15, steps:['Run the missing-time report','Send the list to the account owner']}]},
@@ -445,10 +451,10 @@ function seedTemplates(){
       {title:'Plan ahead', role:'me', horizon:{n:3,unit:'months'}, tasks:[{title:'Sunday meal prep', est:90, cadence:7, cadLabel:'Weekly', steps:['Plan 5 meals','Shop','Prep and portion']}]}
     ]},
     {id:'tp4', scope:'family', owner:'me', name:'Sunday family reset', desc:'Everyone does their part so the week starts calm.', horizon:{n:1,unit:'days'}, ctx:'home', stages:[
-      {title:'Tidy common rooms', role:'kids', tasks:[{title:'Pick up toys and shoes', est:15, steps:['Living room','Hallway']}]},
-      {title:'Laundry and linens', role:'partner', tasks:[{title:'Wash and fold towels', est:45, steps:['Wash','Dry','Fold']}]},
-      {title:'Plan the week', role:'me', tasks:[{title:'Meal plan and calendar check', est:30, steps:['Check the family calendar','Pick 5 dinners','Write the grocery list']}]},
-      {title:'Grocery order', role:'partner', tasks:[{title:'Place the grocery order', est:20, steps:['Use the list','Pick a delivery slot']}]}
+      {id:'tidy', after:[], title:'Tidy common rooms', role:'kids', tasks:[{title:'Pick up toys and shoes', est:15, steps:['Living room','Hallway']}]},
+      {id:'laundry', after:[], title:'Laundry and linens', role:'partner', tasks:[{title:'Wash and fold towels', est:45, steps:['Wash','Dry','Fold']}]},
+      {id:'plan', after:['tidy','laundry'], title:'Plan the week', role:'me', tasks:[{title:'Meal plan and calendar check', est:30, steps:['Check the family calendar','Pick 5 dinners','Write the grocery list']}]},
+      {id:'grocery', after:['plan'], title:'Grocery order', role:'partner', tasks:[{title:'Place the grocery order', est:20, steps:['Use the list','Pick a delivery slot']}]}
     ]}
   ];
 }
@@ -460,7 +466,7 @@ function seedOrg(){
     {id:'p-casey', name:'Casey Nguyen', title:'Coordinator', level:'member', role:'me', mgr:'p-you'},
     {id:'p-riley', name:'Riley Brooks', title:'Coordinator', level:'member', role:'me', mgr:'p-you'},
     {id:'p-sam', name:'Sam Ortiz', title:'Recruiting Lead', level:'lead', role:'recruiter', mgr:'p-morgan'},
-    {id:'p-taylor', name:'Taylor Reed', title:'Credentialing Lead', level:'lead', role:'cred', mgr:'p-morgan'},
+    {id:'p-taylor', name:'Taylor Reed', title:'Compliance Lead', level:'lead', role:'cred', mgr:'p-morgan'},
     {id:'p-pat', name:'Pat Kim', title:'HR Manager', level:'manager', role:'hr', mgr:'p-alex'},
     {id:'p-jamie', name:'Jamie Fox', title:'HR Specialist', level:'member', role:'hr', mgr:'p-pat'},
     {id:'p-lee', name:'Lee Park', title:'Payroll Manager', level:'manager', role:'payroll', mgr:'p-alex'},
@@ -559,11 +565,17 @@ function seed(){
          {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'},{title:'Break: Walk', day:0, kind:'break'}]
   };
 }
-const STORE = 'cueue-proto-v5';
+const STORE = 'cueue-proto-v6';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
 if (!S.tasks || !S.goals || !S.templates || !S.org) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
+const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
+function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
+  tp.stages.forEach((st, i, a) => { if (!st.id) st.id = newSid(); if (!st.after) st.after = i ? [a[i-1].id] : []; });
+  return tp;
+}
+S.templates.forEach(ensureStageIds);
 
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
@@ -964,12 +976,11 @@ function startNext(){
   if (up){ S.dayMode = true; startTask(up); }
   else { S.dayMode = false; confetti(innerWidth/2, innerHeight*.4, 220, 10); chime(true); toast('That\'s everything for today', 'You cleared the board.'); render(); }
 }
-function nextStage(t){
-  const g = goalById(t.goalId); if (!g || !g.parent || !g.role) return null;
-  const sibs = goalKids(g.parent), n = sibs[sibs.indexOf(g) + 1];
-  return n && n.role ? n : null;
+function nextStages(t){
+  const g = goalById(t.goalId); if (!g || !g.parent) return [];
+  return goalKids(g.parent).filter(x => (x.after || []).includes(g.id));
 }
-function completeTask(t, note, files, handoffTask){
+function completeTask(t, note, files, handoffTask, handoffStage){
   t.completions = (t.completions||0) + 1;
   t.resolution = note; t.proofFiles = files;
   S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task'});
@@ -980,9 +991,9 @@ function completeTask(t, note, files, handoffTask){
   const m = MILESTONES.find(x => x === t.completions), ahead = t.ahead != null && !t.cadence;
   if (ahead){ stars(170); tone([523.25,659.25,783.99,1046.5,1318.5,1568], .07, .12); cue(2); }
   else { confetti(innerWidth/2, innerHeight*.45, m ? 260 : 140, m ? 11 : 8); chime(true); cue(2); }
-  if (handoffTask){ const nx = nextStage(t), g = goalById(t.goalId);
+  if (handoffTask && handoffStage){ const nx = goalById(handoffStage);
     S.tasks.push({id:newId('n'), title:handoffTask, ctx:t.ctx, diff:1, span:'quick', est:15, prio:2, owner:nx.role, goalId:nx.id, steps:[{t:handoffTask}],
-      doneWhen:aiDone(handoffTask), proof:false, source:'handoff', status:'waiting', waitingOn:roleOf(g.role).name + ': ' + g.title, waitStage:g.id, day:null,
+      doneWhen:aiDone(handoffTask), proof:false, source:'handoff', status:'waiting', waitStages:[...(nx.after || [])], waitingOn:waitText(nx.after || []), day:null,
       notes:'Added by You when completing "' + t.title + '".'}); }
   if (t.cadence){
     let nd = t.day + t.cadence.every; if (t.cadence.label === 'Weekdays') while (nd % 7 >= 5) nd++;
@@ -995,27 +1006,37 @@ function completeTask(t, note, files, handoffTask){
     if (ahead){ S.aheadCount = (S.aheadCount||0) + 1;
       toast('Ahead of schedule!', 'Planned for ' + DAYS[t.ahead] + ', done ' + DAYS[S.day] + '. That\'s ' + S.aheadCount + ' early this week.'); }
     else toast(m ? 'Milestone: ' + m + '!' : 'Task complete!', 'Resolution saved' + (files && files.length ? ' with ' + files.length + ' proof file' + (files.length>1?'s':'') : '') + '.');
-    const freed = unblockAfter(t), theirs = freed.filter(x => !isMine(x)), mine = freed.filter(isMine);
-    if (theirs.length) setTimeout(() => toast('Handed off to ' + roleOf(theirs[0].owner).name, theirs.map(x => x.title).join(', ') + ' is now on their list.'), 700);
-    else if (mine.length) setTimeout(() => toast('Your next stage is ready', mine[0].title), 700);
+    announceFreed(unblockAfter(t), 700);
   }
   if (t.diff === 3) S.breakDue = {reason:'You finished a heavy task. Take a reward break.', reward:true};
   else if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for a while'};
   closeSheet(); render();
   if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId && (firstUp() || !ahead)) setTimeout(startNext, 900);
 }
+const stageDone = gid => goalTasks(gid).every(y => y.done);
+function waitText(ids){ return ids.filter(id => !stageDone(id)).map(id => { const x = goalById(id); return x ? roleOf(x.role).name + ': ' + x.title : ''; }).filter(Boolean).join(' + '); }
 function unblockAfter(t){
-  // when every task in a stage is done, tasks waiting on that stage are released
-  const stage = t.goalId; if (!stage || goalTasks(stage).some(x => !x.done)) return [];
-  const freed = S.tasks.filter(x => x.waitStage === stage && x.status === 'waiting');
-  freed.forEach(x => { x.status = null; x.day = isMine(x) ? S.day : null; x.waitStage = null; });
+  // a stage that waits on several others starts only when all of them are finished
+  const stage = t.goalId; if (!stage || !stageDone(stage)) return [];
+  const touched = S.tasks.filter(x => x.status === 'waiting' && (x.waitStages || []).includes(stage));
+  const freed = touched.filter(x => x.waitStages.every(stageDone));
+  freed.forEach(x => { x.status = null; x.day = isMine(x) ? S.day : null; x.waitStages = null; });
+  touched.filter(x => !freed.includes(x)).forEach(x => x.waitingOn = waitText(x.waitStages));
   return freed;
+}
+function announceFreed(freed, delay){
+  const theirs = freed.filter(x => !isMine(x)), mine = freed.filter(isMine);
+  const owners = [...new Set(theirs.map(x => roleOf(x.owner).name))];
+  if (owners.length) setTimeout(() => toast(owners.length > 1 ? 'Started ' + owners.length + ' stages at once' : 'Handed off to ' + owners[0],
+    owners.length > 1 ? owners.join(', ') + ' each got their tasks.' : theirs.map(x => x.title).join(', ') + ' is now on their list.'), delay);
+  if (mine.length) setTimeout(() => toast('Your next stage is ready', mine.map(x => x.title).join(', ')), delay + (owners.length ? 350 : 0));
 }
 function othersDone(t){
   t.done = true; t.doneDay = S.day; t.steps.forEach(s => { s.done = true; s.at = stamp(); });
-  const freed = unblockAfter(t).filter(isMine);
-  toast(roleOf(t.owner).name + ' finished: ' + t.title, freed.length ? 'Your next step is unblocked: ' + freed[0].title : 'Handed off to the next stage.');
-  if (freed.length){ confetti(innerWidth/2, innerHeight/3, 60, 6); chime(false); }
+  const freed = unblockAfter(t), g = goalById(t.goalId);
+  const blocked = S.tasks.filter(x => x.status === 'waiting' && (x.waitStages || []).includes(t.goalId));
+  toast(roleOf(t.owner).name + ' finished: ' + t.title, freed.length ? '' : blocked.length ? 'The next stage still waits on: ' + blocked[0].waitingOn : (g && stageDone(g.id) ? 'That stage is complete.' : 'Other tasks in this stage are still open.'));
+  if (freed.length){ confetti(innerWidth/2, innerHeight/3, 60, 6); chime(false); announceFreed(freed, 400); }
   render();
 }
 function startBreak(k){
@@ -1046,24 +1067,21 @@ function endDay(){
 
 /* templates -> goals */
 function instantiate(tp, subject){
+  ensureStageIds(tp);
   const root = {id:newId('g'), title: tp.name + (subject ? ': ' + subject : ''), parent:null, horizon:{...tp.horizon}, start:S.day, fromTemplate:tp.id, why:tp.desc};
   S.goals.push(root);
-  let prevStage = null, prevRole = null, created = 0;
-  tp.stages.forEach((st, i) => {
-    const role = resolveRole(st.role, subject);
-    const g = {id:newId('g'), title:st.title, parent:root.id, role, start:S.day, horizon: st.horizon ? {...st.horizon} : null};
-    S.goals.push(g);
+  const gmap = {}; let created = 0;
+  tp.stages.forEach(st => { const g = {id:newId('g'), title:st.title, parent:root.id, role:resolveRole(st.role, subject), start:S.day, horizon: st.horizon ? {...st.horizon} : null}; gmap[st.id] = g; S.goals.push(g); });
+  tp.stages.forEach(st => {
+    const g = gmap[st.id]; g.after = (st.after || []).map(a => gmap[a] && gmap[a].id).filter(Boolean);
     st.tasks.forEach(tt => {
-      const mine = role === 'me', waiting = prevStage && prevRole !== role;
       const t = {id:newId('n'), title:tt.title, ctx: tp.ctx || 'work', diff: tt.est >= 60 ? 2 : 1, span: spanFor(tt.est), est: tt.est, prio:2,
-        owner: role, goalId: g.id, steps: (tt.steps && tt.steps.length ? tt.steps : [tt.title]).map(s => ({t:s})), doneWhen: tt.doneWhen || aiDone(tt.title), proof: tp.scope === 'company', source:'template',
-        cadence: tt.cadence ? {every:tt.cadence, label: tt.cadLabel || 'Every ' + tt.cadence + ' days'} : null,
-        day: null, status: null, notes:''};
-      if (waiting){ t.status = 'waiting'; t.waitingOn = roleOf(prevRole).name + ': ' + tp.stages[i-1].title; t.waitStage = prevStage; }
-      else if (mine) t.day = S.day;
+        owner: g.role, goalId: g.id, steps: (tt.steps && tt.steps.length ? tt.steps : [tt.title]).map(s => ({t:s})), doneWhen: tt.doneWhen || aiDone(tt.title), proof: tp.scope === 'company', source:'template',
+        cadence: tt.cadence ? {every:tt.cadence, label: tt.cadLabel || 'Every ' + tt.cadence + ' days'} : null, day: null, status: null, notes:''};
+      if (g.after.length){ t.status = 'waiting'; t.waitStages = [...g.after]; t.waitingOn = waitText(g.after); }
+      else if (g.role === 'me') t.day = S.day;
       S.tasks.push(t); created++;
     });
-    prevStage = g.id; prevRole = role;
   });
   return {root, created};
 }
@@ -1075,13 +1093,13 @@ function resolveRole(role, subject){
 }
 function taskToTpl(t){ return {title:t.title, est:estOf(t), steps:t.steps.map(s => s.t), cadence: t.cadence ? t.cadence.every : null, cadLabel: t.cadence ? t.cadence.label : null}; }
 function templateFromGoal(g){
-  const stages = [];
-  if (goalTasks(g.id).length) stages.push({title:g.title, role:goalTasks(g.id)[0].owner || 'me', tasks:goalTasks(g.id).map(taskToTpl)});
-  goalKids(g.id).forEach(k => {
+  const stages = [], kids = goalKids(g.id);
+  if (goalTasks(g.id).length) stages.push({id:g.id, after:[], title:g.title, role:goalTasks(g.id)[0].owner || 'me', tasks:goalTasks(g.id).map(taskToTpl)});
+  kids.forEach((k, i) => {
     const ts = []; (function walk(id){ goalTasks(id).forEach(t => ts.push(t)); goalKids(id).forEach(x => walk(x.id)); })(k.id);
-    stages.push({title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, tasks: ts.map(taskToTpl)});
+    stages.push({id:k.id, after: k.after ? [...k.after] : (i ? [kids[i-1].id] : (stages.length ? [g.id] : [])), title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, tasks: ts.map(taskToTpl)});
   });
-  const tp = {id:newId('tp'), scope:'mine', name:g.title, desc:g.why || 'Saved from your goals.', horizon: g.horizon || {n:1,unit:'weeks'}, ctx: (S.tasks.find(t => t.goalId === g.id) || {}).ctx || 'work', stages};
+  const tp = {id:newId('tp'), scope:'mine', owner:'me', name:g.title, desc:g.why || 'Saved from your goals.', horizon: g.horizon || {n:1,unit:'weeks'}, ctx: (S.tasks.find(t => t.goalId === g.id) || {}).ctx || 'work', stages};
   S.templates.push(tp); return tp;
 }
 const ROUTINE_SETS = [
@@ -1166,10 +1184,14 @@ function openComplete(t){
     <div class="actions"><button class="btn ok" data-act="confirmdone">Complete</button><button class="btn ghost" data-close="1">Not yet</button></div>`, 'complete', t.id);
 }
 function handoffHTML(t){
-  const nx = nextStage(t); if (!nx) return '';
-  const who = roleOf(nx.role).name, rest = goalTasks(t.goalId).filter(x => x !== t && !x.done).length;
-  return `<div class="handoff-note"><b>Hand-off:</b> ${rest ? 'Once the rest of this stage is done' : 'Completing this finishes your stage, so'} <b>${esc(who)}</b> gets "${esc(nx.title)}" next.</div>
-    <div class="field"><label for="hoTask">Add a task for ${esc(who)} (optional)</label><input id="hoTask" placeholder="e.g. Use the attached license copy for verification"></div>`;
+  const nx = nextStages(t); if (!nx.length) return '';
+  const rest = goalTasks(t.goalId).filter(x => x !== t && !x.done).length;
+  const list = nx.map(n => '<b>' + esc(roleOf(n.role).name) + '</b> ("' + esc(n.title) + '")').join(', ');
+  const alsoWait = nx.filter(n => (n.after || []).some(a => a !== t.goalId && !stageDone(a)));
+  return `<div class="handoff-note"><b>Hand-off:</b> ${rest ? 'Once the rest of this stage is done, it' : 'Finishing this'} starts ${nx.length > 1 ? nx.length + ' stages at once: ' : ''}${list}.${alsoWait.length ? ' ' + alsoWait.map(n => '"' + esc(n.title) + '"').join(', ') + ' also waits on other stages.' : ''}</div>
+    <div class="field"><label for="hoTask">Add a task for ${nx.length > 1 ? 'one of them' : esc(roleOf(nx[0].role).name)} (optional)</label>
+      ${nx.length > 1 ? `<select id="hoStage" style="margin-bottom:6px" aria-label="Who gets the extra task">${nx.map(n => `<option value="${n.id}">${esc(roleOf(n.role).name)}: ${esc(n.title)}</option>`).join('')}</select>` : `<input type="hidden" id="hoStage" value="${nx[0].id}">`}
+      <input id="hoTask" placeholder="e.g. Use the attached license copy for verification"></div>`;
 }
 function openDoneList(day){
   const items = S.log.filter(l => l.day === day);
@@ -1230,25 +1252,42 @@ function stageStatus(g){
   return 'active';
 }
 let flowStages = [];
+function stageCols(stages){
+  const idx = {}, memo = {}; stages.forEach((s, i) => idx[s.id] = i);
+  const col = i => { if (memo[i] != null) return memo[i]; memo[i] = 0;
+    const d = (stages[i].after || []).map(a => idx[a]).filter(x => x != null);
+    return memo[i] = d.length ? Math.max(...d.map(col)) + 1 : 0; };
+  return stages.map((_, i) => col(i));
+}
+function nodeHTML(stages, i, cols, opts){
+  const s = stages[i], ed = opts.edit;
+  const mins = s.tasks.reduce((a, t) => a + (t.est || 0), 0), routines = s.tasks.filter(t => t.cadence).length;
+  const stLabel = {done:'Done', active:'In progress', waiting:'Waiting', others:'With ' + roleOf(s.role).name}[s.status] || '';
+  const deps = (s.after || []).length, kids = stages.filter(x => (x.after || []).includes(s.id)).length, par = cols.filter(c => c === cols[i]).length > 1;
+  const tools = ed && opts.structure ? `<div class="ntools"><button data-act="bnext" data-i="${i}" title="Add a stage that starts after this one">+ Next</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div>` : '';
+  return `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${ed && opts.sel===i?'sel':''}" data-sid="${esc(s.id)}" ${ed?`data-act="bsel" data-i="${i}"`:''}>
+    <span class="fm">Stage ${cols[i]+1}${par ? ' · in parallel' : ''}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
+    <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span>
+    ${kids > 1 ? `<span class="fm" style="color:var(--violet);font-weight:700">Starts ${kids} stages</span>` : ''}${deps > 1 ? `<span class="fm" style="color:var(--violet);font-weight:700">Waits for ${deps} stages</span>` : ''}
+    ${ed ? s.tasks.slice(0,2).map(t => `<span class="ft">• ${esc(t.title)}</span>`).join('') : ''}${tools}</div>`;
+}
 function flowHTML(stages, opts){
   opts = opts || {};
   const lanes = opts.lanes || [...new Set(stages.map(s => s.role || 'me'))];
-  const cols = stages.length + (opts.edit && opts.structure ? 1 : 0);
-  let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${cols}, 185px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
+  const cols = stageCols(stages), selCol = opts.edit && stages[opts.sel] ? cols[opts.sel] : -1, ghosts = opts.edit && opts.structure && selCol > -1;
+  const ncol = Math.max(0, ...cols, ghosts ? selCol + 1 : 0) + 1;
+  let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${ncol}, 200px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
   lanes.forEach((r, li) => { html += `<div class="laneband" style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}</div>`; });
-  stages.forEach((s, i) => {
-    const mins = s.tasks.reduce((a, t) => a + (t.est || 0), 0), routines = s.tasks.filter(t => t.cadence).length;
-    const stLabel = {done:'Done', active:'In progress', waiting:'Waiting', others:'With ' + roleOf(s.role).name}[s.status] || '';
-    const ed = opts.edit, tools = ed && opts.structure ? `<div class="ntools"><button data-act="bleft" data-i="${i}" title="Move earlier" aria-label="Move earlier">◀</button><button data-act="bright" data-i="${i}" title="Move later" aria-label="Move later">▶</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div>` : '';
-    html += `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${ed && opts.sel===i?'sel':''}" ${ed?`data-act="bsel" data-i="${i}"`:''} style="grid-row:${lanes.indexOf(s.role || 'me')+1};grid-column:${i+2}">
-      <span class="fm">Stage ${i+1}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
-      <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span>
-      ${ed ? s.tasks.slice(0,2).map(t => `<span class="ft">• ${esc(t.title)}</span>`).join('') : ''}${tools}</div>`;
+  const cells = {};
+  stages.forEach((s, i) => { const k = Math.max(0, lanes.indexOf(s.role || 'me')) + ':' + cols[i]; (cells[k] = cells[k] || {list:[]}).list.push(i); });
+  if (ghosts) lanes.forEach((r, li) => { const k = li + ':' + (selCol + 1); (cells[k] = cells[k] || {list:[]}).ghost = r; });
+  Object.entries(cells).forEach(([k, c]) => {
+    const [li, col] = k.split(':').map(Number);
+    html += `<div class="fcell" style="grid-row:${li+1};grid-column:${col+2}">${c.list.map(i => nodeHTML(stages, i, cols, opts)).join('')}${c.ghost ? `<div class="fnode ghost" data-act="baddstage" data-role="${esc(c.ghost)}">+ ${esc(roleOf(c.ghost).name)} starts after "${esc(stages[opts.sel].title)}"</div>` : ''}</div>`;
   });
-  if (opts.edit && opts.structure) lanes.forEach((r, li) => { html += `<div class="fnode ghost" data-act="baddstage" data-role="${esc(r)}" style="grid-row:${li+1};grid-column:${stages.length+2}">+ Add stage</div>`; });
   html += `<svg class="flowsvg" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
     <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ahv" d="M0,0 L10,5 L0,10 z"/></marker></defs></svg></div></div>
-    <div class="flowkey"><span><i></i>Next step, same owner</span><span><i class="h"></i>Hand-off to another person or team</span></div>`;
+    <div class="flowkey"><span><i></i>Next step, same owner</span><span><i class="h"></i>Hand-off to another person or team</span><span>Several arrows out: those stages start at the same time</span><span>Several arrows in: the stage waits for all of them</span></div>`;
   return html;
 }
 function drawFlow(){
@@ -1256,16 +1295,18 @@ function drawFlow(){
   const stages = flowStages, svg = flow.querySelector('.flowsvg'), fr = flow.getBoundingClientRect();
   svg.setAttribute('width', flow.scrollWidth); svg.setAttribute('height', flow.scrollHeight);
   svg.querySelectorAll('path.link,path.handoff').forEach(n => n.remove());
-  const nodes = [...flow.querySelectorAll('.fnode:not(.ghost)')];
-  for (let i = 0; i < nodes.length - 1; i++){
-    const a = nodes[i].getBoundingClientRect(), b = nodes[i+1].getBoundingClientRect();
-    const x1 = a.right - fr.left, y1 = a.top + a.height/2 - fr.top, x2 = b.left - fr.left - 2, y2 = b.top + b.height/2 - fr.top;
-    const hand = (stages[i].role || 'me') !== (stages[i+1].role || 'me'), mx = (x1 + x2) / 2;
+  const byS = {}; stages.forEach(s => byS[s.id] = s);
+  stages.forEach(s => (s.after || []).forEach(a => {
+    const na = flow.querySelector(`.fnode[data-sid="${CSS.escape(a)}"]`), nb = flow.querySelector(`.fnode[data-sid="${CSS.escape(s.id)}"]`);
+    if (!na || !nb || !byS[a]) return;
+    const ra = na.getBoundingClientRect(), rb = nb.getBoundingClientRect();
+    const x1 = ra.right - fr.left, y1 = ra.top + ra.height/2 - fr.top, x2 = rb.left - fr.left - 2, y2 = rb.top + rb.height/2 - fr.top, mx = (x1 + x2) / 2;
+    const hand = (byS[a].role || 'me') !== (s.role || 'me');
     const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
     p.setAttribute('class', hand ? 'handoff' : 'link'); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
     svg.appendChild(p);
-  }
+  }));
 }
 function openFlow(title, sub, stages, actions){
   flowStages = stages;
@@ -1273,9 +1314,10 @@ function openFlow(title, sub, stages, actions){
   requestAnimationFrame(drawFlow);
 }
 function goalStages(g){
-  return goalKids(g.id).map(k => {
+  const kids = goalKids(g.id);
+  return kids.map((k, i) => {
     const ts = []; (function walk(id){ goalTasks(id).forEach(t => ts.push(t)); goalKids(id).forEach(x => walk(x.id)); })(k.id);
-    return {title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, status: stageStatus(k), tasks: ts.map(t => ({est:estOf(t), cadence:t.cadence}))};
+    return {id:k.id, after: k.after || (i ? [kids[i-1].id] : []), title:k.title, role: k.role || (ts[0] && ts[0].owner) || 'me', horizon:k.horizon, status: stageStatus(k), tasks: ts.map(t => ({est:estOf(t), cadence:t.cadence}))};
   });
 }
 function scopeLabel(tp){ return tp.scope === 'company' ? 'Company process' : tp.scope === 'family' ? 'Family flow' : 'My template'; }
@@ -1314,8 +1356,8 @@ function taskPickOptions(){
   return html;
 }
 function openBuilder(tp){
-  D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', stages:JSON.parse(JSON.stringify(tp.stages)), sel:0}
-         : {id:null, name:'', desc:'', scope: canCreateFlows() ? 'company' : 'family', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', stages:[{title:'Kickoff', role:'me', tasks:[]}], sel:0};
+  D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', stages:JSON.parse(JSON.stringify(ensureStageIds(tp).stages)), sel:0}
+         : {id:null, name:'', desc:'', scope: canCreateFlows() ? 'company' : 'family', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', stages:[{id:newSid(), after:[], title:'Kickoff', role:'me', tasks:[]}], sel:0};
   D.lanes = [...new Set(D.stages.map(s => s.role))];
   renderBuilder();
 }
@@ -1331,13 +1373,19 @@ function renderBuilder(){
       <div class="field"><label>Time frame</label><div class="estrow"><input id="bHn" type="number" min="1" value="${D.horizon.n}" aria-label="Time frame amount" ${dis}><select id="bHu" aria-label="Time frame unit" ${dis}>${['days','weeks','months'].map(u => `<option ${D.horizon.unit===u?'selected':''}>${u}</option>`).join('')}</select></div></div>
       <div class="field"><label for="bDesc">Description</label><input id="bDesc" value="${esc(D.desc)}" placeholder="What this process gets done" ${dis}></div>
     </div>
-    <p class="note" style="margin:0">Click a stage to edit it.${structure ? ' Arrows reorder a stage or move it to another lane. "+ Add stage" adds a stage owned by that lane.' : ''}</p>
+    <p class="note" style="margin:0">Click a stage to edit it.${structure ? ' The dashed boxes add a stage that starts after the selected one. Add several to start them in parallel. Use "Starts when" to make a stage wait for more than one.' : ''}</p>
     ${flowHTML(D.stages, {edit:true, structure, sel:D.sel, lanes:D.lanes})}
     ${structure ? `<div class="actions" style="margin-top:8px"><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane (person, team or family member)…</option>${roleOptions('', D.lanes)}</select></div>` : ''}
     ${st ? `<div class="stageed"><h4 style="margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Stage ${D.sel + 1}</h4>
       <div class="grid2"><div class="field"><label for="bsTitle">Stage name</label><input id="bsTitle" value="${esc(st.title)}" ${dis}></div>
       <div class="field"><label for="bsRole">Owned by</label><select id="bsRole" ${dis}>${roleOptions(st.role)}</select></div></div>
-      <div class="handoff-note">${nx ? `When this stage is done, <b>${esc(roleOf(nx.role).name)}</b> automatically gets stage ${D.sel + 2}: "${esc(nx.title)}".` : 'This is the last stage. Finishing it completes the goal.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
+      ${(() => { const kidsOf = id => D.stages.filter(x => (x.after || []).includes(id)), desc = new Set();
+        (function walk(id){ kidsOf(id).forEach(k => { if (!desc.has(k.id)){ desc.add(k.id); walk(k.id); } }); })(st.id);
+        const opts = D.stages.filter(x => x !== st && !desc.has(x.id)), kids = kidsOf(st.id);
+        return `<div class="field"><label>Starts when these are done</label><div class="depgrid">${opts.map(x => `<label class="dep"><input type="checkbox" data-dep="${esc(x.id)}" ${(st.after || []).includes(x.id) ? 'checked' : ''} ${dis}> ${esc(x.title)} <small>${esc(roleOf(x.role).name)}</small></label>`).join('') || '<span class="note">No other stages yet.</span>'}</div>
+          <p class="note" style="margin:4px 0 0">${!(st.after || []).length ? 'Starts as soon as the flow begins.' : st.after.length > 1 ? 'Waits until all ' + st.after.length + ' are finished.' : ''}</p></div>
+        <div class="handoff-note">${kids.length ? `When this stage is done, it starts ${kids.length > 1 ? '<b>' + kids.length + ' stages at once</b>: ' : ''}${kids.map(k => '<b>' + esc(roleOf(k.role).name) + '</b> ("' + esc(k.title) + '")').join(', ')}.` : 'Nothing starts after this stage yet. Finishing it completes this branch of the flow.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
+        ${structure ? `<div class="actions" style="margin:0 0 10px"><select id="bBranch" class="inp" style="width:auto" aria-label="Start another stage after this one"><option value="">+ When this is done, also start a stage for…</option>${roleOptions('')}</select></div>` : ''}`; })()}
       ${st.tasks.map((tk, ti) => `<div class="btask"><span>${esc(tk.title)}<small> · ${fmtDur(tk.est)}${tk.cadLabel ? ' · ' + esc(tk.cadLabel) : ''}${tk.steps && tk.steps.length ? ' · ' + tk.steps.length + ' steps' : ''}</small></span>${stageEdit ? `<button class="btn small ghost" data-act="bdeltask" data-ti="${ti}">Remove</button>` : '<span></span>'}</div>`).join('') || '<p class="note">No tasks yet. Pull one in from a template or write your own.</p>'}
       ${stageEdit ? `<div class="actions" style="margin-top:6px"><select id="bPick" class="inp" style="flex:1;min-width:200px;width:auto" aria-label="Template task">${taskPickOptions()}</select><button class="btn small" data-act="bpick">Add</button></div>
         <div class="actions" style="margin-top:6px"><input id="bNewTask" class="inp" placeholder="Or write a new task" style="flex:1;min-width:160px;width:auto"><input id="bNewEst" class="inp" type="number" min="5" step="5" value="30" style="width:80px" aria-label="Minutes"><span class="note">min</span><button class="btn small" data-act="baddtask">Add</button></div>` : ''}
@@ -1352,17 +1400,20 @@ function renderBuilder(){
   on('#bsTitle', 'change', el => { st.title = el.value.trim() || st.title; renderBuilder(); });
   on('#bsRole', 'change', el => { st.role = el.value; if (!D.lanes.includes(el.value)) D.lanes.push(el.value); renderBuilder(); });
   on('#bLane', 'change', el => { if (el.value){ D.lanes.push(el.value); renderBuilder(); } });
+  on('#bBranch', 'change', el => { if (!el.value) return; D.stages.push({id:newSid(), after:[st.id], title:'New stage', role:el.value, tasks:[]}); if (!D.lanes.includes(el.value)) D.lanes.push(el.value); D.sel = D.stages.length - 1; renderBuilder(); });
+  document.querySelectorAll('[data-dep]').forEach(cb => cb.addEventListener('change', () => { const id = cb.dataset.dep; st.after = cb.checked ? [...new Set([...(st.after || []), id])] : (st.after || []).filter(a => a !== id); renderBuilder(); }));
 }
 function builderAct(a, el){
   const i = +el.dataset.i, sw = (x, y) => { [D.stages[x], D.stages[y]] = [D.stages[y], D.stages[x]]; };
   const st = D.stages[D.sel];
   switch (a){
     case 'bsel': D.sel = i; break;
-    case 'bleft': if (i > 0){ sw(i, i-1); D.sel = i-1; } break;
-    case 'bright': if (i < D.stages.length - 1){ sw(i, i+1); D.sel = i+1; } break;
     case 'bup': case 'bdown': { const li = D.lanes.indexOf(D.stages[i].role) + (a === 'bup' ? -1 : 1); if (li >= 0 && li < D.lanes.length) D.stages[i].role = D.lanes[li]; D.sel = i; break; }
-    case 'bdel': D.stages.splice(i, 1); if (!D.stages.length) D.stages.push({title:'New stage', role:'me', tasks:[]}); D.sel = Math.max(0, Math.min(D.sel, D.stages.length - 1)); break;
-    case 'baddstage': D.stages.push({title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; break;
+    case 'bdel': { const del = D.stages.splice(i, 1)[0]; // stages that waited on it now wait on whatever it waited on
+      D.stages.forEach(x => { if ((x.after || []).includes(del.id)) x.after = [...new Set(x.after.filter(a => a !== del.id).concat(del.after || []))]; });
+      if (!D.stages.length) D.stages.push({id:newSid(), after:[], title:'New stage', role:'me', tasks:[]}); D.sel = Math.max(0, Math.min(D.sel, D.stages.length - 1)); break; }
+    case 'baddstage': { const prev = D.stages[D.sel]; D.stages.push({id:newSid(), after: prev ? [prev.id] : [], title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; break; }
+    case 'bnext': { const prev = D.stages[i]; D.stages.push({id:newSid(), after:[prev.id], title:'New stage', role:prev.role, tasks:[]}); D.sel = D.stages.length - 1; break; }
     case 'bdeltask': st.tasks.splice(+el.dataset.ti, 1); break;
     case 'bpick': { const v = $('#bPick').value; if (!v) return;
       if (v.startsWith('t:')){ const tp = TEMPLATES[v.slice(2)]; st.tasks.push({title:tp.title.replace(/:\s*$/, ''), est:SPANS[tp.span][1], steps:tp.steps.map(x => x[0]), cadence: tp.cadence ? +tp.cadence : null, cadLabel: tp.cadence ? 'Every 2 days until done' : null}); }
@@ -1553,7 +1604,7 @@ document.addEventListener('click', ev => {
   if (el.dataset.nav){ S.viewDay = Math.max(0, Math.min(6, S.viewDay + +el.dataset.nav)); render(); return; }
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
   const a = el.dataset.act, cur = byId(S.currentId), gid = el.dataset.goal, tpl = S.templates.find(t => t.id === el.dataset.tpl);
-  if (a && a[0] === 'b' && D && $('#sheetRoot').dataset.kind === 'builder' && /^b(sel|left|right|up|down|del|addstage|deltask|pick|addtask|save|copy)$/.test(a)){ builderAct(a, el); return; }
+  if (a && a[0] === 'b' && D && $('#sheetRoot').dataset.kind === 'builder' && /^b(sel|up|down|del|addstage|next|deltask|pick|addtask|save|copy)$/.test(a)){ builderAct(a, el); return; }
   switch (a){
     case 'startday': closeSheet(); startNext(); break;
     case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
@@ -1577,7 +1628,7 @@ document.addEventListener('click', ev => {
     case 'confirmdone': {
       const note = $('#resNote').value.trim(), files = [...$('#proofFile').files].map(f => f.name);
       if (sheetTask.proof && note.length < 3){ $('#resErr').hidden = false; $('#resNote').focus(); return; }
-      completeTask(sheetTask, note, files, $('#hoTask') ? $('#hoTask').value.trim() : ''); break; }
+      completeTask(sheetTask, note, files, $('#hoTask') ? $('#hoTask').value.trim() : '', $('#hoStage') ? $('#hoStage').value : ''); break; }
     case 'othersdone': closeSheet(); othersDone(byId(el.dataset.task)); break;
     case 'brkpick': openBreakPicker(); break;
     case 'endbrk': endBreak(); break;

@@ -340,3 +340,11 @@ CRM · Android/desktop native apps (web covers desktop first).
 - Switch task: pick another task; the current one pauses and keeps its time.
 - Get ahead: when today is clear, pull in tasks due later; finishing early has its own celebration.
 - Notifications sit at the top of the screen, at most two at a time.
+
+### 12.7 Branching flows (fan-out and fan-in)
+- Each stage lists the stages it waits for (`after`). No entries = starts when the flow begins.
+- **Fan-out**: several stages wait on the same stage, so finishing it starts all of them at once
+  (e.g. an approved offer starts Recruiting outreach, the Compliance packet, HR system setup and Payroll setup).
+- **Fan-in**: a stage that waits on several stages starts only when every one of them is done
+  (e.g. Orientation waits for all four). Its "waiting on" label updates as each one finishes.
+- When a stage starts several others, the person finishing it sees which teams get work next and can add an extra task for any of them.
