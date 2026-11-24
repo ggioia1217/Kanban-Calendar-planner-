@@ -432,7 +432,9 @@ a{color:var(--accent)}
 .btool{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
 .hint{font-size:12.5px;color:var(--muted);line-height:1.4}
 .bcanvas .flowwrap{margin-top:0;background:var(--surface)}
-.fnode.editable{touch-action:none;user-select:none}
+.fnode.editable{touch-action:manipulation;user-select:none;-webkit-touch-callout:none}
+.fnode.lifted{transform:scale(1.04);box-shadow:0 10px 26px rgba(0,0,0,.22)!important;z-index:5}
+.bcanvas .flowwrap.panning{cursor:grabbing}
 .nport{position:absolute;right:-9px;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--surface);border:2px solid var(--violet);cursor:crosshair;z-index:4;touch-action:none}
 .nport:hover,.nport:focus-visible{background:var(--violet)}
 .fnode.dragging{opacity:.35}
@@ -1935,7 +1937,7 @@ function stagePanel(){
   const opts = D.stages.filter(x => x !== st && !desc.has(x.id)), kids = kidsOf(st.id);
   return `<h3>Stage: ${esc(st.title)}</h3>
     <div class="field" style="margin-top:8px"><label for="bsTitle">Stage name</label><input id="bsTitle" value="${esc(st.title)}" ${dis}></div>
-    <div class="field"><label for="bsRole">Owned by</label><select id="bsRole" ${dis}>${roleOptions(st.role)}</select><p class="hint">Or drag the stage into another lane.</p></div>
+    <div class="field"><label for="bsRole">Owned by</label><select id="bsRole" ${dis}>${roleOptions(st.role)}</select><p class="hint">Or press and hold the stage, then drag it into another lane.</p></div>
     <div class="field"><label>Starts when these are done</label><div class="depgrid">${opts.map(x => `<label class="dep"><input type="checkbox" data-dep="${esc(x.id)}" ${(st.after || []).includes(x.id) ? 'checked' : ''} ${dis}> ${esc(x.title)} <small>${esc(roleOf(x.role).name)}</small></label>`).join('') || '<span class="note">No other stages yet.</span>'}</div>
       <p class="hint" style="margin-top:4px">${!(st.after || []).length ? 'Starts as soon as the flow begins.' : st.after.length > 1 ? 'Waits until all ' + st.after.length + ' are finished.' : ''} ${(st.after || []).map(a => { const x = D.stages.find(y => y.id === a); return x ? `<button class="chipbtn" style="padding:2px 8px;font-size:12px" data-act="blink" data-src="${a}" data-dst="${st.id}">Edit link from ${esc(x.title)}</button>` : ''; }).join(' ')}</p></div>
     <div class="handoff-note">${kids.length ? `When this stage is done, it starts ${kids.length > 1 ? '<b>' + kids.length + ' stages at once</b>: ' : ''}${kids.map(k => '<b>' + esc(roleOf(k.role).name) + '</b> ("' + esc(k.title) + '")').join(', ')}.` : 'Nothing starts after this stage yet.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
@@ -2067,7 +2069,7 @@ function renderBuilder(){
     ${view === 'changes' ? `<button class="btn small" data-act="bchanges">What changed (${diff.list.length})</button>` : ''}
     ${structure && view === 'suggested' ? `<button class="btn small" data-act="broot">+ Stage</button><select id="bLane" class="inp" style="width:auto;padding:6px 8px" aria-label="Add a lane"><option value="">+ Lane…</option>${roleOptions('', D.lanes)}</select>` : ''}
     ${D.full ? `<div class="spacer"></div>${right}` : ''}</div>`;
-  const hint = mode === 'diagram' && structure && view === 'suggested' && !phonePortrait ? '<p class="hint" style="margin:0 0 8px">Drag a stage between lanes to change its owner. Drag its round handle onto another stage to connect them, or tap the handle and then the next stage. Click a line to edit it. Pinch or use − and + to zoom. Tap a stage to highlight everything it affects.</p>' : '';
+  const hint = mode === 'diagram' && structure && view === 'suggested' && !phonePortrait ? '<p class="hint" style="margin:0 0 8px">Drag empty space to scroll. Press and hold a stage (or click and drag it) to move it to another lane. Drag its round handle onto another stage to connect them, or tap the handle and then the next stage. Click a line to edit it. Pinch or use − and + to zoom. Tap a stage to highlight everything it affects.</p>' : '';
   const rotate = phonePortrait && mode === 'diagram' && !S.settings.noRotateHint ? `<div class="hintbar"><span style="flex:1;min-width:160px">Turn your phone sideways for more room, or use the step list.</span><button class="btn small" data-act="bmode" data-v="list">Step list</button><button class="btn small ghost" data-act="bnorotate">Don't show again</button></div>` : '';
   const body = mode === 'list' ? listHTML(shown, o) : flowHTML(shown, o) + '<div class="minimap" id="minimap" hidden title="Overview: tap to jump"></div>';
   let panelTitle = '', side = '';
@@ -2086,7 +2088,7 @@ function renderBuilder(){
   requestAnimationFrame(() => {
     if (mode === 'diagram'){
       if (D.zoom == null) fitZoom(); else applyZoom();
-      drawFlow(); drawMinimap(); bindZoomGestures(); if (view === 'suggested') bindBuilderDrag();
+      drawFlow(); drawMinimap(); bindZoomGestures(); bindBuilderDrag();
       const tgt = D.scrollTo && selSid && document.querySelector(`.bcanvas .fnode[data-sid="${CSS.escape(selSid)}"]`); if (tgt) tgt.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
     } else { const tgt = D.scrollTo && selSid && document.querySelector(`.scard[data-sid="${CSS.escape(selSid)}"]`); if (tgt) tgt.scrollIntoView({block:'nearest', behavior:'smooth'}); }
     D.scrollTo = false;
@@ -2123,18 +2125,36 @@ function connect(src, dst){
   toast('Connected', '"' + d.title + '" now starts after "' + s.title + '". Choose how they relate on the right.');
 }
 function bindBuilderDrag(){
-  const canvas = document.querySelector('.bcanvas'); if (!canvas || !canStructure(D)) return;
+  const canvas = document.querySelector('.bcanvas'); if (!canvas) return;
+  const editable = canStructure(D) && flowEditable;
   canvas.onpointerdown = e => {
     if (e.button !== 0 || e.target.closest('.ntools')) return;
-    const node = e.target.closest('.fnode[data-sid]'); if (!node) return;
+    const node = e.target.closest('.fnode[data-sid]');
+    const {wrap} = canvasParts();
+    // Click and drag empty space to scroll (touch already scrolls natively)
+    if (!node || node.classList.contains('ghost') || !editable){
+      if (e.pointerType !== 'mouse' || !wrap || !wrap.contains(e.target) || e.target.closest('button,select,input,.fnode.ghost')) return;
+      const sx = e.clientX, sy = e.clientY, sl = wrap.scrollLeft, st = wrap.scrollTop; let panned = false;
+      const mv = ev => { const dx = ev.clientX - sx, dy = ev.clientY - sy; if (!panned && Math.hypot(dx, dy) < 4) return; panned = true; wrap.classList.add('panning'); wrap.scrollLeft = sl - dx; wrap.scrollTop = st - dy; };
+      const upp = () => { window.removeEventListener('pointermove', mv); wrap.classList.remove('panning'); if (panned){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); } };
+      window.addEventListener('pointermove', mv); window.addEventListener('pointerup', upp, {once:true}); window.addEventListener('pointercancel', upp, {once:true});
+      return;
+    }
     const port = !!e.target.closest('.nport'), sid = node.dataset.sid, flow = canvas.querySelector('.flow'), svg = flow.querySelector('.flowsvg');
+    const touch = e.pointerType !== 'mouse';
+    // On touch, moving a stage needs a press and hold, so an ordinary swipe scrolls the diagram
+    let armed = !touch || port, pressTimer = null;
+    if (!armed) pressTimer = setTimeout(() => { armed = true; node.classList.add('lifted'); try { navigator.vibrate && navigator.vibrate(15); } catch(_){} }, 380);
     const x0 = e.clientX, y0 = e.clientY; let moved = false, ghost = null, line = null, over = null;
-    const noScroll = ev => { if (moved) ev.preventDefault(); };
+    const noScroll = ev => { if (armed) ev.preventDefault(); };
     document.addEventListener('touchmove', noScroll, {passive:false});
     const laneAt = y => [...flow.querySelectorAll('.laneband')].findIndex(b => { const r = b.getBoundingClientRect(); return y >= r.top && y < r.bottom; });
+    const cleanup = () => { clearTimeout(pressTimer); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); document.removeEventListener('touchmove', noScroll); node.classList.remove('lifted'); };
     const move = ev => {
       if (pinching){ if (ghost) ghost.remove(); if (line) line.remove(); node.classList.remove('dragging'); moved = false; ghost = line = null; return; }
-      if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+      const dist = Math.hypot(ev.clientX - x0, ev.clientY - y0);
+      if (!armed){ if (dist > 8) cleanup(); return; } // the finger is scrolling, not dragging
+      if (!moved && dist < 6) return;
       if (!moved){ moved = true;
         if (port){ line = document.createElementNS('http://www.w3.org/2000/svg', 'path'); line.setAttribute('class', 'handoff'); svg.appendChild(line); }
         else { ghost = document.createElement('div'); ghost.className = 'dragghost'; ghost.textContent = node.querySelector('b').textContent; document.body.appendChild(ghost); node.classList.add('dragging'); } }
@@ -2145,20 +2165,27 @@ function bindBuilderDrag(){
         if (over && over !== n) over.classList.remove('droptarget'); over = n && n !== node ? n : null; if (over) over.classList.add('droptarget');
       } else {
         ghost.style.left = ev.clientX + 12 + 'px'; ghost.style.top = ev.clientY + 8 + 'px';
-        const li = laneAt(ev.clientY); flow.querySelectorAll('.laneband').forEach((b, i) => b.classList.toggle('drop', i === li));
+        const li = laneAt(ev.clientY); flow.querySelectorAll('.laneband').forEach((b, k) => b.classList.toggle('drop', k === li));
+        // keep the diagram scrolling when dragging near an edge
+        if (wrap){ const r = wrap.getBoundingClientRect(), edge = 36;
+          if (ev.clientX > r.right - edge) wrap.scrollLeft += 12; else if (ev.clientX < r.left + edge) wrap.scrollLeft -= 12;
+          if (ev.clientY > r.bottom - edge) wrap.scrollTop += 12; else if (ev.clientY < r.top + edge) wrap.scrollTop -= 12; }
       }
     };
     const up = ev => {
-      window.removeEventListener('pointermove', move); window.removeEventListener('pointercancel', up); document.removeEventListener('touchmove', noScroll);
-      if (!moved || pinching){ if (port && !pinching){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); D.connectFrom = sid; D.link = null; renderBuilder(); } return; }
+      const wasArmed = armed; cleanup();
+      if (!moved || pinching){ if (port && !pinching && ev.type === 'pointerup'){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); D.connectFrom = sid; D.link = null; renderBuilder(); }
+        else if (touch && wasArmed && !port && ev.type === 'pointerup'){ dragSuppress = true; setTimeout(() => dragSuppress = false, 60); toast('Now drag it', 'Press and hold, then move the stage into another lane.'); }
+        return; }
       dragSuppress = true; setTimeout(() => dragSuppress = false, 60);
       if (ghost) ghost.remove(); if (line) line.remove(); node.classList.remove('dragging');
+      if (ev.type !== 'pointerup'){ renderBuilder(); return; }
       if (port){ if (over) connect(sid, over.dataset.sid); }
       else { const li = laneAt(ev.clientY), st = D.stages.find(x => x.id === sid), role = D.lanes[li];
-        if (li > -1 && role && st.role !== role){ st.role = role; D.sel = D.stages.indexOf(st); D.link = null; toast('Moved "' + st.title + '" to ' + roleOf(role).name, 'That lane owns this stage now.'); } }
+        if (li > -1 && role && st.role !== role){ st.role = role; D.sel = D.stages.indexOf(st); D.link = null; D.panel = true; toast('Moved "' + st.title + '" to ' + roleOf(role).name, 'That lane owns this stage now.'); } }
       renderBuilder();
     };
-    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up, {once:true}); window.addEventListener('pointercancel', up, {once:true});
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   };
 }
 function builderSave(kind){

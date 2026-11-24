@@ -69,6 +69,7 @@
 | D64 | **Step list** view: the same flow read top to bottom by step, parallel stages grouped, with waits-for / then-starts / receives on each card; editable. Default on phones held upright; a one-time hint suggests turning sideways |
 | D65 | **Path highlight**: selecting a stage highlights everything it waits on and everything it starts; the rest fades. Clicking empty canvas clears it |
 | D66 | Empty lanes collapse to a thin row; long hints and legends hide on small screens; the suggester's note folds behind "Read their note" |
+| D67 | **Scrolling always wins on touch**: a normal swipe anywhere on the diagram scrolls it, even when it starts on a stage. Moving a stage on a phone needs a press and hold (the card lifts and the phone gives a short buzz). With a mouse, drag empty space to pan; dragging a stage still moves it. Dragging near an edge scrolls the diagram |
 
 ## Open
 | # | Question |
