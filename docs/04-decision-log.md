@@ -47,6 +47,15 @@
 | D42 | **Branching flows**: one stage can start several stages at once (fan-out), and a stage can wait until all of its prerequisite stages are done (fan-in). Example: Offer approved starts Recruiting, Compliance, HR and Payroll in parallel; Orientation waits for all four |
 | D43 | Flow diagram columns = how far along the chain a stage is, so parallel stages line up in the same column marked "in parallel" |
 | D44 | Builder: "+ Next" on a stage, dashed boxes in every lane, and "When this is done, also start a stage for…" all add stages after the selected one. "Starts when these are done" sets what a stage waits for (loops are prevented) |
+| D45 | Main page top bar trimmed to: Menu, Focus (All/Work/Home), Notifications bell, and a **+ New** dropdown (Task, Goal, Flow, From a template). Board view (Auto/Week/Today) moved to Settings |
+| D46 | **Menu drawer** grouped as Plan (Today & week, My goals, Flows, Templates & ideas), Team (Notifications, Team activity, Org chart, CRM), Me (Achievements, Insights, Profile & my day), then Settings and Help. Every full-screen page has a menu button, Back and breadcrumbs |
+| D47 | Phones get a slim bottom tab bar (Today, Goals, Flows, Inbox, Menu); it can be turned off in Settings |
+| D48 | **My goals** has three tabs: I own, I'm part of (flows a coworker started), Waiting on others (with Request update and replies) |
+| D49 | **Flows hub**: Active runs with progress and who holds each stage, Templates, Drafts, and Suggestions |
+| D50 | **Full-screen flow builder**: drag a stage into another lane to change its owner; drag from a stage's handle onto another to connect them; click a line to edit the connection (starts when finished / same time / helpful but not required, wait time, what gets handed over, only-when condition, with suggestions) |
+| D51 | **Flow suggestions**: anyone without flow rights can build a flow or suggest changes to an existing one; managers review, edit, approve or request changes with a note |
+| D52 | **Team leaderboard**: teams compete on per-person and on-time measures, several categories, weekly reset, top five plus your team, no last place, opt-out |
+| D53 | **Templates & ideas**: ready-made home, family and work routines (morning launch, weekly reset, meals, bills, car, health, pets, school week, and more) with research notes where evidence exists |
 
 ## Open
 | # | Question |

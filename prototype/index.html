@@ -339,6 +339,121 @@ a{color:var(--accent)}
 .ptable th.cur{color:var(--accent)}
 .yes{color:var(--ok);font-weight:700} .no{color:var(--muted)}
 
+/* Header controls */
+.iconbtn{position:relative}
+.badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:999px;background:var(--hot);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px;font-style:normal;line-height:1}
+.newwrap{position:relative}
+.newmenu{position:absolute;right:0;top:calc(100% + 6px);z-index:35;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;width:270px;display:flex;flex-direction:column}
+.newmenu button{border:0;background:none;text-align:left;padding:9px 10px;border-radius:10px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center}
+.newmenu button svg{width:18px;height:18px;color:var(--accent);grid-row:1/3}
+.newmenu button:hover,.newmenu button:focus-visible{background:var(--surface-2)}
+.newmenu b{font-size:14px} .newmenu span{font-size:12px;color:var(--muted)}
+/* Phone tab bar */
+.tabbar{display:none;justify-content:space-around;background:var(--surface);border-top:1px solid var(--line);position:relative;z-index:32;
+  padding:3px max(8px,env(safe-area-inset-left,0px)) calc(3px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px))}
+.tabbar.on{display:flex}
+.tabbar button{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:600;color:var(--muted);padding:4px 10px;border-radius:10px}
+.tabbar button svg{width:20px;height:20px}
+.tabbar button[aria-current="page"]{color:var(--accent)}
+.tabbar .badge{top:0;right:2px}
+/* Menu drawer */
+.drawer-scrim{position:fixed;inset:0;background:var(--scrim);z-index:55;display:flex}
+.drawer{width:min(330px,88vw);height:100%;background:var(--surface);overflow-y:auto;display:flex;flex-direction:column;gap:2px;animation:slidein .22s ease;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 12px calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+@keyframes slidein{from{transform:translateX(-24px);opacity:0}to{transform:none;opacity:1}}
+.profile{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--surface-2);text-align:left;width:100%;margin-bottom:6px}
+.profile b{display:block;font-size:16px} .profile small{color:var(--muted);font-size:12.5px;display:block}
+.bigav{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
+.mgroup{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 10px 2px}
+.mitem{display:flex;align-items:center;gap:12px;border:0;background:none;width:100%;text-align:left;padding:9px 10px;border-radius:10px;font-size:15px;font-weight:600}
+.mitem:hover,.mitem[aria-current="page"]{background:var(--surface-2)}
+.mitem svg{width:20px;height:20px;color:var(--muted);flex:none}
+.mitem[aria-current="page"] svg{color:var(--accent)}
+.cnt{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cnt.hot{background:color-mix(in srgb,var(--hot) 14%,var(--surface));color:var(--hot)}
+/* Full-screen pages */
+.page{position:fixed;left:0;right:0;top:0;bottom:var(--tabh,0px);background:var(--bg);z-index:30;display:flex;flex-direction:column;animation:fadein .16s ease;
+  padding-top:env(safe-area-inset-top,0px)}
+.page.still{animation:none}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.pagebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.crumbs{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:13px;color:var(--muted);min-width:0}
+.crumbs button{border:0;background:none;padding:3px 5px;border-radius:6px;color:var(--muted);font-weight:600}
+.crumbs button:hover{color:var(--accent);background:var(--surface-2)}
+.crumbs b{color:var(--ink);font-size:13.5px;padding:0 4px}
+.pagebody{flex:1;min-height:0;overflow-y:auto;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.inner{max-width:1040px;margin:0 auto}
+.page h1{font-family:var(--font-display);font-size:28px;margin:0 0 4px;letter-spacing:-.015em;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 6px;max-width:70ch;line-height:1.45}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:14px 0 16px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:9px 12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs .n{font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:0 7px;margin-left:6px}
+.list{display:flex;flex-direction:column;gap:10px}
+.box{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--surface)}
+.box h3{margin:0;font-family:var(--font-display);font-size:18px;letter-spacing:-.01em}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
+.stat b{font-family:var(--font-display);font-size:28px;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted)}
+.chipbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600}
+.chipbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.empty2{border:1.5px dashed var(--line);border-radius:16px;padding:22px;text-align:center;color:var(--muted)}
+/* Notifications */
+.nitem{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:11px 12px;border-radius:14px;border:1px solid var(--line);background:var(--surface);text-align:left;width:100%}
+.nitem.unread{border-color:color-mix(in srgb,var(--accent) 60%,var(--line));background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.nitem .ni{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--accent)}
+.nitem .ni svg{width:16px;height:16px}
+.nitem b{font-size:14.5px;display:block} .nitem small{display:block;color:var(--muted);font-size:13px;margin-top:2px;line-height:1.4}
+.nitem .when{white-space:nowrap}
+/* Waiting / update requests */
+.waitcard{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.reply{margin-top:8px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--ok) 10%,var(--surface));font-size:13.5px}
+/* Leaderboard */
+.lb{display:flex;flex-direction:column;gap:6px}
+.lbrow{display:grid;grid-template-columns:30px auto 1fr auto;gap:10px;align-items:center;padding:9px 12px;border-radius:12px;background:var(--surface-2)}
+.lbrow.you{background:var(--accent-soft);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.lbrow .rk{font-weight:700;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.lbrow .val{font-weight:700;font-variant-numeric:tabular-nums}
+.lbbar{height:6px;border-radius:999px;background:var(--pie-track);overflow:hidden;margin-top:5px}
+.lbbar i{display:block;height:100%;background:var(--violet);border-radius:999px}
+.feed{display:flex;flex-direction:column;gap:8px}
+.feed div{display:flex;gap:10px;align-items:center;font-size:14px}
+.feed small{color:var(--muted);margin-left:auto;white-space:nowrap}
+/* Builder (full screen) */
+.bwrap{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 370px}
+@media (max-width:880px){.bwrap{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}}
+.bcanvas{min-width:0;min-height:0;overflow:auto;padding:14px max(16px,env(safe-area-inset-left,0px))}
+.bside{border-left:1px solid var(--line);background:var(--surface);overflow-y:auto;padding:16px}
+@media (max-width:880px){.bside{border-left:0;border-top:1px solid var(--line);max-height:46vh}}
+.bside h3{margin:0 0 4px;font-family:var(--font-display);font-size:18px}
+.btool{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.4}
+.bcanvas .flowwrap{margin-top:0;background:var(--surface)}
+.fnode.editable{touch-action:none;user-select:none}
+.nport{position:absolute;right:-9px;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--surface);border:2px solid var(--violet);cursor:crosshair;z-index:4;touch-action:none}
+.nport:hover,.nport:focus-visible{background:var(--violet)}
+.fnode.dragging{opacity:.35}
+.dragghost{position:fixed;pointer-events:none;z-index:80;border:1.5px solid var(--accent);border-radius:12px;background:var(--surface);padding:8px 10px;font-weight:700;font-size:13px;box-shadow:0 10px 26px rgba(0,0,0,.2)}
+.laneband.drop{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.fnode.droptarget{box-shadow:0 0 0 3px var(--violet)}
+.flowsvg path.hit{fill:none;stroke:transparent;stroke-width:16;pointer-events:stroke;cursor:pointer}
+.flowsvg path.selink{stroke:var(--accent)!important;stroke-width:3!important}
+.flowsvg path.soft{stroke:var(--muted)!important;stroke-dasharray:2 5!important}
+.flowsvg path.same{stroke-dasharray:10 4 2 4}
+.flowsvg text.ll{fill:var(--ink);font-size:11px;font-weight:700;font-family:var(--font-body);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.relopt{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:6px;cursor:pointer}
+.relopt:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.relopt b{font-size:14px} .relopt span{grid-column:2;font-size:12.5px;color:var(--muted)}
+.sugchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.sugchips button{border:1px dashed color-mix(in srgb,var(--violet) 55%,var(--line));background:none;border-radius:999px;padding:4px 10px;font-size:12.5px;color:var(--ink)}
+.reviewbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--violet) 10%,var(--surface));margin-bottom:10px;font-size:13.5px}
+.status{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.status.pending{background:color-mix(in srgb,var(--violet) 14%,var(--surface));color:var(--violet)}
+.status.changes{background:color-mix(in srgb,var(--warn) 18%,var(--surface));color:var(--warn)}
+.status.live{background:color-mix(in srgb,var(--ok) 14%,var(--surface));color:var(--ok)}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -351,19 +466,15 @@ a{color:var(--accent)}
 
 <div class="app" id="app">
   <header>
+    <button class="iconbtn" id="menuBtn" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg><i class="badge" id="menuBadge" hidden></i></button>
     <div class="brand">Cueue <small>prototype</small></div>
     <div class="seg" role="group" aria-label="Focus">
       <button data-focus="all">All</button><button data-focus="work">Work</button><button data-focus="home">Home</button>
     </div>
-    <div class="seg" role="group" aria-label="View">
-      <button data-view="auto">Auto</button><button data-view="week">Week</button><button data-view="day">Today</button>
-    </div>
     <div class="spacer"></div>
-    <button class="btn" id="goalsBtn">Goals</button>
-    <button class="btn" id="libBtn">Library</button>
-    <button class="btn" id="orgBtn">Team</button>
-    <button class="btn primary" id="addBtn">+ Add task</button>
-    <button class="iconbtn" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <button class="iconbtn" id="bellBtn" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><i class="badge" id="bellBadge" hidden></i></button>
+    <div class="newwrap"><button class="btn primary" id="newBtn" aria-haspopup="menu" aria-expanded="false">+ New ▾</button>
+      <div class="newmenu" id="newMenu" role="menu" hidden></div></div>
   </header>
   <div id="banner" class="banner" hidden></div>
   <main class="board" id="board"></main>
@@ -379,10 +490,13 @@ a{color:var(--accent)}
     <div class="spacer"></div>
     <button class="btn small ghost" id="resetBtn">Reset demo</button>
   </div>
+  <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
 </div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <canvas id="confetti"></canvas>
+<div id="pageRoot"></div>
 <div id="sheetRoot"></div>
+<div id="drawerRoot"></div>
 
 <script>
 (() => {
@@ -413,6 +527,23 @@ const ROLES = {
 const LV = {member:0, lead:1, manager:2, admin:3};
 const LEVEL_NAMES = {admin:'Admin', manager:'Manager', lead:'Team lead', member:'Member'};
 const ICON = {
+  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  board:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>',
+  flow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="15" y="3" width="6" height="6" rx="1.5"/><rect x="15" y="15" width="6" height="6" rx="1.5"/><path d="M9 6h6M18 9v6"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>',
+  trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
+  org:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1"/><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  ask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',
+  idea:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
   repeat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
   dot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>',
   done:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>',
@@ -458,6 +589,51 @@ function seedTemplates(){
     ]}
   ];
 }
+function seedIdeas(){
+  // Ready-made life and work templates. Each task becomes a routine stage; stages without "after" start right away.
+  const idea = (id, cat, name, desc, horizon, tasks, why) => ({id, scope:'idea', cat, owner:'me', name, desc, horizon, why, ctx: cat === 'Work' ? 'work' : 'home',
+    stages: tasks.map((t, i) => ({id:id + '-' + i, after:[], title:t[0], role:t[5] || 'me', tasks:[{title:t[0], est:t[1], cadence:t[2], cadLabel:t[3], steps:t[4]}]}))});
+  const ITH = 'If-then plans ("After coffee, I check my plan") roughly double follow-through in research on goal pursuit (Gollwitzer & Sheeran, 2006).';
+  const HAB = 'New routines take about 66 days on average to feel automatic, and missing a day does not reset progress (Lally et al., 2010).';
+  return [
+    idea('i-morning', 'Home', 'Morning launch', 'A 15-minute start that tells you what today is about.', {n:1, unit:'months'},
+      [['Morning launch checklist', 15, 1, 'Daily', ['Drink a glass of water','Take meds','Look at today\'s plan','Pick the one task that matters most']]], ITH),
+    idea('i-evening', 'Home', 'Evening wind-down', 'Set tomorrow up tonight so mornings start easy.', {n:1, unit:'months'},
+      [['Set up tomorrow', 15, 1, 'Daily', ['Lay out clothes','Bag and keys by the door','Check tomorrow\'s first task']], ['Screens off', 5, 1, 'Daily', ['Phone on the charger outside the bedroom']]], ITH),
+    idea('i-reset', 'Home', 'Weekly home reset', 'One hour a week that keeps the house from piling up.', {n:3, unit:'months'},
+      [['Sunday reset', 45, 7, 'Weekly', ['Dishes and counters','Trash and recycling','Start a load of laundry','Clear one surface']], ['10-minute tidy', 10, 1, 'Daily', ['Set a timer','Put 10 things back']]], HAB),
+    idea('i-meals', 'Home', 'Meal planning & groceries', 'Decide dinners once a week instead of every night.', {n:3, unit:'months'},
+      [['Plan 5 dinners', 30, 7, 'Weekly', ['Check the calendar for busy nights','Pick 5 dinners','Write the grocery list']], ['Grocery order', 20, 7, 'Weekly', ['Use the list','Pick a delivery or pickup time']]], HAB),
+    idea('i-money', 'Home', 'Bills & budget check', 'A short weekly look so nothing sneaks up on you.', {n:6, unit:'months'},
+      [['Weekly money check', 15, 7, 'Weekly', ['Check balances','List bills due in the next 2 weeks','Flag anything unexpected']], ['Pay bills', 20, 14, 'Every 2 weeks', ['Pay what is due','Note confirmation numbers']]], HAB),
+    idea('i-car', 'Home', 'Car maintenance', 'Small checks that prevent big repairs.', {n:12, unit:'months'},
+      [['Monthly car check', 15, 30, 'Monthly', ['Tire pressure','Fluids','Lights']], ['Oil change', 60, 90, 'Every 3 months', ['Book the appointment','Drop off and pick up']]], ''),
+    idea('i-health', 'Home', 'Health appointments', 'Checkups and refills on autopilot.', {n:12, unit:'months'},
+      [['Refill prescriptions', 10, 30, 'Monthly', ['Check pills left','Request the refill']], ['Book checkups', 20, 90, 'Every 3 months', ['Doctor','Dentist','Eye exam if due']]], ''),
+    idea('i-pets', 'Home', 'Pet care', 'Daily care plus the things that are easy to forget.', {n:3, unit:'months'},
+      [['Feed and fresh water', 10, 1, 'Daily', ['Morning food','Evening food','Fresh water']], ['Walk', 30, 1, 'Daily', ['Leash, bags, go']], ['Meds and grooming check', 15, 30, 'Monthly', ['Flea and tick meds','Nails and brushing']]], HAB),
+    idea('i-seasonal', 'Home', 'Seasonal deep clean', 'A bigger clean four times a year, split into chunks.', {n:12, unit:'months'},
+      [['Seasonal deep clean', 120, 90, 'Every 3 months', ['Windows','Inside the fridge','One closet','Under the furniture']]], ''),
+    idea('i-school', 'Family', 'Kids\' school week', 'Everyone has a small job so school mornings run smoothly.', {n:3, unit:'months'},
+      [['Pack bags the night before', 10, 1, 'Daily', ['Homework in the folder','Lunch packed','Shoes by the door'], 'kids'], ['Check school email and forms', 10, 1, 'Weekdays', ['Read new messages','Sign anything due'], 'me'], ['Sunday week preview', 20, 7, 'Weekly', ['Look at the school calendar','Plan rides and activities'], 'partner']], ITH),
+    idea('i-followup', 'Work', 'Client follow-up sweep', 'Never let a "waiting on them" item go quiet.', {n:1, unit:'months'},
+      [['Follow-up sweep', 20, 2, 'Every 2 days', ['List open asks','Send nudges','Log replies']]], ''),
+    idea('i-report', 'Work', 'Weekly report', 'A steady weekly summary without the Friday scramble.', {n:3, unit:'months'},
+      [['Draft the weekly report', 45, 7, 'Weekly', ['Pull the numbers','Write 3 wins and 3 risks','Send it']]], ''),
+    idea('i-oneone', 'Work', '1:1 prep', 'Walk into every 1:1 with your wins, blockers and asks.', {n:3, unit:'months'},
+      [['Prep for 1:1', 15, 7, 'Weekly', ['Wins this week','Blockers','What I need']]], '')
+  ];
+}
+function seedSuggestion(){
+  return {id:'tp5', scope:'company', status:'pending', owner:'p-casey', suggestedBy:'Casey Nguyen', suggestedOn:'Mon', reviewer:'You',
+    note:'We keep losing track of complaints between calls. This makes sure the account owner and AR both close the loop.',
+    name:'Client complaint follow-up', desc:'Log it, call the client, check billing, then close the loop.', horizon:{n:1, unit:'weeks'}, ctx:'work', stages:[
+      {id:'log', after:[], title:'Log the complaint', role:'me', tasks:[{title:'Log the complaint details', est:15, steps:['Who, what and when','Attach any emails']}]},
+      {id:'acct', after:['log'], title:'Call the client', role:'crmowner', tasks:[{title:'Call the client to acknowledge', est:20, steps:['Apologize and listen','Agree on next steps']}]},
+      {id:'credit', after:['log'], title:'Check billing impact', role:'ar', tasks:[{title:'Review invoices for credits', est:30, steps:['Find affected invoices','Propose a credit if needed']}]},
+      {id:'close', after:['acct','credit'], title:'Close the loop', role:'me', tasks:[{title:'Send the resolution summary', est:15, steps:['Summarize the fix','Email the client and AR']}]}
+    ]};
+}
 function seedOrg(){
   return [
     {id:'p-alex', name:'Alex Rivera', title:'Chief Operating Officer', level:'admin', role:null, mgr:null},
@@ -485,9 +661,11 @@ function seed(){
     day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
     currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
     settings:{cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
+      tabbar:true, leaderboard:true, medTime:'',
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
-    templates: seedTemplates(), org: seedOrg(), crm: seedCrm(), crmConnected:true, viewAs:'lead', aheadCount:0,
+    notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'steps',
+    templates: seedTemplates().concat(seedIdeas()), org: seedOrg(), crm: seedCrm(), crmConnected:true, viewAs:'lead', aheadCount:0,
     goals:[
       {id:'g1', title:'Close November billing gaps', parent:null, why:'Every missing hour is revenue we can\'t bill.', horizon:{n:2,unit:'weeks'}, start:-3},
       {id:'g2', title:'Acme Staffing', parent:'g1', horizon:{n:1,unit:'weeks'}, start:-1},
@@ -565,7 +743,7 @@ function seed(){
          {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'},{title:'Break: Walk', day:0, kind:'break'}]
   };
 }
-const STORE = 'cueue-proto-v6';
+const STORE = 'cueue-proto-v7';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
 if (!S.tasks || !S.goals || !S.templates || !S.org) S = seed();
@@ -850,7 +1028,7 @@ function render(){
   const {overflow} = schedule(S.day), ban = $('#banner');
   if (overflow.length){ ban.hidden = false; ban.innerHTML = `<strong>Today is overbooked.</strong> ${overflow.length} task${overflow.length>1?'s don\'t':' doesn\'t'} fit. <button class="btn small" data-act="pushlater">Move later-due tasks to tomorrow</button>`; }
   else ban.hidden = true;
-  live(); save();
+  live(); updateTabs(); save();
 }
 
 /* ---------- live updates ---------- */
@@ -1029,7 +1207,7 @@ function announceFreed(freed, delay){
   const owners = [...new Set(theirs.map(x => roleOf(x.owner).name))];
   if (owners.length) setTimeout(() => toast(owners.length > 1 ? 'Started ' + owners.length + ' stages at once' : 'Handed off to ' + owners[0],
     owners.length > 1 ? owners.join(', ') + ' each got their tasks.' : theirs.map(x => x.title).join(', ') + ' is now on their list.'), delay);
-  if (mine.length) setTimeout(() => toast('Your next stage is ready', mine.map(x => x.title).join(', ')), delay + (owners.length ? 350 : 0));
+  if (mine.length){ setTimeout(() => toast('Your next stage is ready', mine.map(x => x.title).join(', ')), delay + (owners.length ? 350 : 0)); note('Hand-off: your stage is ready', mine.map(x => x.title).join(', '), 'handoff', {page:'goals', tab:'part'}); }
 }
 function othersDone(t){
   t.done = true; t.doneDay = S.day; t.steps.forEach(s => { s.done = true; s.at = stamp(); });
@@ -1066,18 +1244,29 @@ function endDay(){
 }
 
 /* templates -> goals */
-function instantiate(tp, subject){
+function linkOf(st, src){ return (st.links && st.links[src]) || {}; }
+function effectiveAfter(stages, st, seen){
+  // "same time" links inherit what the source waits for; "helpful" links don't block
+  seen = seen || new Set(); if (seen.has(st.id)) return []; seen.add(st.id);
+  const byS = {}; stages.forEach(x => byS[x.id] = x);
+  return [...new Set((st.after || []).flatMap(a => { const m = linkOf(st, a), src = byS[a]; if (!src || m.type === 'soft') return [];
+    return m.type === 'same' ? effectiveAfter(stages, src, seen) : [a]; }))];
+}
+function instantiate(tp, subject, startedBy){
   ensureStageIds(tp);
-  const root = {id:newId('g'), title: tp.name + (subject ? ': ' + subject : ''), parent:null, horizon:{...tp.horizon}, start:S.day, fromTemplate:tp.id, why:tp.desc};
+  const root = {id:newId('g'), title: tp.name + (subject ? ': ' + subject : ''), parent:null, horizon:{...tp.horizon}, start:S.day, fromTemplate:tp.id, why:tp.desc, owner: startedBy || 'me'};
   S.goals.push(root);
   const gmap = {}; let created = 0;
-  tp.stages.forEach(st => { const g = {id:newId('g'), title:st.title, parent:root.id, role:resolveRole(st.role, subject), start:S.day, horizon: st.horizon ? {...st.horizon} : null}; gmap[st.id] = g; S.goals.push(g); });
+  tp.stages.forEach(st => { const g = {id:newId('g'), title:st.title, parent:root.id, role:resolveRole(st.role, subject), start:S.day, horizon: st.horizon ? {...st.horizon} : (tp.scope === 'idea' ? {...tp.horizon} : null)}; gmap[st.id] = g; S.goals.push(g); });
   tp.stages.forEach(st => {
-    const g = gmap[st.id]; g.after = (st.after || []).map(a => gmap[a] && gmap[a].id).filter(Boolean);
+    const g = gmap[st.id]; g.after = effectiveAfter(tp.stages, st).map(a => gmap[a] && gmap[a].id).filter(Boolean);
+    const handed = (st.after || []).map(a => { const m = linkOf(st, a), src = tp.stages.find(x => x.id === a); return m.note && src ? 'Handed over from ' + src.title + ': ' + m.note + '.' : ''; }).filter(Boolean);
+    const conds = (st.after || []).map(a => linkOf(st, a).cond).filter(Boolean), delays = (st.after || []).map(a => linkOf(st, a).delay).filter(Boolean);
     st.tasks.forEach(tt => {
       const t = {id:newId('n'), title:tt.title, ctx: tp.ctx || 'work', diff: tt.est >= 60 ? 2 : 1, span: spanFor(tt.est), est: tt.est, prio:2,
         owner: g.role, goalId: g.id, steps: (tt.steps && tt.steps.length ? tt.steps : [tt.title]).map(s => ({t:s})), doneWhen: tt.doneWhen || aiDone(tt.title), proof: tp.scope === 'company', source:'template',
-        cadence: tt.cadence ? {every:tt.cadence, label: tt.cadLabel || 'Every ' + tt.cadence + ' days'} : null, day: null, status: null, notes:''};
+        cadence: tt.cadence ? {every:tt.cadence, label: tt.cadLabel || 'Every ' + tt.cadence + ' days'} : null, day: null, status: null,
+        notes: handed.concat(conds.map(c => 'Only when: ' + c + '.'), delays.map(d => 'Starts ' + d + ' after the previous stage.')).join(' ')};
       if (g.after.length){ t.status = 'waiting'; t.waitStages = [...g.after]; t.waitingOn = waitText(g.after); }
       else if (g.role === 'me') t.day = S.day;
       S.tasks.push(t); created++;
@@ -1121,9 +1310,98 @@ function suggestRoutines(g){
   return stages.length;
 }
 
+/* ---------- notifications ---------- */
+function note(text, sub, icon, open){ S.notes.unshift({id:newId('nt'), text, sub:sub || '', icon:icon || 'bell', open:open || null, when:stamp(), read:false}); updateBadges(); save(); }
+const unread = () => S.notes.filter(n => !n.read).length;
+function updateBadges(){
+  const n = unread(), set = (id, v) => { const el = $(id); if (!el) return; el.hidden = !v; el.textContent = v > 9 ? '9+' : v; };
+  set('#bellBadge', n); set('#tabBadge', n);
+  const review = canCreateFlows() ? S.templates.filter(t => t.status === 'pending' && t.owner !== 'me').length : 0;
+  set('#menuBadge', review + waitingMine().length ? '' : 0); const mb = $('#menuBadge'); if (mb){ mb.hidden = !(review || waitingMine().length) || !!n; mb.textContent = ''; mb.style.minWidth = '10px'; mb.style.height = '10px'; }
+}
+function waitingMine(){ return S.tasks.filter(t => isMine(t) && t.status === 'waiting' && t.waitStages && t.waitStages.length && !t.done); }
+function initRuntime(){
+  // sample data that needs real ids: a flow Morgan started that you are part of, plus a teammate's flow suggestion
+  if (S.inited) return; S.inited = true;
+  const {root} = instantiate(S.templates.find(t => t.id === 'tp1'), 'Avery Park', 'p-morgan'); root.start = S.day - 3;
+  goalKids(root.id).filter(k => ['Offer approved','Welcome the nurse','Compliance packet'].includes(k.title))
+    .forEach(k => goalTasks(k.id).forEach(t => { t.done = true; t.doneDay = 0; t.steps.forEach(x => x.done = true); }));
+  S.tasks.forEach(t => { if (t.status === 'waiting' && t.waitStages){ if (t.waitStages.every(stageDone)){ t.status = null; t.day = isMine(t) ? S.day : null; t.waitStages = null; } else t.waitingOn = waitText(t.waitStages); } });
+  S.templates.push(seedSuggestion());
+  S.notes = [
+    {id:'nt1', icon:'idea', text:'Casey Nguyen suggested a flow: "Client complaint follow-up"', sub:'Waiting for your review.', when:'Mon 3:40 PM', read:false, open:{page:'flows', tab:'suggest'}},
+    {id:'nt2', icon:'flow', text:'Morgan Blake added you to "Nurse onboarding: Avery Park"', sub:'You own Orientation and First-shift check-in. They start when four teams finish.', when:'Mon 4:12 PM', read:false, open:{flow:root.id}},
+    {id:'nt3', icon:'handoff', text:'Compliance finished "Compliance packet" for Avery Park', sub:'Orientation still waits on HR and Payroll.', when:'Tue 8:05 AM', read:false, open:{page:'goals', tab:'waiting'}}
+  ];
+}
+
+/* ---------- pages, menu drawer, tab bar ---------- */
+let page = null;
+function openPage(kind, crumbs, html, opts){
+  opts = opts || {};
+  const r = $('#pageRoot'), again = page && page.kind === kind;
+  const keep = again ? [...r.querySelectorAll('.pagebody,.bcanvas,.bside')].map(x => x.scrollTop) : [];
+  closeSheet(true); closeDrawer(); closeNewMenu();
+  r.innerHTML = `<section class="page ${again ? 'still' : ''}" aria-label="${esc(crumbs[crumbs.length-1][0])}">
+    <div class="pagebar"><button class="iconbtn" data-act="menu" aria-label="Open menu">${ICON.menu}</button><button class="btn small" data-act="back" aria-label="Back">‹ Back</button>
+      <nav class="crumbs" aria-label="Breadcrumb">${crumbs.map((c, i) => i < crumbs.length - 1 ? `<button data-act="${c[1]}">${esc(c[0])}</button><span aria-hidden="true">›</span>` : `<b>${esc(c[0])}</b>`).join('')}</nav>
+      <div class="spacer"></div>${opts.right || ''}</div>
+    ${opts.raw ? html : `<div class="pagebody"><div class="inner">${html}</div></div>`}</section>`;
+  page = {kind, crumbs, refresh: opts.refresh || null};
+  if (again) [...r.querySelectorAll('.pagebody,.bcanvas,.bside')].forEach((x, i) => x.scrollTop = keep[i] || 0);
+  else { const pb = r.querySelector('.pagebody'); if (pb) pb.scrollTop = 0; }
+  updateTabs();
+}
+function closePage(){ $('#pageRoot').innerHTML = ''; page = null; updateTabs(); render(); }
+function goBack(){ if (!page) return; const c = page.crumbs; runAct(c.length > 1 ? c[c.length - 2][1] : 'board'); }
+function runAct(a){ const b = document.createElement('button'); b.dataset.act = a; b.style.display = 'none'; document.body.appendChild(b); b.click(); b.remove(); }
+function openDrawer(){
+  const cur = page ? page.kind : 'board', wait = waitingMine().length, n = unread();
+  const review = canCreateFlows() ? S.templates.filter(t => t.status === 'pending' && t.owner !== 'me').length : 0;
+  const todayDone = S.log.filter(l => l.day === S.day && l.kind === 'task').length, todayLeft = S.tasks.filter(t => t.day === S.day && !t.done && isMine(t)).length;
+  const mi = (act, icon, label, extra, kinds) => `<button class="mitem" data-act="${act}" ${(kinds || [act]).includes(cur) ? 'aria-current="page"' : ''}>${ICON[icon]}<span>${label}</span>${extra || ''}</button>`;
+  $('#drawerRoot').innerHTML = `<div class="drawer-scrim" data-act="closedrawer"><nav class="drawer" aria-label="Menu">
+    <button class="profile" data-act="profile"><span class="bigav">ME</span><span><b>You</b><small>Account Manager · Operations</small><small>${LEVEL_NAMES[S.viewAs]} · reports to Morgan Blake</small></span><span class="ring sm" style="--p:${((todayDone / Math.max(1, todayDone + todayLeft))).toFixed(3)}" title="Today's progress"></span></button>
+    <div class="mgroup">Plan</div>
+    ${mi('board', 'board', 'Today & week')}
+    ${mi('goals', 'target', 'My goals', wait ? `<span class="cnt hot">${wait} waiting</span>` : '')}
+    ${mi('flows', 'flow', 'Flows', review ? `<span class="cnt">${review} to review</span>` : '', ['flows','builder','flowview'])}
+    ${mi('templates', 'idea', 'Templates & ideas')}
+    <div class="mgroup">Team</div>
+    ${mi('inbox', 'bell', 'Notifications', n ? `<span class="cnt hot">${n} new</span>` : '')}
+    ${mi('leaderboard', 'trophy', 'Team activity')}
+    ${mi('org', 'org', 'Org chart & permissions')}
+    ${LV[S.viewAs] >= 1 ? mi('crm', 'link', 'CRM connection') : ''}
+    <div class="mgroup">Me</div>
+    ${mi('achievements', 'star', 'Achievements')}
+    ${mi('insights', 'chart', 'Insights')}
+    ${mi('profile', 'user', 'Profile & my day')}
+    <div style="flex:1;min-height:12px"></div>
+    ${mi('settings', 'gear', 'Settings')}
+    ${mi('help', 'help', 'Help & feedback')}
+  </nav></div>`;
+}
+function closeDrawer(){ $('#drawerRoot').innerHTML = ''; }
+function openNewMenu(){
+  const m = $('#newMenu'), item = (act, icon, label, sub) => `<button role="menuitem" data-act="${act}">${ICON[icon]}<b>${label}</b><span>${sub}</span></button>`;
+  m.innerHTML = item('newtask', 'plus', 'Task', 'One-off or routine, with steps') + item('newgoal', 'target', 'Goal', 'Days, weeks or months, broken into routines')
+    + item('newflow', 'flow', canCreateFlows() ? 'Flow' : 'Suggest a flow', canCreateFlows() ? 'A process across people or family' : 'Build it, your manager reviews it') + item('templates', 'idea', 'From a template', 'Home, family and work ideas');
+  m.hidden = false; $('#newBtn').setAttribute('aria-expanded', 'true'); m.querySelector('button').focus();
+}
+function closeNewMenu(){ const m = $('#newMenu'); if (m){ m.hidden = true; $('#newBtn').setAttribute('aria-expanded', 'false'); } }
+function updateTabs(){
+  const bar = $('#tabbar'), on = innerWidth < 700 && S.settings.tabbar !== false;
+  bar.classList.toggle('on', on);
+  const cur = page ? (['builder','flowview'].includes(page.kind) ? 'flows' : page.kind) : 'board';
+  const tab = (k, icon, label, extra) => `<button data-tab="${k}" ${cur === k ? 'aria-current="page"' : ''}>${ICON[icon]}<span>${label}</span>${extra || ''}</button>`;
+  bar.innerHTML = tab('board', 'board', 'Today') + tab('goals', 'target', 'Goals') + tab('flows', 'flow', 'Flows') + tab('inbox', 'bell', 'Inbox', '<i class="badge" id="tabBadge" hidden></i>') + tab('menu', 'menu', 'Menu');
+  document.documentElement.style.setProperty('--tabh', on ? bar.offsetHeight + 'px' : '0px');
+  updateBadges();
+}
+
 /* ---------- sheets ---------- */
 function openSheet(html, kind, taskId, wide){ const r = $('#sheetRoot'), again = r.dataset.kind && r.dataset.kind === kind; r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet ${wide?'wide':''} ${again?'still':''}" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
-function closeSheet(){ const r = $('#sheetRoot'); r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; }
+function closeSheet(quiet){ const r = $('#sheetRoot'), had = r.innerHTML !== ''; r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; if (had && !quiet && page && page.refresh && page.kind !== 'builder') page.refresh(); }
 function relatedTasks(e){
   const words = (e.title + ' ' + e.desc + ' ' + e.who.join(' ')).match(/\b[A-Z][a-z]{3,}\b/g) || [];
   const keys = [...new Set(words)].filter(w => !['Review','Bring','Questions','Check','Team','Client','Yesterday','Credentialing'].includes(w));
@@ -1216,12 +1494,12 @@ function subNode(g){
       <div class="gacts" id="ga-${g.id}"><button class="btn small" data-act="addsub" data-goal="${g.id}">+ Sub-goal</button><button class="btn small" data-act="addgtask" data-goal="${g.id}">+ Task</button></div></div></div>`;
 }
 function goalCard(g){
-  const pct = goalProgress(g.id), tm = goalTime(g), kids = goalKids(g.id), tasks = goalTasks(g.id);
+  const pct = goalProgress(g.id), tm = goalTime(g), kids = goalKids(g.id), tasks = goalTasks(g.id), theirs = g.owner && g.owner !== 'me';
   const pace = tm ? (pct + .05 >= tm.frac ? '<span class="chip okc">On pace</span>' : '<span class="chip warn">A little behind. Today\'s routines catch you up</span>') : '';
   const roles = new Set(); (function walk(id){ goalTasks(id).forEach(t => roles.add(t.owner || 'me')); goalKids(id).forEach(k => walk(k.id)); })(g.id);
   return `<article class="gcard">
     <div class="ghead"><span class="ring" style="--p:${pct.toFixed(3)}">${Math.round(pct*100)}%</span>
-      <div style="min-width:0"><h3 class="gtitle">${esc(g.title)}</h3><div class="gmeta">${tm ? `<span class="chip">${esc(horizonLabel(g))}</span><span class="chip">Day ${tm.dayN} of ${tm.total}</span>` : ''}${pace}${roles.size > 1 ? [...roles].map(r => avatar(r)).join('') : ''}</div></div></div>
+      <div style="min-width:0"><h3 class="gtitle">${esc(g.title)}</h3><div class="gmeta">${theirs ? `<span class="chip" style="color:var(--violet)">Started by ${esc(ownerName(g.owner))}</span>` : ''}${g.fromTemplate ? '<span class="chip">Flow</span>' : ''}${tm ? `<span class="chip">${esc(horizonLabel(g))}</span><span class="chip">Day ${tm.dayN} of ${tm.total}</span>` : ''}${pace}${roles.size > 1 ? [...roles].map(r => avatar(r)).join('') : ''}</div></div></div>
     ${g.why ? `<p class="why"><b>Why:</b> ${esc(g.why)}</p>` : ''}
     ${tm ? `<div class="tline"><div class="bar"><i style="width:${Math.round(pct*100)}%"></i><span class="elapsed" style="left:${(tm.frac*100).toFixed(1)}%"></span></div>
       <div class="legendrow"><span>Progress (green) vs time passed (line)</span><span>Ends ${tm.end}</span></div></div>` : ''}
@@ -1229,17 +1507,56 @@ function goalCard(g){
     <div class="gacts" id="ga-${g.id}" style="margin-top:12px"><button class="btn small" data-act="addsub" data-goal="${g.id}">+ Sub-goal</button><button class="btn small" data-act="addgtask" data-goal="${g.id}">+ Task</button>
       <button class="btn small" data-act="suggest" data-goal="${g.id}">Suggest routines (AI)</button>
       ${kids.length ? `<button class="btn small" data-act="goalflow" data-goal="${g.id}">View flow</button>` : ''}
-      <button class="btn small ghost" data-act="savetpl" data-goal="${g.id}">Save as template</button></div>
+      ${theirs ? '' : `<button class="btn small ghost" data-act="savetpl" data-goal="${g.id}">Save as template</button>`}</div>
   </article>`;
 }
 function horizonInputs(prefix){
   return `<input id="${prefix}N" class="inp" type="number" min="1" value="1" style="width:70px" aria-label="Time frame amount"><select id="${prefix}U" class="inp" style="width:auto" aria-label="Time frame unit"><option value="days">days</option><option value="weeks" selected>weeks</option><option value="months">months</option></select>`;
 }
-function openGoals(){
-  openSheet(`<h2>Goals</h2><p class="note">Big goals get a time frame in days, weeks or months. The routines and tasks inside them use minutes and hours, so the long goal turns into something you can do today.</p>
-    <div class="actions" style="margin-top:8px"><input id="newGoal" class="inp" placeholder="New goal, e.g. Lose 15 pounds" style="flex:1;min-width:180px;width:auto">${horizonInputs('ng')}<button class="btn small primary" data-act="savegoal">Add goal</button></div>
-    <div class="sec">${goalKids(null).slice().reverse().map(goalCard).join('')}</div>
-    <div class="actions"><button class="btn" data-act="library">Browse the template library</button><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'goals', null, true);
+function hasMine(id){ let f = false; (function walk(x){ if (goalTasks(x).some(isMine)) f = true; goalKids(x).forEach(k => walk(k.id)); })(id); return f; }
+function rootOf(g){ while (g && g.parent) g = goalById(g.parent); return g; }
+function personFor(role){
+  if (!role) return 'Someone'; if (role === 'me') return 'You'; if (role.startsWith('crm:')) return role.slice(4);
+  const ps = S.org.filter(p => p.role === role).sort((a, b) => LV[b.level] - LV[a.level]);
+  return ps.length ? ps[0].name + ' (' + roleOf(role).name + ')' : roleOf(role).name;
+}
+const REPLIES = {hr:'The background check is submitted. Results should be back Thursday.', payroll:'Waiting on the direct deposit form. Should be done tomorrow.',
+  cred:'The packet is out. Two trainings are left to assign.', recruiter:'Called them this morning. All set on our side.', ar:'The invoice is drafted. Sending it once the corrected hours post.'};
+function openGoals(tab){
+  tab = tab || S.goalTab || 'own'; S.goalTab = tab;
+  const roots = goalKids(null);
+  const own = roots.filter(g => !g.owner || g.owner === 'me'), part = roots.filter(g => g.owner && g.owner !== 'me' && hasMine(g.id));
+  const waits = waitingMine(), blockers = {};
+  waits.forEach(t => t.waitStages.filter(id => !stageDone(id) && goalById(id) && goalById(id).role !== 'me').forEach(id => (blockers[id] = blockers[id] || []).push(t)));
+  const tabs = [['own', 'I own', own.length], ['part', 'I\'m part of', part.length], ['waiting', 'Waiting on others', Object.keys(blockers).length]];
+  let body = '';
+  if (tab === 'own') body = own.length ? own.slice().reverse().map(goalCard).join('') : '<div class="empty2">No goals yet. Use + New goal to add one.</div>';
+  if (tab === 'part') body = part.length ? part.map(goalCard).join('') : '<div class="empty2">When a teammate adds you to a flow, it shows up here with its progress.</div>';
+  if (tab === 'waiting') body = Object.keys(blockers).length ? '<div class="list">' + Object.entries(blockers).map(([sid, ts]) => {
+      const st = goalById(sid), r = rootOf(st), all = goalTasks(sid), done = all.filter(x => x.done).length, who = personFor(st.role);
+      return `<div class="box waitcard">${avatar(st.role)}<div style="min-width:0">
+        <div class="crumb" style="margin:0 0 2px">${esc(r ? r.title : '')}</div>
+        <b>${esc(roleOf(st.role).name)}: ${esc(st.title)}</b> <span class="note">· ${done} of ${all.length} tasks done</span>
+        <div class="bar thin" style="margin:8px 0"><i style="width:${Math.round(100 * done / Math.max(1, all.length))}%"></i></div>
+        <div class="note">Holding up your ${ts.length > 1 ? ts.length + ' tasks' : 'task'}: ${ts.map(x => '<b>' + esc(x.title) + '</b>').join(', ')}</div>
+        ${st.updReply ? `<div class="reply"><b>${esc(st.updReply.who)}:</b> ${esc(st.updReply.text)} <span class="note">· ${esc(st.updReply.when)}</span></div>` : ''}
+        <div class="actions" style="margin-top:10px">${st.updReq && !st.updReply ? `<span class="note">Update requested ${esc(st.updReq)} from ${esc(who)}</span>` : `<button class="btn small primary" data-act="requpd" data-goal="${sid}">Request update from ${esc(who)}</button>`}
+          ${r ? `<button class="btn small" data-act="goalflow" data-goal="${r.id}">View flow</button>` : ''}</div></div></div>`;
+    }).join('') + '</div>' : '<div class="empty2">Nothing of yours is waiting on anyone right now.</div>';
+  openPage('goals', [['Board', 'board'], ['My goals', 'goals']], `<h1>My goals</h1>
+    <p class="lede">Every goal you're responsible for. Big goals use days, weeks or months; the routines inside them use minutes and hours.</p>
+    <div class="tabs" role="tablist">${tabs.map(([k, l, n]) => `<button role="tab" aria-selected="${tab === k}" data-act="goaltab" data-tab="${k}">${l}<span class="n">${n}</span></button>`).join('')}</div>
+    ${body}`, {right:'<button class="btn small primary" data-act="newgoal">+ New goal</button>', refresh: () => openGoals(tab)});
+}
+function openNewGoal(){
+  openSheet(`<h2>New goal</h2><p class="note">Give it a time frame. Cueue breaks it into small routines you can do today.</p>
+    <div class="field"><label for="ngTitle">Goal</label><input id="ngTitle" placeholder="e.g. Lose 15 pounds"></div>
+    <div class="grid2"><div class="field"><label>Time frame</label><div class="estrow"><input id="ngN" type="number" min="1" value="3" aria-label="Amount"><select id="ngU" aria-label="Unit"><option>days</option><option>weeks</option><option selected>months</option></select></div></div>
+    <div class="field"><label for="ngCtx">Area</label><select id="ngCtx"><option value="home">Home</option><option value="work">Work</option></select></div></div>
+    <div class="field"><label for="ngWhy">Why it matters (optional)</label><input id="ngWhy" placeholder="e.g. More energy for the kids"></div>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="ngAi" checked> Suggest routines to get started (AI)</label>
+    <div class="actions"><button class="btn primary" data-act="savenewgoal">Create goal</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'newgoal');
+  setTimeout(() => $('#ngTitle') && $('#ngTitle').focus(), 50);
 }
 
 /* Library + flow */
@@ -1264,7 +1581,7 @@ function nodeHTML(stages, i, cols, opts){
   const mins = s.tasks.reduce((a, t) => a + (t.est || 0), 0), routines = s.tasks.filter(t => t.cadence).length;
   const stLabel = {done:'Done', active:'In progress', waiting:'Waiting', others:'With ' + roleOf(s.role).name}[s.status] || '';
   const deps = (s.after || []).length, kids = stages.filter(x => (x.after || []).includes(s.id)).length, par = cols.filter(c => c === cols[i]).length > 1;
-  const tools = ed && opts.structure ? `<div class="ntools"><button data-act="bnext" data-i="${i}" title="Add a stage that starts after this one">+ Next</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div>` : '';
+  const tools = ed && opts.structure ? `<div class="ntools"><button data-act="bnext" data-i="${i}" title="Add a stage that starts after this one">+ Next</button><button data-act="bup" data-i="${i}" title="Move to the lane above" aria-label="Lane up">▲</button><button data-act="bdown" data-i="${i}" title="Move to the lane below" aria-label="Lane down">▼</button><button data-act="bdel" data-i="${i}" title="Delete stage" aria-label="Delete stage">✕</button></div><span class="nport" title="Drag onto another stage to connect" aria-hidden="true"></span>` : '';
   return `<div class="fnode st-${s.status || ''} ${ed?'editable':''} ${ed && opts.sel===i?'sel':''}" data-sid="${esc(s.id)}" ${ed?`data-act="bsel" data-i="${i}"`:''}>
     <span class="fm">Stage ${cols[i]+1}${par ? ' · in parallel' : ''}${stLabel ? ' · ' + stLabel : ''}</span><b>${esc(s.title)}</b>
     <span class="fm">${s.tasks.length} task${s.tasks.length!==1?'s':''}${mins ? ' · ' + fmtDur(mins) : ''}${routines ? ' · ' + routines + ' routine' + (routines>1?'s':'') : ''}${s.horizon ? ' · ' + esc(horizonLabel(s)) : ''}</span>
@@ -1277,7 +1594,7 @@ function flowHTML(stages, opts){
   const cols = stageCols(stages), selCol = opts.edit && stages[opts.sel] ? cols[opts.sel] : -1, ghosts = opts.edit && opts.structure && selCol > -1;
   const ncol = Math.max(0, ...cols, ghosts ? selCol + 1 : 0) + 1;
   let html = `<div class="flowwrap"><div class="flow" style="grid-template-columns:150px repeat(${ncol}, 200px);grid-template-rows:repeat(${lanes.length}, minmax(84px,auto))">`;
-  lanes.forEach((r, li) => { html += `<div class="laneband" style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}</div>`; });
+  lanes.forEach((r, li) => { html += `<div class="laneband" data-lane="${li}" style="grid-row:${li+1};grid-column:1/-1"></div><div class="lane" style="grid-row:${li+1};grid-column:1">${avatar(r, true)}</div>`; });
   const cells = {};
   stages.forEach((s, i) => { const k = Math.max(0, lanes.indexOf(s.role || 'me')) + ':' + cols[i]; (cells[k] = cells[k] || {list:[]}).list.push(i); });
   if (ghosts) lanes.forEach((r, li) => { const k = li + ':' + (selCol + 1); (cells[k] = cells[k] || {list:[]}).ghost = r; });
@@ -1294,25 +1611,70 @@ function drawFlow(){
   const flow = document.querySelector('.flow'); if (!flow) return;
   const stages = flowStages, svg = flow.querySelector('.flowsvg'), fr = flow.getBoundingClientRect();
   svg.setAttribute('width', flow.scrollWidth); svg.setAttribute('height', flow.scrollHeight);
-  svg.querySelectorAll('path.link,path.handoff').forEach(n => n.remove());
+  svg.querySelectorAll('path.link,path.handoff,path.hit,text.ll').forEach(n => n.remove());
   const byS = {}; stages.forEach(s => byS[s.id] = s);
   stages.forEach(s => (s.after || []).forEach(a => {
     const na = flow.querySelector(`.fnode[data-sid="${CSS.escape(a)}"]`), nb = flow.querySelector(`.fnode[data-sid="${CSS.escape(s.id)}"]`);
     if (!na || !nb || !byS[a]) return;
     const ra = na.getBoundingClientRect(), rb = nb.getBoundingClientRect();
     const x1 = ra.right - fr.left, y1 = ra.top + ra.height/2 - fr.top, x2 = rb.left - fr.left - 2, y2 = rb.top + rb.height/2 - fr.top, mx = (x1 + x2) / 2;
-    const hand = (byS[a].role || 'me') !== (s.role || 'me');
+    const hand = (byS[a].role || 'me') !== (s.role || 'me'), m = (s.links && s.links[a]) || {}, d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+    const sel = D && flow.closest('.bcanvas') && D.link && D.link.src === a && D.link.dst === s.id;
     const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
-    p.setAttribute('class', hand ? 'handoff' : 'link'); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
+    p.setAttribute('d', d);
+    p.setAttribute('class', (hand ? 'handoff' : 'link') + (m.type === 'soft' ? ' soft' : m.type === 'same' ? ' same' : '') + (sel ? ' selink' : '')); p.setAttribute('marker-end', hand ? 'url(#ahv)' : 'url(#ah)');
     svg.appendChild(p);
+    const label = [m.type === 'same' ? 'same time' : '', m.delay ? '+' + m.delay : '', m.cond ? 'if ' + m.cond : '', m.note ? '↳ ' + m.note : ''].filter(Boolean).join(' · ');
+    if (label){ const t = document.createElementNS('http://www.w3.org/2000/svg', 'text'); t.setAttribute('class', 'll'); t.setAttribute('x', mx + 4); t.setAttribute('y', (y1 + y2) / 2 - 4);
+      t.textContent = label.length > 34 ? label.slice(0, 33) + '…' : label; svg.appendChild(t); }
+    if (flow.closest('.bcanvas')){ const h = document.createElementNS('http://www.w3.org/2000/svg', 'path'); h.setAttribute('d', d); h.setAttribute('class', 'hit');
+      h.dataset.act = 'blink'; h.dataset.src = a; h.dataset.dst = s.id; svg.appendChild(h); }
   }));
 }
-function openFlow(title, sub, stages, actions){
+function openFlow(title, sub, stages, actions, crumbs){
   flowStages = stages;
-  openSheet(`<h2>${esc(title)}</h2><p class="note">${esc(sub)}</p>${flowHTML(stages)}<div class="actions">${actions||''}<div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'flow', null, true);
+  openPage('flowview', (crumbs || [['Board', 'board'], ['Flows', 'flows']]).concat([[title, '']]), `<h1>${esc(title)}</h1><p class="lede">${esc(sub)}</p>${flowHTML(stages)}<div class="actions">${actions || ''}</div>`);
   requestAnimationFrame(drawFlow);
 }
+const isPublished = t => !t.status || t.status === 'published';
+function flowCardActive(g){
+  const pct = goalProgress(g.id), kids = goalKids(g.id), live = kids.filter(k => ['active', 'others'].includes(stageStatus(k))), wait = kids.filter(k => stageStatus(k) === 'waiting');
+  return `<div class="box"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="flex:1;min-width:0">${esc(g.title)}</h3><span class="status live">Running</span></div>
+    <p class="note" style="margin:4px 0 8px">${g.owner && g.owner !== 'me' ? 'Started by ' + esc(ownerName(g.owner)) : 'Started by you'} · ${kids.filter(k => stageStatus(k) === 'done').length} of ${kids.length} stages done</p>
+    <div class="bar"><i style="width:${Math.round(pct * 100)}%"></i></div>
+    <div class="chips" style="margin:10px 0 4px">${live.map(k => `<span class="chip">${avatar(k.role)} ${esc(k.title)}</span>`).join('') || '<span class="note">No stage is active right now.</span>'}</div>
+    ${wait.length ? `<p class="note" style="margin:4px 0 0">Waiting: ${wait.map(k => esc(k.title)).join(', ')}</p>` : ''}
+    <div class="actions" style="margin-top:10px"><button class="btn small" data-act="goalflow" data-goal="${g.id}">View diagram</button>${g.fromTemplate && S.templates.find(t => t.id === g.fromTemplate) ? `<button class="btn small" data-act="editflow" data-tpl="${g.fromTemplate}">Open template</button>` : ''}</div></div>`;
+}
+function flowCardSuggestion(tp){
+  const mine = tp.owner === 'me', canReview = canCreateFlows() && !mine;
+  const st = tp.status === 'pending' ? ['pending', 'Waiting for review'] : tp.status === 'changes' ? ['changes', 'Changes requested'] : ['', 'Draft'];
+  return `<div class="box"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3 style="flex:1;min-width:0">${esc(tp.name)}</h3><span class="status ${st[0]}">${st[1]}</span></div>
+    <p class="note" style="margin:4px 0 6px">${tp.status === 'draft' ? 'Your draft' : 'Suggested by ' + esc(mine ? 'you' : tp.suggestedBy) + (tp.suggestedOn ? ' · ' + esc(tp.suggestedOn) : '')}${tp.suggestFor ? ' · changes to "' + esc((S.templates.find(t => t.id === tp.suggestFor) || {}).name || '') + '"' : ''} · ${tp.stages.length} stages</p>
+    ${tp.note ? `<div class="quote">${esc(tp.note)}</div>` : ''}${tp.review ? `<div class="reply" style="background:color-mix(in srgb,var(--warn) 14%,var(--surface))"><b>Reviewer:</b> ${esc(tp.review)}</div>` : ''}
+    <div class="actions" style="margin-top:10px">${canReview && tp.status === 'pending' ? `<button class="btn small primary" data-act="editflow" data-tpl="${tp.id}">Review</button>` : `<button class="btn small" data-act="editflow" data-tpl="${tp.id}">${mine ? 'Edit' : 'View'}</button>`}<button class="btn small" data-act="tplflow" data-tpl="${tp.id}">View diagram</button></div></div>`;
+}
+function openFlows(tab){
+  tab = tab || S.flowTab || 'active'; S.flowTab = tab;
+  const active = goalKids(null).filter(g => g.fromTemplate && hasAnyOpen(g.id) && S.templates.find(t => t.id === g.fromTemplate && t.scope !== 'idea'));
+  const tpls = S.templates.filter(t => isPublished(t) && t.scope !== 'idea');
+  const drafts = S.templates.filter(t => t.status === 'draft' && t.owner === 'me');
+  const sugg = S.templates.filter(t => (t.status === 'pending' || t.status === 'changes') && (canCreateFlows() || t.owner === 'me'));
+  const tabs = [['active', 'Active', active.length], ['templates', 'Templates', tpls.length], ['drafts', 'Drafts', drafts.length], ['suggest', canCreateFlows() ? 'Suggestions to review' : 'My suggestions', sugg.length]];
+  let body = '';
+  if (tab === 'active') body = active.length ? '<div class="grid-cards">' + active.map(flowCardActive).join('') + '</div>' : '<div class="empty2">No flows are running. Use a template to start one.</div>';
+  if (tab === 'templates') body = ['company', 'family', 'mine'].map(sc => { const list = tpls.filter(t => t.scope === sc);
+    return list.length ? `<div class="sec" style="border:0;margin-top:0"><h4>${sc === 'company' ? 'Company processes (sample)' : sc === 'family' ? 'Family flows' : 'My templates'}</h4><div class="tplgrid">${list.map(tplCard).join('')}</div></div>` : ''; }).join('');
+  if (tab === 'drafts') body = drafts.length ? '<div class="grid-cards">' + drafts.map(flowCardSuggestion).join('') + '</div>' : '<div class="empty2">Flows you save as a draft wait here until you publish or send them.</div>';
+  if (tab === 'suggest') body = (canCreateFlows() ? '<p class="lede">Teammates without flow access can suggest flows or changes. Review them here, edit if needed, then approve or send back with a note.</p>'
+      : '<p class="lede">You can build any flow. Company processes go to your manager for review before they go live.</p>') +
+    (sugg.length ? '<div class="grid-cards">' + sugg.map(flowCardSuggestion).join('') + '</div>' : '<div class="empty2">No suggestions right now.</div>');
+  openPage('flows', [['Board', 'board'], ['Flows', 'flows']], `<h1>Flows</h1>
+    <p class="lede">Processes that move work between people. View a diagram, edit it, or use it to start a new run.</p>
+    <div class="tabs" role="tablist">${tabs.map(([k, l, n]) => `<button role="tab" aria-selected="${tab === k}" data-act="flowtab" data-tab="${k}">${l}<span class="n">${n}</span></button>`).join('')}</div>${body}`,
+    {right:`<button class="btn small primary" data-act="newflow">+ ${canCreateFlows() ? 'New flow' : 'Suggest a flow'}</button>`, refresh: () => openFlows(tab)});
+}
+function hasAnyOpen(id){ let f = false; (function walk(x){ if (goalTasks(x).some(t => !t.done)) f = true; goalKids(x).forEach(k => walk(k.id)); })(id); return f; }
 function goalStages(g){
   const kids = goalKids(g.id);
   return kids.map((k, i) => {
@@ -1327,9 +1689,10 @@ function tplCard(tp){
     <p class="note" style="margin:0">${esc(tp.desc || '')}</p>
     <div class="chips" style="margin:0"><span class="chip">${esc(horizonLabel(tp))}</span><span class="chip">${tp.stages.length} stages · ${tasks} tasks</span></div>
     <div class="lanes">${lanes.map(r => avatar(r, true)).join('')}</div>
-    <div class="actions" style="margin-top:4px" id="tu-${tp.id}"><button class="btn small" data-act="tplflow" data-tpl="${tp.id}">Preview flow</button><button class="btn small" data-act="editflow" data-tpl="${tp.id}">${canStructure(tp) ? 'Edit flow' : 'Open in builder'}</button><button class="btn small primary" data-act="tpluse" data-tpl="${tp.id}">Use</button></div></div>`;
+    <div class="actions" style="margin-top:4px" id="tu-${tp.id}"><button class="btn small" data-act="tplflow" data-tpl="${tp.id}">View diagram</button><button class="btn small" data-act="editflow" data-tpl="${tp.id}">${canStructure(tp) ? 'Edit' : 'Suggest changes'}</button><button class="btn small primary" data-act="tpluse" data-tpl="${tp.id}">Use</button></div></div>`;
 }
-function openLibrary(){
+function openLibrary(){ openFlows('templates'); }
+function openLibraryOld(){
   const co = S.templates.filter(t => t.scope === 'company'), fam = S.templates.filter(t => t.scope === 'family'), mine = S.templates.filter(t => t.scope === 'mine');
   openSheet(`<h2>Template library</h2><p class="note">Company processes are shared by your organization and show who owns each stage. Using one creates the goal, its sub-goals and tasks. Your tasks go on your board. When a stage is finished, the next owner's tasks start automatically.</p>
     <div class="actions" style="margin-top:6px"><button class="btn primary" data-act="newflow">+ New flow</button><button class="btn" data-act="org">Team &amp; permissions</button><span class="note">Previewing as ${LEVEL_NAMES[S.viewAs]}.${canCreateFlows() ? '' : ' Members can build family flows and personal templates. Company processes need a team lead or above.'}</span></div>
@@ -1342,7 +1705,11 @@ function openLibrary(){
 /* Flow builder: the diagram is the editor */
 let D = null;
 function canCreateFlows(){ return LV[S.viewAs] >= 1; }
-function canStructure(d){ return d.scope !== 'company' || LV[S.viewAs] === 3 || (LV[S.viewAs] >= 1 && (!d.id || d.owner === 'me')); }
+function canStructure(d){
+  if (d.scope !== 'company') return true;
+  if (['pending', 'changes', 'draft', 'suggest'].includes(d.status)) return d.owner === 'me' || LV[S.viewAs] >= 1;
+  return LV[S.viewAs] === 3 || (LV[S.viewAs] >= 1 && (!d.id || d.owner === 'me'));
+}
 function canEditStage(d, st){ return canStructure(d) || (LV[S.viewAs] >= 1 && st.role === 'me'); }
 function ownerName(id){ if (id === 'me') return 'you'; const p = S.org.find(x => x.id === id); return p ? p.name : 'someone else'; }
 function roleOptions(sel, exclude){
@@ -1356,100 +1723,321 @@ function taskPickOptions(){
   return html;
 }
 function openBuilder(tp){
-  D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', stages:JSON.parse(JSON.stringify(ensureStageIds(tp).stages)), sel:0}
-         : {id:null, name:'', desc:'', scope: canCreateFlows() ? 'company' : 'family', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', stages:[{id:newSid(), after:[], title:'Kickoff', role:'me', tasks:[]}], sel:0};
+  if (tp) ensureStageIds(tp);
+  D = tp ? {id:tp.id, name:tp.name, desc:tp.desc || '', scope:tp.scope === 'idea' ? 'mine' : tp.scope, horizon:{...tp.horizon}, ctx:tp.ctx || 'work', owner:tp.owner || 'me', status:tp.status || 'published',
+            suggestFor:tp.suggestFor || null, suggestedBy:tp.suggestedBy || '', note:tp.note || '', fromIdea: tp.scope === 'idea', stages:JSON.parse(JSON.stringify(tp.stages)), sel:0, link:null}
+         : {id:null, name:'', desc:'', scope: 'company', horizon:{n:2, unit:'weeks'}, ctx:'work', owner:'me', status:'new', stages:[{id:newSid(), after:[], title:'Kickoff', role:'me', tasks:[]}], sel:0, link:null};
+  if (D.fromIdea){ D.id = null; D.status = 'new'; D.name = D.name + ' (my version)'; }
+  if (!tp && !canCreateFlows()) D.status = 'suggest';
   D.lanes = [...new Set(D.stages.map(s => s.role))];
   renderBuilder();
 }
+function reviewing(){ return D.status === 'pending' && D.owner !== 'me' && canCreateFlows(); }
+const LINK_SUGG = {payroll:['I-9 and direct deposit form', 'Start date and pay rate'], hr:['Signed offer letter', 'Personal details for the employee record'], cred:['License number and expiration', 'Required trainings list'],
+  recruiter:['Candidate contact details', 'Start date'], ar:['Corrected hours and screenshot', 'Invoice number'], me:['Summary of what was done', 'Anything still open'], crmowner:['Client contact and history', 'What the client was told'],
+  kids:['Checklist for the day'], partner:['Shopping list', 'Calendar for the week'], vendor:['Corrected record request']};
+function linkPanel(){
+  const byS = id => D.stages.find(x => x.id === id), src = byS(D.link.src), dst = byS(D.link.dst);
+  if (!src || !dst){ D.link = null; return stagePanel(); }
+  const m = linkOf(dst, src.id), ed = canStructure(D) ? '' : 'disabled', type = m.type || 'finish';
+  const opt = (v, t, d) => `<label class="relopt"><input type="radio" name="lt" value="${v}" ${type === v ? 'checked' : ''} ${ed}><b>${t}</b><span>${d}</span></label>`;
+  const sugg = (LINK_SUGG[dst.role] || []).concat(['The completed checklist']);
+  return `<h3>Connection</h3><p class="note" style="margin:0 0 10px">${avatar(src.role)} <b>${esc(src.title)}</b> → ${avatar(dst.role)} <b>${esc(dst.title)}</b></p>
+    <div class="field"><label>How do they relate?</label>
+      ${opt('finish', 'Starts when "' + esc(src.title) + '" is finished', 'The usual hand-off. ' + esc(roleOf(dst.role).name) + ' gets their tasks the moment it\'s done.')}
+      ${opt('same', 'Starts at the same time as "' + esc(src.title) + '"', 'Both run side by side from the same moment, like two teams starting together.')}
+      ${opt('soft', 'Helpful, but not required', 'Shown as a dotted line. "' + esc(dst.title) + '" can start without it.')}</div>
+    <div class="field"><label for="lkDelay">Wait after it finishes</label><select id="lkDelay" ${ed}>${['', '1 day', '2 days', '3 days', '1 week'].map(d => `<option value="${d}" ${(m.delay || '') === d ? 'selected' : ''}>${d || 'No wait'}</option>`).join('')}</select>
+      <p class="hint">Useful when someone needs time to return paperwork.</p></div>
+    <div class="field"><label for="lkNote">What gets handed over</label><input id="lkNote" value="${esc(m.note || '')}" placeholder="e.g. Signed offer letter and start date" ${ed}>
+      ${ed ? '' : ''}<div class="sugchips">${sugg.map(x => `<button data-act="lksug" data-v="${esc(x)}" ${ed}>+ ${esc(x)}</button>`).join('')}</div></div>
+    <div class="field"><label for="lkCond">Only when (optional)</label><input id="lkCond" value="${esc(m.cond || '')}" placeholder="e.g. The nurse needs a visa" ${ed}><p class="hint">Leave empty if this always happens.</p></div>
+    ${canStructure(D) ? `<div class="actions"><button class="btn small" data-act="lkrev">Reverse direction</button><button class="btn small ghost" data-act="lkdel" style="color:var(--hot)">Delete connection</button></div>` : ''}
+    <div class="actions"><button class="btn small" data-act="bsel" data-i="${D.stages.indexOf(dst)}">Back to "${esc(dst.title)}"</button></div>`;
+}
+function stagePanel(){
+  const st = D.stages[D.sel]; if (!st) return '<p class="note">Select a stage or a connection to edit it.</p>';
+  const structure = canStructure(D), stageEdit = canEditStage(D, st), dis = structure ? '' : 'disabled';
+  const kidsOf = id => D.stages.filter(x => (x.after || []).includes(id)), desc = new Set();
+  (function walk(id){ kidsOf(id).forEach(k => { if (!desc.has(k.id)){ desc.add(k.id); walk(k.id); } }); })(st.id);
+  const opts = D.stages.filter(x => x !== st && !desc.has(x.id)), kids = kidsOf(st.id);
+  return `<h3>Stage: ${esc(st.title)}</h3>
+    <div class="field" style="margin-top:8px"><label for="bsTitle">Stage name</label><input id="bsTitle" value="${esc(st.title)}" ${dis}></div>
+    <div class="field"><label for="bsRole">Owned by</label><select id="bsRole" ${dis}>${roleOptions(st.role)}</select><p class="hint">Or drag the stage into another lane.</p></div>
+    <div class="field"><label>Starts when these are done</label><div class="depgrid">${opts.map(x => `<label class="dep"><input type="checkbox" data-dep="${esc(x.id)}" ${(st.after || []).includes(x.id) ? 'checked' : ''} ${dis}> ${esc(x.title)} <small>${esc(roleOf(x.role).name)}</small></label>`).join('') || '<span class="note">No other stages yet.</span>'}</div>
+      <p class="hint" style="margin-top:4px">${!(st.after || []).length ? 'Starts as soon as the flow begins.' : st.after.length > 1 ? 'Waits until all ' + st.after.length + ' are finished.' : ''} ${(st.after || []).map(a => { const x = D.stages.find(y => y.id === a); return x ? `<button class="chipbtn" style="padding:2px 8px;font-size:12px" data-act="blink" data-src="${a}" data-dst="${st.id}">Edit link from ${esc(x.title)}</button>` : ''; }).join(' ')}</p></div>
+    <div class="handoff-note">${kids.length ? `When this stage is done, it starts ${kids.length > 1 ? '<b>' + kids.length + ' stages at once</b>: ' : ''}${kids.map(k => '<b>' + esc(roleOf(k.role).name) + '</b> ("' + esc(k.title) + '")').join(', ')}.` : 'Nothing starts after this stage yet.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
+    ${structure ? `<div class="field"><select id="bBranch" aria-label="Start another stage after this one"><option value="">+ When this is done, also start a stage for…</option>${roleOptions('')}</select></div>` : ''}
+    <div class="field"><label>Tasks in this stage</label>
+    ${st.tasks.map((tk, ti) => `<div class="btask"><span>${esc(tk.title)}<small> · ${fmtDur(tk.est)}${tk.cadLabel ? ' · ' + esc(tk.cadLabel) : ''}${tk.steps && tk.steps.length ? ' · ' + tk.steps.length + ' steps' : ''}</small></span>${stageEdit ? `<button class="btn small ghost" data-act="bdeltask" data-ti="${ti}">Remove</button>` : '<span></span>'}</div>`).join('') || '<p class="note">No tasks yet.</p>'}</div>
+    ${stageEdit ? `<div class="actions" style="margin-top:0"><select id="bPick" class="inp" style="flex:1;min-width:180px;width:auto" aria-label="Template task">${taskPickOptions()}</select><button class="btn small" data-act="bpick">Add</button></div>
+      <div class="actions" style="margin-top:6px"><input id="bNewTask" class="inp" placeholder="Or write a new task" style="flex:1;min-width:140px;width:auto"><input id="bNewEst" class="inp" type="number" min="5" step="5" value="30" style="width:74px" aria-label="Minutes"><span class="note">min</span><button class="btn small" data-act="baddtask">Add</button></div>` : ''}
+    ${structure && D.stages.length > 1 ? `<div class="actions"><button class="btn small ghost" data-act="bdel" data-i="${D.sel}" style="color:var(--hot)">Delete stage</button></div>` : ''}`;
+}
 function renderBuilder(){
-  const st = D.stages[D.sel], structure = canStructure(D), stageEdit = st && canEditStage(D, st), nx = D.stages[D.sel + 1];
-  const prevSheet = document.querySelector('.sheet'), top = prevSheet ? prevSheet.scrollTop : 0;
-  const dis = structure ? '' : 'disabled';
-  openSheet(`<h2>${D.id ? 'Edit flow' : 'New flow'}</h2>
-    ${!structure ? `<div class="lockmsg">${ICON.lock}<span>${LV[S.viewAs] >= 1 ? 'This flow belongs to ' + esc(ownerName(D.owner)) + '. You can edit the tasks in your own stages. The order, owners and hand-offs are set by the flow owner.' : 'You can view this flow. Ask a team lead or manager to change it, or save your own copy.'}</span></div>` : ''}
-    <div class="grid2">
-      <div class="field"><label for="bName">Flow name</label><input id="bName" value="${esc(D.name)}" placeholder="e.g. New vendor setup" ${dis}></div>
-      <div class="field"><label for="bScope">Type</label><select id="bScope" ${dis}><option value="company" ${D.scope==='company'?'selected':''} ${canCreateFlows()?'':'disabled'}>Company process${canCreateFlows()?'':' (team leads and above)'}</option><option value="family" ${D.scope==='family'?'selected':''}>Family flow</option><option value="mine" ${D.scope==='mine'?'selected':''}>My template</option></select></div>
-      <div class="field"><label>Time frame</label><div class="estrow"><input id="bHn" type="number" min="1" value="${D.horizon.n}" aria-label="Time frame amount" ${dis}><select id="bHu" aria-label="Time frame unit" ${dis}>${['days','weeks','months'].map(u => `<option ${D.horizon.unit===u?'selected':''}>${u}</option>`).join('')}</select></div></div>
-      <div class="field"><label for="bDesc">Description</label><input id="bDesc" value="${esc(D.desc)}" placeholder="What this process gets done" ${dis}></div>
-    </div>
-    <p class="note" style="margin:0">Click a stage to edit it.${structure ? ' The dashed boxes add a stage that starts after the selected one. Add several to start them in parallel. Use "Starts when" to make a stage wait for more than one.' : ''}</p>
-    ${flowHTML(D.stages, {edit:true, structure, sel:D.sel, lanes:D.lanes})}
-    ${structure ? `<div class="actions" style="margin-top:8px"><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane (person, team or family member)…</option>${roleOptions('', D.lanes)}</select></div>` : ''}
-    ${st ? `<div class="stageed"><h4 style="margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Stage ${D.sel + 1}</h4>
-      <div class="grid2"><div class="field"><label for="bsTitle">Stage name</label><input id="bsTitle" value="${esc(st.title)}" ${dis}></div>
-      <div class="field"><label for="bsRole">Owned by</label><select id="bsRole" ${dis}>${roleOptions(st.role)}</select></div></div>
-      ${(() => { const kidsOf = id => D.stages.filter(x => (x.after || []).includes(id)), desc = new Set();
-        (function walk(id){ kidsOf(id).forEach(k => { if (!desc.has(k.id)){ desc.add(k.id); walk(k.id); } }); })(st.id);
-        const opts = D.stages.filter(x => x !== st && !desc.has(x.id)), kids = kidsOf(st.id);
-        return `<div class="field"><label>Starts when these are done</label><div class="depgrid">${opts.map(x => `<label class="dep"><input type="checkbox" data-dep="${esc(x.id)}" ${(st.after || []).includes(x.id) ? 'checked' : ''} ${dis}> ${esc(x.title)} <small>${esc(roleOf(x.role).name)}</small></label>`).join('') || '<span class="note">No other stages yet.</span>'}</div>
-          <p class="note" style="margin:4px 0 0">${!(st.after || []).length ? 'Starts as soon as the flow begins.' : st.after.length > 1 ? 'Waits until all ' + st.after.length + ' are finished.' : ''}</p></div>
-        <div class="handoff-note">${kids.length ? `When this stage is done, it starts ${kids.length > 1 ? '<b>' + kids.length + ' stages at once</b>: ' : ''}${kids.map(k => '<b>' + esc(roleOf(k.role).name) + '</b> ("' + esc(k.title) + '")').join(', ')}.` : 'Nothing starts after this stage yet. Finishing it completes this branch of the flow.'}${st.role === 'crmowner' ? ' This stage goes to whoever owns the contact in your CRM.' : ''}</div>
-        ${structure ? `<div class="actions" style="margin:0 0 10px"><select id="bBranch" class="inp" style="width:auto" aria-label="Start another stage after this one"><option value="">+ When this is done, also start a stage for…</option>${roleOptions('')}</select></div>` : ''}`; })()}
-      ${st.tasks.map((tk, ti) => `<div class="btask"><span>${esc(tk.title)}<small> · ${fmtDur(tk.est)}${tk.cadLabel ? ' · ' + esc(tk.cadLabel) : ''}${tk.steps && tk.steps.length ? ' · ' + tk.steps.length + ' steps' : ''}</small></span>${stageEdit ? `<button class="btn small ghost" data-act="bdeltask" data-ti="${ti}">Remove</button>` : '<span></span>'}</div>`).join('') || '<p class="note">No tasks yet. Pull one in from a template or write your own.</p>'}
-      ${stageEdit ? `<div class="actions" style="margin-top:6px"><select id="bPick" class="inp" style="flex:1;min-width:200px;width:auto" aria-label="Template task">${taskPickOptions()}</select><button class="btn small" data-act="bpick">Add</button></div>
-        <div class="actions" style="margin-top:6px"><input id="bNewTask" class="inp" placeholder="Or write a new task" style="flex:1;min-width:160px;width:auto"><input id="bNewEst" class="inp" type="number" min="5" step="5" value="30" style="width:80px" aria-label="Minutes"><span class="note">min</span><button class="btn small" data-act="baddtask">Add</button></div>` : ''}
-    </div>` : ''}
-    <div class="actions">${structure || D.stages.some(s => canEditStage(D, s)) ? '<button class="btn primary" data-act="bsave">Save flow</button>' : ''}${D.id ? '<button class="btn" data-act="bcopy">Save as my copy</button>' : ''}<div class="spacer"></div><button class="btn ghost" data-act="library">Back to library</button></div>`, 'builder', null, true);
-  const sh = document.querySelector('.sheet'); if (sh) sh.scrollTop = top;
-  flowStages = D.stages; requestAnimationFrame(drawFlow);
-  const on = (id, evn, fn) => { const el = $(id); if (el) el.addEventListener(evn, ev => fn(ev.target)); };
-  on('#bName', 'input', el => D.name = el.value); on('#bDesc', 'input', el => D.desc = el.value);
+  const structure = canStructure(D), dis = structure ? '' : 'disabled', rev = reviewing();
+  const isCo = D.scope === 'company', needsReview = isCo && !canCreateFlows();
+  let right = '';
+  if (rev) right = `<button class="btn small" data-act="breqchg">Request changes</button><button class="btn small ok" data-act="bapprove">Approve &amp; publish</button>`;
+  else if (structure) right = `<button class="btn small" data-act="bdraft">Save draft</button>${D.id && D.status === 'published' && D.scope === 'company' ? '<button class="btn small" data-act="bcopy">Save as my copy</button>' : ''}<button class="btn small primary" data-act="${needsReview ? 'bsend' : 'bsave'}">${needsReview ? 'Send for review' : 'Save &amp; publish'}</button>`;
+  else if (D.stages.some(s => canEditStage(D, s))) right = `<button class="btn small primary" data-act="bsave">Save my stage</button>`;
+  const banner = rev ? `<div class="reviewbar">${ICON.idea.replace('<svg', '<svg width="18" height="18"')}<span><b>${esc(D.suggestedBy)}</b> suggested this flow${D.suggestFor ? ' as a change to an existing one' : ''}. Edit anything you like, then approve or send it back.${D.note ? '<br><i>"' + esc(D.note) + '"</i>' : ''}</span></div>`
+    : !structure ? `<div class="lockmsg">${ICON.lock}<span>${LV[S.viewAs] >= 1 ? 'This flow belongs to ' + esc(ownerName(D.owner)) + '. You can edit tasks in your own stages.' : 'You can view this flow.'} Want something different? <button class="btn small" data-act="bsuggest">Suggest changes</button></span></div>`
+    : needsReview ? `<div class="reviewbar">${ICON.idea.replace('<svg', '<svg width="18" height="18"')}<span>You're suggesting this flow. When you send it, Morgan Blake reviews it before it goes live.</span></div>` : '';
+  const details = `<details class="box" style="padding:10px 12px;margin-bottom:12px" ${!D.name ? 'open' : ''}><summary style="cursor:pointer;font-weight:700">Flow details${D.name ? ': ' + esc(D.name) : ''}</summary>
+    <div class="field" style="margin-top:10px"><label for="bName">Flow name</label><input id="bName" value="${esc(D.name)}" placeholder="e.g. New vendor setup" ${dis}></div>
+    <div class="field"><label for="bScope">Type</label><select id="bScope" ${dis}><option value="company" ${isCo ? 'selected' : ''}>Company process${canCreateFlows() ? '' : ' (sent for review)'}</option><option value="family" ${D.scope === 'family' ? 'selected' : ''}>Family flow</option><option value="mine" ${D.scope === 'mine' ? 'selected' : ''}>My template</option></select></div>
+    <div class="field"><label>Time frame</label><div class="estrow"><input id="bHn" type="number" min="1" value="${D.horizon.n}" aria-label="Amount" ${dis}><select id="bHu" aria-label="Unit" ${dis}>${['days', 'weeks', 'months'].map(u => `<option ${D.horizon.unit === u ? 'selected' : ''}>${u}</option>`).join('')}</select></div></div>
+    <div class="field"><label for="bDesc">Description</label><input id="bDesc" value="${esc(D.desc)}" placeholder="What this process gets done" ${dis}></div>
+    ${needsReview || D.status === 'suggest' ? `<div class="field"><label for="bNote">Note for your manager</label><input id="bNote" value="${esc(D.note || '')}" placeholder="Why this would help the team"></div>` : ''}
+    ${rev ? `<div class="field"><label for="bReview">Note back to ${esc(D.suggestedBy)}</label><input id="bReview" placeholder="Needed if you request changes"></div>` : ''}</details>`;
+  const top = structure ? `<div class="btool"><button class="btn small" data-act="broot">+ Stage at the start</button><select id="bLane" class="inp" style="width:auto" aria-label="Add a lane"><option value="">+ Add a lane…</option>${roleOptions('', D.lanes)}</select>
+    <span class="hint">Drag a stage into another lane to change its owner. Drag from the round handle onto another stage to connect them. Click any line to edit how two stages relate.</span></div>` : '';
+  openPage('builder', [['Board', 'board'], ['Flows', 'flows'], [D.name || (D.status === 'suggest' ? 'Suggested flow' : 'New flow'), '']],
+    `<div class="bwrap"><div class="bcanvas">${banner}${top}${flowHTML(D.stages, {edit:true, structure, sel: D.link ? -1 : D.sel, lanes:D.lanes, link:D.link})}</div><aside class="bside" aria-label="Editor">${details}${D.link ? linkPanel() : stagePanel()}</aside></div>`,
+    {raw:true, right});
+  flowStages = D.stages; requestAnimationFrame(() => { drawFlow(); bindBuilderDrag(); });
+  const st = D.stages[D.sel], on = (id, evn, fn) => { const el = $(id); if (el) el.addEventListener(evn, ev => fn(ev.target)); };
+  on('#bName', 'input', el => D.name = el.value); on('#bDesc', 'input', el => D.desc = el.value); on('#bNote', 'input', el => D.note = el.value);
+  on('#bName', 'change', () => renderBuilder());
   on('#bScope', 'change', el => { D.scope = el.value; D.ctx = el.value === 'family' ? 'home' : D.ctx; renderBuilder(); });
   on('#bHn', 'change', el => D.horizon.n = Math.max(1, +el.value || 1)); on('#bHu', 'change', el => D.horizon.unit = el.value);
-  on('#bsTitle', 'change', el => { st.title = el.value.trim() || st.title; renderBuilder(); });
-  on('#bsRole', 'change', el => { st.role = el.value; if (!D.lanes.includes(el.value)) D.lanes.push(el.value); renderBuilder(); });
   on('#bLane', 'change', el => { if (el.value){ D.lanes.push(el.value); renderBuilder(); } });
-  on('#bBranch', 'change', el => { if (!el.value) return; D.stages.push({id:newSid(), after:[st.id], title:'New stage', role:el.value, tasks:[]}); if (!D.lanes.includes(el.value)) D.lanes.push(el.value); D.sel = D.stages.length - 1; renderBuilder(); });
-  document.querySelectorAll('[data-dep]').forEach(cb => cb.addEventListener('change', () => { const id = cb.dataset.dep; st.after = cb.checked ? [...new Set([...(st.after || []), id])] : (st.after || []).filter(a => a !== id); renderBuilder(); }));
+  if (st && !D.link){
+    on('#bsTitle', 'change', el => { st.title = el.value.trim() || st.title; renderBuilder(); });
+    on('#bsRole', 'change', el => { st.role = el.value; if (!D.lanes.includes(el.value)) D.lanes.push(el.value); renderBuilder(); });
+    on('#bBranch', 'change', el => { if (!el.value) return; D.stages.push({id:newSid(), after:[st.id], title:'New stage', role:el.value, tasks:[]}); if (!D.lanes.includes(el.value)) D.lanes.push(el.value); D.sel = D.stages.length - 1; renderBuilder(); });
+    document.querySelectorAll('[data-dep]').forEach(cb => cb.addEventListener('change', () => { const id = cb.dataset.dep; st.after = cb.checked ? [...new Set([...(st.after || []), id])] : (st.after || []).filter(a => a !== id); if (!cb.checked && st.links) delete st.links[id]; renderBuilder(); }));
+  }
+  if (D.link){
+    const dst = D.stages.find(x => x.id === D.link.dst), setM = (k, v) => { dst.links = dst.links || {}; dst.links[D.link.src] = {...linkOf(dst, D.link.src), [k]: v}; };
+    document.querySelectorAll('input[name="lt"]').forEach(r => r.addEventListener('change', () => { setM('type', r.value); renderBuilder(); }));
+    on('#lkDelay', 'change', el => { setM('delay', el.value); renderBuilder(); }); on('#lkNote', 'change', el => { setM('note', el.value.trim()); renderBuilder(); }); on('#lkCond', 'change', el => { setM('cond', el.value.trim()); renderBuilder(); });
+  }
+}
+let dragSuppress = false;
+function upstream(a, b){ // does stage a (transitively) wait on stage b?
+  const byS = {}; D.stages.forEach(x => byS[x.id] = x); const seen = new Set();
+  return (function walk(id){ const st = byS[id]; if (!st) return false; return (st.after || []).some(x => x === b || (!seen.has(x) && (seen.add(x), walk(x)))); })(a);
+}
+function connect(src, dst){
+  const s = D.stages.find(x => x.id === src), d = D.stages.find(x => x.id === dst);
+  if ((d.after || []).includes(src)){ D.link = {src, dst}; toast('Already connected', 'Edit the connection on the right.'); return; }
+  if (upstream(src, dst)){ toast('That would make a loop', '"' + s.title + '" already waits on "' + d.title + '".'); return; }
+  d.after = [...(d.after || []), src]; D.link = {src, dst};
+  toast('Connected', '"' + d.title + '" now starts after "' + s.title + '". Choose how they relate on the right.');
+}
+function bindBuilderDrag(){
+  const canvas = document.querySelector('.bcanvas'); if (!canvas || !canStructure(D)) return;
+  canvas.onpointerdown = e => {
+    if (e.button !== 0 || e.target.closest('.ntools')) return;
+    const node = e.target.closest('.fnode[data-sid]'); if (!node) return;
+    const port = !!e.target.closest('.nport'), sid = node.dataset.sid, flow = canvas.querySelector('.flow'), svg = flow.querySelector('.flowsvg');
+    const x0 = e.clientX, y0 = e.clientY; let moved = false, ghost = null, line = null, over = null;
+    const laneAt = y => [...flow.querySelectorAll('.laneband')].findIndex(b => { const r = b.getBoundingClientRect(); return y >= r.top && y < r.bottom; });
+    const move = ev => {
+      if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 6) return;
+      if (!moved){ moved = true;
+        if (port){ line = document.createElementNS('http://www.w3.org/2000/svg', 'path'); line.setAttribute('class', 'handoff'); svg.appendChild(line); }
+        else { ghost = document.createElement('div'); ghost.className = 'dragghost'; ghost.textContent = node.querySelector('b').textContent; document.body.appendChild(ghost); node.classList.add('dragging'); } }
+      if (port){
+        const fr = flow.getBoundingClientRect(), nr = node.getBoundingClientRect(), x1 = nr.right - fr.left, y1 = nr.top + nr.height / 2 - fr.top, x2 = ev.clientX - fr.left, y2 = ev.clientY - fr.top;
+        line.setAttribute('d', `M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}`);
+        const t = document.elementFromPoint(ev.clientX, ev.clientY), n = t && t.closest('.fnode[data-sid]');
+        if (over && over !== n) over.classList.remove('droptarget'); over = n && n !== node ? n : null; if (over) over.classList.add('droptarget');
+      } else {
+        ghost.style.left = ev.clientX + 12 + 'px'; ghost.style.top = ev.clientY + 8 + 'px';
+        const li = laneAt(ev.clientY); flow.querySelectorAll('.laneband').forEach((b, i) => b.classList.toggle('drop', i === li));
+      }
+    };
+    const up = ev => {
+      window.removeEventListener('pointermove', move);
+      if (!moved) return;
+      dragSuppress = true; setTimeout(() => dragSuppress = false, 60);
+      if (ghost) ghost.remove(); if (line) line.remove(); node.classList.remove('dragging');
+      if (port){ if (over) connect(sid, over.dataset.sid); }
+      else { const li = laneAt(ev.clientY), st = D.stages.find(x => x.id === sid), role = D.lanes[li];
+        if (li > -1 && role && st.role !== role){ st.role = role; D.sel = D.stages.indexOf(st); D.link = null; toast('Moved "' + st.title + '" to ' + roleOf(role).name, 'That lane owns this stage now.'); } }
+      renderBuilder();
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up, {once:true});
+  };
+}
+function builderSave(kind){
+  if (!D.name.trim()){ toast('Give the flow a name', 'Open "Flow details" at the top right.'); const d = document.querySelector('.bside details'); if (d) d.open = true; $('#bName') && $('#bName').focus(); return; }
+  const base = {scope:D.scope, name:D.name.trim(), desc:D.desc.trim(), horizon:{...D.horizon}, ctx: D.scope === 'family' ? 'home' : D.ctx, stages:JSON.parse(JSON.stringify(D.stages))};
+  if (kind === 'copy'){ S.templates.push({...base, id:newId('tp'), owner:'me', scope: D.scope === 'company' ? 'mine' : D.scope, name: base.name + ' (my copy)', status:'published'}); save(); openFlows('templates'); toast('Saved your copy', 'Find it under My templates.'); return; }
+  let tp = D.id ? S.templates.find(t => t.id === D.id) : null;
+  if (!tp){ tp = {id:newId('tp')}; S.templates.push(tp); D.id = tp.id; }
+  if (kind === 'approve'){
+    const orig = D.suggestFor && S.templates.find(t => t.id === D.suggestFor);
+    if (orig){ Object.assign(orig, base); S.templates.splice(S.templates.indexOf(tp), 1); }
+    else Object.assign(tp, base, {status:'published', owner:'me', approvedFrom: D.suggestedBy});
+    note('You approved "' + base.name + '"', D.suggestedBy + ' was notified. It\'s live in the template library.', 'ok', {page:'flows', tab:'templates'});
+    save(); openFlows('templates'); confetti(innerWidth / 2, innerHeight / 3, 90, 7); chime(true); toast('Approved and published', D.suggestedBy + ' will see it in their notifications.'); return;
+  }
+  if (kind === 'changes'){
+    const r = ($('#bReview') && $('#bReview').value.trim()) || '';
+    if (!r){ toast('Add a note for ' + D.suggestedBy, 'Say what to change in "Flow details".'); const d = document.querySelector('.bside details'); if (d) d.open = true; $('#bReview') && $('#bReview').focus(); return; }
+    Object.assign(tp, base, {status:'changes', review:r}); save(); openFlows('suggest'); toast('Sent back to ' + D.suggestedBy, 'They\'ll see your note.'); return;
+  }
+  if (kind === 'send'){
+    Object.assign(tp, base, {status:'pending', owner:'me', suggestedBy:'You', suggestedOn:DAYS[S.day], note:D.note || '', suggestFor:D.suggestFor || null, review:null});
+    note('Sent "' + base.name + '" to Morgan Blake for review', 'You\'ll get a notification when it\'s approved or needs changes.', 'idea', {page:'flows', tab:'suggest'});
+    save(); openFlows('suggest'); toast('Sent for review', 'Morgan Blake will review it.'); return;
+  }
+  Object.assign(tp, base, {status: kind === 'draft' ? 'draft' : 'published', owner: tp.owner && tp.owner !== 'me' && !canStructure({...tp, status:'published'}) ? tp.owner : (tp.owner || 'me')});
+  if (!tp.owner) tp.owner = 'me';
+  save(); openFlows(kind === 'draft' ? 'drafts' : 'templates'); toast(kind === 'draft' ? 'Draft saved' : 'Flow saved: ' + base.name, kind === 'draft' ? 'Find it under Drafts.' : tp.stages.length + ' stages. Use it from Flows or + New.');
 }
 function builderAct(a, el){
-  const i = +el.dataset.i, sw = (x, y) => { [D.stages[x], D.stages[y]] = [D.stages[y], D.stages[x]]; };
-  const st = D.stages[D.sel];
+  const i = +el.dataset.i, st = D.stages[D.sel];
   switch (a){
-    case 'bsel': D.sel = i; break;
-    case 'bup': case 'bdown': { const li = D.lanes.indexOf(D.stages[i].role) + (a === 'bup' ? -1 : 1); if (li >= 0 && li < D.lanes.length) D.stages[i].role = D.lanes[li]; D.sel = i; break; }
-    case 'bdel': { const del = D.stages.splice(i, 1)[0]; // stages that waited on it now wait on whatever it waited on
-      D.stages.forEach(x => { if ((x.after || []).includes(del.id)) x.after = [...new Set(x.after.filter(a => a !== del.id).concat(del.after || []))]; });
-      if (!D.stages.length) D.stages.push({id:newSid(), after:[], title:'New stage', role:'me', tasks:[]}); D.sel = Math.max(0, Math.min(D.sel, D.stages.length - 1)); break; }
-    case 'baddstage': { const prev = D.stages[D.sel]; D.stages.push({id:newSid(), after: prev ? [prev.id] : [], title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; break; }
-    case 'bnext': { const prev = D.stages[i]; D.stages.push({id:newSid(), after:[prev.id], title:'New stage', role:prev.role, tasks:[]}); D.sel = D.stages.length - 1; break; }
+    case 'bsel': D.sel = i; D.link = null; break;
+    case 'blink': D.link = {src:el.dataset.src, dst:el.dataset.dst}; break;
+    case 'bup': case 'bdown': { const li = D.lanes.indexOf(D.stages[i].role) + (a === 'bup' ? -1 : 1); if (li >= 0 && li < D.lanes.length) D.stages[i].role = D.lanes[li]; D.sel = i; D.link = null; break; }
+    case 'bdel': { const del = D.stages.splice(i, 1)[0];
+      D.stages.forEach(x => { if ((x.after || []).includes(del.id)){ x.after = [...new Set(x.after.filter(a2 => a2 !== del.id).concat(del.after || []))]; if (x.links) delete x.links[del.id]; } });
+      if (!D.stages.length) D.stages.push({id:newSid(), after:[], title:'New stage', role:'me', tasks:[]}); D.sel = Math.max(0, Math.min(D.sel, D.stages.length - 1)); D.link = null; break; }
+    case 'baddstage': { const prev = D.stages[D.sel]; D.stages.push({id:newSid(), after: prev ? [prev.id] : [], title:'New stage', role:el.dataset.role, tasks:[]}); D.sel = D.stages.length - 1; D.link = null; break; }
+    case 'bnext': { const prev = D.stages[i]; D.stages.push({id:newSid(), after:[prev.id], title:'New stage', role:prev.role, tasks:[]}); D.sel = D.stages.length - 1; D.link = null; break; }
+    case 'broot': D.stages.push({id:newSid(), after:[], title:'New stage', role: D.lanes[0] || 'me', tasks:[]}); D.sel = D.stages.length - 1; D.link = null; break;
     case 'bdeltask': st.tasks.splice(+el.dataset.ti, 1); break;
     case 'bpick': { const v = $('#bPick').value; if (!v) return;
       if (v.startsWith('t:')){ const tp = TEMPLATES[v.slice(2)]; st.tasks.push({title:tp.title.replace(/:\s*$/, ''), est:SPANS[tp.span][1], steps:tp.steps.map(x => x[0]), cadence: tp.cadence ? +tp.cadence : null, cadLabel: tp.cadence ? 'Every 2 days until done' : null}); }
       else { const [, id, si, ti] = v.split(':'); st.tasks.push(JSON.parse(JSON.stringify(S.templates.find(t => t.id === id).stages[+si].tasks[+ti]))); }
       break; }
     case 'baddtask': { const v = $('#bNewTask').value.trim(); if (!v){ $('#bNewTask').focus(); return; } st.tasks.push({title:v, est:Math.max(5, +$('#bNewEst').value || 30), steps:aiSteps(v).map(x => x[0])}); break; }
-    case 'bsave': case 'bcopy': {
-      if (!D.name.trim()){ toast('Give the flow a name', 'It shows in the library and on the goal it creates.'); $('#bName').focus(); return; }
-      const copy = a === 'bcopy', tp = {id: copy || !D.id ? newId('tp') : D.id, scope: copy ? (D.scope === 'company' ? 'mine' : D.scope) : D.scope, owner: copy ? 'me' : D.owner,
-        name: D.name.trim() + (copy ? ' (my copy)' : ''), desc:D.desc.trim(), horizon:{...D.horizon}, ctx: D.scope === 'family' ? 'home' : D.ctx, stages:JSON.parse(JSON.stringify(D.stages))};
-      const idx = S.templates.findIndex(t => t.id === tp.id);
-      if (idx > -1) S.templates[idx] = tp; else S.templates.push(tp);
-      save(); openLibrary(); toast(copy ? 'Saved your copy' : 'Flow saved: ' + tp.name, tp.stages.length + ' stages. Use it from the library or when adding a task.'); return; }
+    case 'lksug': { const inp = $('#lkNote'); inp.value = inp.value ? inp.value + ', ' + el.dataset.v : el.dataset.v; inp.dispatchEvent(new Event('change')); return; }
+    case 'lkrev': { const {src, dst} = D.link, s2 = D.stages.find(x => x.id === src), d2 = D.stages.find(x => x.id === dst);
+      if (upstream(src, dst) && !(d2.after || []).includes(src)) return;
+      d2.after = d2.after.filter(x => x !== src); const m = linkOf(d2, src); if (d2.links) delete d2.links[src];
+      if (upstream(src, dst)){ d2.after.push(src); toast('Can\'t reverse', 'That would make a loop.'); break; }
+      s2.after = [...(s2.after || []), dst]; s2.links = s2.links || {}; s2.links[dst] = m; D.link = {src:dst, dst:src}; break; }
+    case 'lkdel': { const d2 = D.stages.find(x => x.id === D.link.dst); d2.after = d2.after.filter(x => x !== D.link.src); if (d2.links) delete d2.links[D.link.src]; D.sel = D.stages.indexOf(d2); D.link = null; toast('Connection removed', ''); break; }
+    case 'bsuggest': D.suggestFor = D.id; D.id = null; D.owner = 'me'; D.status = 'suggest'; D.name = D.name + ' (suggested changes)'; toast('Suggesting changes', 'Edit anything, then send it for review.'); break;
+    case 'bsave': return builderSave(D.status === 'suggest' && D.scope === 'company' && !canCreateFlows() ? 'send' : 'publish');
+    case 'bdraft': return builderSave('draft');
+    case 'bsend': return builderSave('send');
+    case 'bcopy': return builderSave('copy');
+    case 'bapprove': return builderSave('approve');
+    case 'breqchg': return builderSave('changes');
   }
   renderBuilder();
 }
-function openOrg(){
+function openOrg(focus){
   const kids = id => S.org.filter(p => p.mgr === id);
   const dept = p => p.role ? (p.role === 'me' ? 'Operations' : roleOf(p.role).name) : 'Leadership';
   const ini = n => n === 'You' ? 'ME' : n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   const node = p => `<li><div class="op ${p.me ? 'me' : ''}"><span class="av" style="--c:var(${p.role ? roleOf(p.role).c : '--violet'})"><i>${ini(p.name)}</i></span><div><b>${esc(p.name)}</b><small>${esc(p.title)} · ${esc(dept(p))}</small></div><span class="chip">${LEVEL_NAMES[p.level]}</span>${kids(p.id).length ? `<span class="chip">Manages ${kids(p.id).length}</span>` : ''}</div>${kids(p.id).length ? `<ul class="org">${kids(p.id).map(node).join('')}</ul>` : ''}</li>`;
   const Y = '<span class="yes">Yes</span>', N = '<span class="no">–</span>';
-  const rows = [['Create company flows', Y, Y, Y, N], ['Change a flow\'s order, owners and hand-offs', Y, 'Own flows', 'Own flows', N],
-    ['Edit tasks in their department\'s stages', Y, Y, Y, 'Suggest changes'], ['Use flows and complete their tasks', Y, Y, Y, Y],
+  const rows = [['Create company flows', Y, Y, Y, 'Suggest for review'], ['Change a flow\'s order, owners and hand-offs', Y, 'Own flows', 'Own flows', 'Suggest changes'],
+    ['Review flow suggestions from their team', Y, Y, Y, N], ['Edit tasks in their department\'s stages', Y, Y, Y, 'Suggest changes'], ['Use flows and complete their tasks', Y, Y, Y, Y],
     ['Track flow progress for their team', Y, Y, Y, 'Own tasks'], ['Manage the org chart and job levels', Y, N, N, N]];
   const cur = S.viewAs;
-  openSheet(`<h2>Team &amp; permissions</h2><p class="note">Job levels decide who can build and change flows. Anyone who manages people can create flows. Departments can tune the tasks inside their own stages, but the flow decides who gets the next step.</p>
-    <div class="actions" style="margin-top:6px"><span class="note">Preview the app as:</span><div class="seg" role="group" aria-label="Preview as">${['admin','manager','lead','member'].map(l => `<button data-viewas="${l}" aria-pressed="${cur === l}">${LEVEL_NAMES[l]}${l === 'lead' ? ' (you)' : ''}</button>`).join('')}</div></div>
-    <div class="sec"><h4>Org chart (sample)</h4><ul class="org">${S.org.filter(p => !p.mgr).map(node).join('')}</ul></div>
-    <div class="sec"><h4>What each level can do</h4><div class="tablewrap"><table class="ptable"><thead><tr><th>Permission</th>${['admin','manager','lead','member'].map(l => `<th class="${cur===l?'cur':''}">${LEVEL_NAMES[l]}</th>`).join('')}</tr></thead>
-      <tbody>${rows.map(r => `<tr><td>${r[0]}</td>${r.slice(1).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
-    <div class="sec"><h4>CRM connection (sample)</h4><p class="note">A connected CRM supplies candidates, vendors and clients, and who owns each one. A flow stage owned by "Account owner (CRM)" is assigned to that contact's owner when the flow starts.</p>
+  openPage(focus === 'crm' ? 'crm' : 'org', [['Board', 'board'], [focus === 'crm' ? 'CRM connection' : 'Org chart & permissions', focus === 'crm' ? 'crm' : 'org']], `<h1>${focus === 'crm' ? 'CRM connection' : 'Org chart & permissions'}</h1>
+    <p class="lede">Job levels decide who can build and change flows. Anyone who manages people can create flows; everyone else can suggest them. Departments tune the tasks inside their own stages, but the flow decides who gets the next step.</p>
+    <div class="actions" style="margin-top:8px"><span class="note">Preview the app as:</span><div class="seg" role="group" aria-label="Preview as">${['admin', 'manager', 'lead', 'member'].map(l => `<button data-viewas="${l}" aria-pressed="${cur === l}">${LEVEL_NAMES[l]}${l === 'lead' ? ' (you)' : ''}</button>`).join('')}</div></div>
+    ${focus === 'crm' ? '' : `<div class="sec"><h4>Org chart (sample)</h4><ul class="org">${S.org.filter(p => !p.mgr).map(node).join('')}</ul></div>
+    <div class="sec"><h4>What each level can do</h4><div class="tablewrap"><table class="ptable"><thead><tr><th>Permission</th>${['admin', 'manager', 'lead', 'member'].map(l => `<th class="${cur === l ? 'cur' : ''}">${LEVEL_NAMES[l]}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r => `<tr><td>${r[0]}</td>${r.slice(1).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`}
+    <div class="sec" id="crmSec"><h4>CRM connection (sample)</h4><p class="note">A connected CRM supplies candidates, vendors and clients, and who owns each one. A flow stage owned by "Account owner (CRM)" goes to that contact's owner when the flow starts.</p>
       <div class="actions" style="margin-top:6px"><button class="btn small" data-act="crmtoggle">${S.crmConnected ? 'Disconnect sample CRM' : 'Connect sample CRM'}</button></div>
-      ${S.crmConnected ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">${S.crm.map(r => `<div class="trow" style="grid-template-columns:1fr auto"><span class="tt">${esc(r.name)}<small>${esc(r.type)}</small></span><span class="note">Owner: ${esc(r.owner)}</span></div>`).join('')}</div>
-      <p class="note">Try it: in the Library, use "Missing-time billing correction" for <b>Acme Staffing</b>. Its "Request the fix" stage comes to you because you own Acme in the CRM.</p>` : ''}</div>
-    <div class="actions"><button class="btn" data-act="library">Open the library</button><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'org', null, true);
+      ${S.crmConnected ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">${S.crm.map(r => `<div class="trow" style="grid-template-columns:1fr auto"><span class="tt">${esc(r.name)}<small>${esc(r.type)}</small></span><span class="note">Owner: ${esc(r.owner)}</span></div>`).join('')}</div>` : ''}</div>`,
+    {refresh: () => openOrg(focus)});
+}
+function ideaCard(tp){
+  return `<div class="box" style="display:flex;flex-direction:column;gap:8px"><span class="scope" style="color:${tp.cat === 'Work' ? 'var(--work)' : tp.cat === 'Family' ? 'var(--home)' : 'var(--violet)'}">${esc(tp.cat)}</span>
+    <h3>${esc(tp.name)}</h3><p class="note" style="margin:0">${esc(tp.desc)}</p>
+    <div class="chips" style="margin:0"><span class="chip">${esc(horizonLabel(tp))}</span></div>
+    <div style="display:flex;flex-direction:column;gap:4px">${tp.stages.map(st => st.tasks.map(t => `<div class="note" style="display:flex;gap:8px;align-items:center">${avatar(st.role)}<span><b style="color:var(--ink)">${esc(t.title)}</b> · ${fmtDur(t.est)} · ${esc(t.cadLabel || '')}</span></div>`).join('')).join('')}</div>
+    ${tp.why ? `<p class="note" style="margin:0"><b style="color:var(--ink)">Why it works:</b> ${esc(tp.why)}</p>` : ''}
+    <div class="actions" style="margin-top:auto"><button class="btn small primary" data-act="useidea" data-tpl="${tp.id}">Add to my goals</button><button class="btn small" data-act="editflow" data-tpl="${tp.id}">Customize first</button></div></div>`;
+}
+function openTemplates(){
+  const cat = S.ideaCat || 'All', ideas = S.templates.filter(t => t.scope === 'idea' && (cat === 'All' || t.cat === cat));
+  openPage('templates', [['Board', 'board'], ['Templates & ideas', 'templates']], `<h1>Templates & ideas</h1>
+    <p class="lede">Ready-made routines for the parts of life that repeat. Adding one creates a goal with small routines on your board. Customize first to change times, steps or who does what.</p>
+    <div class="actions" style="margin:12px 0 16px">${['All', 'Home', 'Family', 'Work'].map(c => `<button class="chipbtn" aria-pressed="${cat === c}" data-act="ideacat" data-cat="${c}">${c}</button>`).join('')}</div>
+    <div class="grid-cards">${ideas.map(ideaCard).join('')}</div>`, {refresh: openTemplates});
+}
+function openInbox(){
+  const icon = k => ({flow:ICON.flow, handoff:ICON.link, ask:ICON.ask, reply:ICON.ask, idea:ICON.idea, ok:ICON.done})[k] || ICON.bell;
+  openPage('inbox', [['Board', 'board'], ['Notifications', 'inbox']], `<h1>Notifications</h1>
+    <p class="lede">Flows you were added to, hand-offs that reached you, update requests and replies.</p>
+    <div class="list" style="margin-top:14px">${S.notes.map((n, i) => `<button class="nitem ${n.read ? '' : 'unread'}" data-act="opennote" data-i="${i}"><span class="ni">${icon(n.icon)}</span><span style="min-width:0"><b>${esc(n.text)}</b>${n.sub ? `<small>${esc(n.sub)}</small>` : ''}</span><span class="note when">${esc(n.when)}</span></button>`).join('') || '<div class="empty2">You\'re all caught up.</div>'}</div>`,
+    {right: S.notes.some(n => !n.read) ? '<button class="btn small" data-act="readall">Mark all read</button>' : '', refresh: openInbox});
+}
+const TEAMS = [ // weekly, per-person or rate based so teams with harder work aren't penalized
+  {role:'me', name:'Operations', people:3, steps:41, ontime:92, improved:12, breaks:9, ahead:2},
+  {role:'recruiter', name:'Recruiting', people:4, steps:46, ontime:88, improved:4, breaks:6, ahead:1},
+  {role:'cred', name:'Compliance', people:3, steps:38, ontime:97, improved:18, breaks:11, ahead:3},
+  {role:'hr', name:'HR', people:2, steps:33, ontime:85, improved:-3, breaks:7, ahead:0},
+  {role:'payroll', name:'Payroll', people:2, steps:36, ontime:90, improved:9, breaks:5, ahead:1},
+  {role:'ar', name:'Billing (AR)', people:3, steps:29, ontime:94, improved:21, breaks:8, ahead:2}];
+const LB_CATS = {steps:['Steps per person', 'steps', ''], ontime:['Hand-offs on time', 'ontime', '%'], improved:['Most improved', 'improved', '%'], breaks:['Breaks per person', 'breaks', ''], ahead:['Got ahead', 'ahead', '']};
+function openLeaderboard(){
+  const cat = S.lbCat || 'steps', [label, key, unit] = LB_CATS[cat];
+  const mine = S.log.filter(l => l.kind === 'step').length, myBreaks = S.log.filter(l => l.kind === 'break').length;
+  const teams = TEAMS.map(t => t.role === 'me' ? {...t, steps: t.steps + Math.round(mine / t.people), breaks: t.breaks + Math.round(myBreaks / t.people), ahead: t.ahead + (S.aheadCount || 0)} : t)
+    .filter(t => S.settings.leaderboard || t.role !== 'me').sort((a, b) => b[key] - a[key]);
+  const max = Math.max(...teams.map(t => t[key]), 1), you = teams.findIndex(t => t.role === 'me');
+  const row = (t, i) => `<div class="lbrow ${t.role === 'me' ? 'you' : ''}"><span class="rk">${i + 1}</span>${avatar(t.role)}<div style="min-width:0"><b>${esc(t.name)}</b>${t.role === 'me' ? ' <span class="note">your team</span>' : ''}<div class="lbbar"><i style="width:${Math.max(4, Math.round(100 * t[key] / max))}%"></i></div></div><span class="val">${t[key] > 0 && cat === 'improved' ? '+' : ''}${t[key]}${unit}</span></div>`;
+  const feed = [['cred', 'Taylor Reed finished the Compliance packet for Avery Park', 'Tue 8:05 AM'], ['recruiter', 'Sam Ortiz welcomed Avery Park', 'Mon 5:20 PM'], ['ar', 'Priya Shah closed 3 billing corrections', 'Mon 3:10 PM']]
+    .concat(S.log.filter(l => l.day === S.day && l.kind === 'task').slice(-3).map(l => ['me', 'You finished ' + l.title, 'Today']));
+  openPage('leaderboard', [['Board', 'board'], ['Team activity', 'leaderboard']], `<h1>Team activity</h1>
+    <p class="lede">Light, team-based competition. Teams are compared on per-person averages and on-time rates, so a team doing harder work isn't at a disadvantage. Resets every Monday. Only the top teams and your own are shown, never a last place.</p>
+    <div class="actions" style="margin:12px 0 16px">${Object.entries(LB_CATS).map(([k, v]) => `<button class="chipbtn" aria-pressed="${cat === k}" data-act="lbcat" data-cat="${k}">${v[0]}</button>`).join('')}</div>
+    <div class="grid-cards" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div class="box"><h3>${label}</h3><p class="note" style="margin:2px 0 10px">This week</p><div class="lb">${teams.slice(0, 5).map(row).join('')}${you >= 5 ? row(teams[you], you) : ''}</div>
+        ${S.settings.leaderboard ? '' : '<p class="note">Your team is hidden from the leaderboard. Turn it on in Settings.</p>'}</div>
+      <div class="box"><h3>Wins this week</h3><p class="note" style="margin:2px 0 10px">Recent finishes across teams</p><div class="feed">${feed.reverse().map(f => `<div>${avatar(f[0])}<span>${esc(f[1])}</span><small>${esc(f[2])}</small></div>`).join('')}</div></div>
+    </div>
+    <p class="note" style="margin-top:14px">Team leads can turn the leaderboard off for their team. Personal stats stay private in Achievements.</p>`, {refresh: openLeaderboard});
+}
+function openAchievements(){
+  const tasks = S.log.filter(l => l.kind === 'task').length, steps = S.log.filter(l => l.kind === 'step').length, breaks = S.log.filter(l => l.kind === 'break').length;
+  const routines = S.tasks.filter(t => t.cadence && t.completions && isMine(t));
+  const badges = [['First get-ahead', 'Finish a task before its planned day', (S.aheadCount || 0) >= 1], ['Break taker', 'Take 5 breaks', breaks >= 5], ['Step by step', 'Check off 25 steps', steps >= 25],
+    ['Routine builder', 'Reach 10 on any routine', routines.some(t => t.completions >= 10)], ['Hand-off pro', 'Finish a stage that starts others', S.log.some(l => l.kind === 'task' && l.handoff)], ['Week cleared', 'Clear a whole day', S.log.some(l => l.cleared)]];
+  openPage('achievements', [['Board', 'board'], ['Achievements', 'achievements']], `<h1>Achievements</h1><p class="lede">Your progress, just for you.</p>
+    <div class="stats" style="margin-top:14px"><div class="stat"><b>${tasks}</b><span>Tasks this week</span></div><div class="stat"><b>${steps}</b><span>Steps checked</span></div><div class="stat"><b>${breaks}</b><span>Breaks taken</span></div><div class="stat"><b>${S.aheadCount || 0}</b><span>Done early</span></div></div>
+    <div class="sec"><h4>Routine milestones</h4><div class="list">${routines.map(t => { const m = MILESTONES.find(x => x > t.completions); return `<div class="box" style="padding:10px 14px"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(t.title)}</b><span class="note">${t.completions} of ${m}</span></div><div class="bar" style="margin-top:6px"><i style="width:${Math.round(100 * t.completions / m)}%"></i></div></div>`; }).join('')}</div></div>
+    <div class="sec"><h4>Badges</h4><div class="grid-cards">${badges.map(b => `<div class="box" style="display:flex;gap:12px;align-items:center;${b[2] ? '' : 'opacity:.55'}"><span class="ring sm" style="--p:${b[2] ? 1 : 0};--rc:var(--violet)"></span><div><b>${b[0]}</b><div class="note">${b[2] ? 'Earned' : b[1]}</div></div></div>`).join('')}</div></div>`, {refresh: openAchievements});
+}
+function openInsights(){
+  const est = S.tasks.filter(t => t.aiRuns > 1).map(t => [t.title, t.aiEst, t.aiRuns]);
+  const stalls = {}; S.tasks.filter(t => t.status === 'waiting' && t.waitStages).forEach(t => t.waitStages.filter(id => !stageDone(id)).forEach(id => { const r = goalById(id).role; stalls[r] = (stalls[r] || 0) + 1; }));
+  const hours = [8,9,10,11,12,13,14,15,16,17,18], fresh = h => h * 60 >= S.settings.freshStart && h * 60 < S.settings.freshEnd;
+  openPage('insights', [['Board', 'board'], ['Insights', 'insights']], `<h1>Insights</h1><p class="lede">Patterns Cueue has noticed, so plans get more accurate over time. Sample data in this prototype.</p>
+    <div class="grid-cards" style="margin-top:14px">
+      <div class="box"><h3>Time estimates</h3><p class="note">Routines Cueue has learned from:</p>${est.map(e => `<div class="kv"><span>${esc(e[0])}</span><span>~${fmtDur(e[1])} · ${e[2]} runs</span></div>`).join('')}
+        <p class="note" style="margin-top:8px">Heavy tasks tend to run about 20% longer than planned. Cueue now adds a small buffer to them.</p></div>
+      <div class="box"><h3>Best focus hours</h3><div style="display:flex;gap:4px;align-items:flex-end;height:90px;margin:10px 0">${hours.map(h => `<div title="${h}:00" style="flex:1;border-radius:4px 4px 0 0;background:${fresh(h) ? 'var(--accent)' : 'var(--pie-track)'};height:${fresh(h) ? 80 + (h % 3) * 6 : 30 + (h % 4) * 8}%"></div>`).join('')}</div>
+        <div class="kv" style="font-size:12px"><span>8 AM</span><span>6 PM</span></div><p class="note">Heavy tasks finish fastest between ${fmt(S.settings.freshStart)} and ${fmt(S.settings.freshEnd)}.</p></div>
+      <div class="box"><h3>Where flows wait</h3>${Object.keys(stalls).length ? Object.entries(stalls).map(([r, n]) => `<div class="kv"><span>${avatar(r, true)}</span><span>${n} task${n > 1 ? 's' : ''} waiting</span></div>`).join('') : '<p class="note">Nothing is stuck right now.</p>'}
+        <p class="note" style="margin-top:8px">Use "Request update" in My goals to nudge the team that's holding things up.</p></div>
+    </div>`, {refresh: openInsights});
+}
+function openProfile(){
+  const st = S.settings, hh = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'), me = S.org.find(p => p.me);
+  openPage('profile', [['Board', 'board'], ['Profile & my day', 'profile']], `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><span class="bigav" style="width:64px;height:64px;font-size:20px">ME</span>
+      <div><h1 style="margin:0">You</h1><p class="lede" style="margin:0">${esc(me.title)} · Operations · ${LEVEL_NAMES[S.viewAs]}</p><p class="note" style="margin:2px 0 0">Reports to Morgan Blake · Manages Casey Nguyen and Riley Brooks</p></div></div>
+    <div class="grid-cards" style="margin-top:18px">
+      <div class="box"><h3>My day</h3><p class="note">Cueue plans around these.</p><div class="grid2" style="margin-top:8px">
+        <div class="field"><label for="pFs">Fresh hours start</label><input type="time" id="pFs" value="${hh(st.freshStart)}"></div><div class="field"><label for="pFe">Fresh hours end</label><input type="time" id="pFe" value="${hh(st.freshEnd)}"></div>
+        <div class="field"><label for="pWs">Work starts</label><input type="time" id="pWs" value="${hh(st.workStart)}"></div><div class="field"><label for="pWe">Work ends</label><input type="time" id="pWe" value="${hh(st.workEnd)}"></div>
+        <div class="field"><label for="pBuf">Buffer between tasks (min)</label><input type="number" id="pBuf" min="0" max="30" value="${st.buffer}"></div><div class="field"><label for="pBrk">Break every (min)</label><input type="number" id="pBrk" min="30" max="240" step="15" value="${st.breakEvery}"></div>
+        <div class="field"><label for="pMed">Medication time (optional)</label><input type="time" id="pMed" value="${esc(st.medTime || '')}"></div></div>
+        <p class="note">If you add a medication time, Cueue can shift your fresh hours to match when it usually takes effect.</p></div>
+      <div class="box"><h3>Reminders</h3><p class="note">How strongly Cueue gets your attention.</p>
+        <div class="actions">${['Off', 'Gentle', 'Medium', 'Strong'].map((l, i) => `<button class="chipbtn" aria-pressed="${st.cue === i}" data-act="setcue" data-cue="${i}">${l}</button>`).join('')}</div>
+        <p class="note" style="margin-top:10px">More options, like sounds, vibration and the edge light, are in Settings.</p><button class="btn small" data-act="settings">Open Settings</button></div>
+    </div>`, {refresh: openProfile});
+  const toMin = v => { const [h, m] = v.split(':').map(Number); return h * 60 + m; };
+  const bind = (id, fn) => $(id).addEventListener('change', ev => { fn(ev.target); save(); render(); });
+  bind('#pFs', el => st.freshStart = toMin(el.value)); bind('#pFe', el => st.freshEnd = toMin(el.value)); bind('#pWs', el => st.workStart = toMin(el.value)); bind('#pWe', el => st.workEnd = toMin(el.value));
+  bind('#pBuf', el => st.buffer = Math.max(0, +el.value)); bind('#pBrk', el => st.breakEvery = Math.max(30, +el.value)); bind('#pMed', el => st.medTime = el.value);
 }
 
 function openEvent(e){
@@ -1495,7 +2083,7 @@ function aiDone(title){
 }
 function openAdd(goalId){
   const dayOpts = [...Array(7).keys()].filter(i => i >= S.day).map(i => `<option value="${i}">${i===S.day?'Today':DAYS[i]}</option>`).join('');
-  const procOpts = S.templates.map(tp => `<option value="p:${tp.id}">${esc(tp.name)} (${tp.scope==='company'?'company':'mine'}, ${esc(horizonLabel(tp))})</option>`).join('');
+  const procOpts = S.templates.filter(tp => isPublished(tp) && tp.scope !== 'idea').map(tp => `<option value="p:${tp.id}">${esc(tp.name)} (${tp.scope==='company'?'company':'mine'}, ${esc(horizonLabel(tp))})</option>`).join('');
   openSheet(`<h2>New task</h2>
   <div class="field"><label for="fTitle">Goal (title)</label><input id="fTitle" placeholder="e.g. Follow up with Riverside on missing hours"></div>
   <div class="field"><label for="fTmpl">Start from a template</label><select id="fTmpl"><option value="">None</option>
@@ -1550,7 +2138,12 @@ function openSettings(){
   const st = S.settings, hh = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
   const cb = (id, on, text) => `<label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="${id}" ${on?'checked':''}> ${text}</label>`;
   openSheet(`<h2>Settings</h2>
-  <div class="sec" style="border:0;margin:0;padding:0"><h4>Day flow</h4>
+  <div class="sec" style="border:0;margin:0;padding:0"><h4>Display</h4>
+    <div class="field"><label>Board view</label><div class="seg" role="group" aria-label="Board view"><button data-view="auto" aria-pressed="${S.view === 'auto'}">Auto</button><button data-view="week" aria-pressed="${S.view === 'week'}">Week</button><button data-view="day" aria-pressed="${S.view === 'day'}">Today</button></div>
+      <p class="note" style="margin:4px 0 0">Auto shows the week when your screen is wide or sideways, and today when it's upright.</p></div>
+    ${cb('sTab', st.tabbar !== false, 'Show the tab bar at the bottom on phones')}
+    ${cb('sLb', st.leaderboard, 'Include my team on the leaderboard')}</div>
+  <div class="sec"><h4>Day flow</h4>
     ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
     ${cb('sLock', st.breakLock, 'Break lock: pause check-offs until I take a due break')}</div>
   <div class="sec"><h4>Cues and feedback</h4>
@@ -1565,13 +2158,7 @@ function openSettings(){
     <span class="sw" style="background:color-mix(in srgb,var(--rest) 18%,var(--surface));border-color:var(--rest)"></span><span>Break: rest and recharge</span>
     <span class="sw" style="background:var(--surface-2);border-style:dashed"></span><span>Waiting on someone else</span>
     <span class="sw" style="background:var(--surface)"></span><span>On track. The dot shows Work (teal) or Home (orange)</span></div></div>
-  <div class="sec"><h4>Your day</h4><div class="grid2">
-    <div class="field"><label for="sFs">Fresh hours start</label><input type="time" id="sFs" value="${hh(st.freshStart)}"></div>
-    <div class="field"><label for="sFe">Fresh hours end</label><input type="time" id="sFe" value="${hh(st.freshEnd)}"></div>
-    <div class="field"><label for="sWs">Work starts</label><input type="time" id="sWs" value="${hh(st.workStart)}"></div>
-    <div class="field"><label for="sWe">Work ends</label><input type="time" id="sWe" value="${hh(st.workEnd)}"></div>
-    <div class="field"><label for="sBuf">Buffer between tasks (min)</label><input type="number" id="sBuf" min="0" max="30" value="${st.buffer}"></div>
-    <div class="field"><label for="sBrk">Break every (min)</label><input type="number" id="sBrk" min="30" max="240" step="15" value="${st.breakEvery}"></div></div>
+  <div class="sec"><h4>Your day</h4><p class="note">Fresh hours, work hours, breaks and medication time live in your profile.</p><button class="btn small" data-act="profile">Open Profile &amp; my day</button>
     ${cb('sPrep', st.prepAll, 'Prep blocks before meetings')}</div>
   <div class="actions"><button class="btn primary" data-close="1">Done</button></div>`, 'settings');
   const toMin = v => { const [h,m] = v.split(':').map(Number); return h*60+m; };
@@ -1580,14 +2167,16 @@ function openSettings(){
   bind('#sAuto', el => st.autoNext = el.checked); bind('#sLock', el => st.breakLock = el.checked); bind('#sEdge', el => st.edge = el.checked);
   bind('#sSound', el => st.sound = el.checked); bind('#sHap', el => st.haptics = el.checked); bind('#sReduce', el => st.reduce = el.checked);
   bind('#sPies', el => st.pies = el.checked); bind('#sTimes', el => st.times = el.checked); bind('#sPrep', el => st.prepAll = el.checked);
-  bind('#sFs', el => st.freshStart = toMin(el.value)); bind('#sFe', el => st.freshEnd = toMin(el.value));
-  bind('#sWs', el => st.workStart = toMin(el.value)); bind('#sWe', el => st.workEnd = toMin(el.value));
-  bind('#sBuf', el => st.buffer = Math.max(0, +el.value)); bind('#sBrk', el => st.breakEvery = Math.max(30, +el.value));
+  bind('#sTab', el => { st.tabbar = el.checked; updateTabs(); }); bind('#sLb', el => st.leaderboard = el.checked);
 }
 
 /* ---------- events ---------- */
 document.addEventListener('click', ev => {
   if (ev.target.closest('.nextck')) return; // step checkboxes on cards are handled by the change event
+  if (dragSuppress) return;
+  if (!ev.target.closest('.newwrap')) closeNewMenu();
+  const tabBtn = ev.target.closest('[data-tab]');
+  if (tabBtn && tabBtn.closest('#tabbar')){ const k = tabBtn.dataset.tab; if (k === 'menu') openDrawer(); else runAct(k); return; }
   const el = ev.target.closest('[data-finish],[data-open],[data-act],[data-ev],[data-brk],[data-donelist],[data-viewas],[data-close],[data-focus],[data-view],[data-speed],[data-nav],.card[data-id]');
   if (!el) return;
   const root = $('#sheetRoot'), sheetTask = byId(root.dataset.task);
@@ -1597,14 +2186,14 @@ document.addEventListener('click', ev => {
   if (el.dataset.ev){ openEvent(S.events.find(e => e.id === el.dataset.ev)); return; }
   if (el.dataset.brk){ startBreak(el.dataset.brk); return; }
   if (el.dataset.donelist){ openDoneList(+el.dataset.donelist); return; }
-  if (el.dataset.viewas){ S.viewAs = el.dataset.viewas; save(); openOrg(); toast('Previewing as ' + LEVEL_NAMES[S.viewAs], canCreateFlows() ? 'You can create and change company flows.' : 'Company flows are view-only. Family and personal flows still work.'); return; }
+  if (el.dataset.viewas){ S.viewAs = el.dataset.viewas; save(); openOrg(page && page.kind === 'crm' ? 'crm' : null); toast('Previewing as ' + LEVEL_NAMES[S.viewAs], canCreateFlows() ? 'You can create and change company flows.' : 'Company flows are view-only. Family and personal flows still work.'); return; }
   if (el.dataset.focus){ S.focus = el.dataset.focus; render(); toast(S.focus==='all'?'Showing everything':'Focus: ' + (S.focus==='work'?'Work':'Home'), S.focus==='work'?'Home items fade back in during your last 3 work hours.':''); return; }
-  if (el.dataset.view){ S.view = el.dataset.view; S.viewDay = S.day; render.scrolled = false; render(); return; }
+  if (el.dataset.view){ S.view = el.dataset.view; S.viewDay = S.day; render.scrolled = false; render(); if ($('#sheetRoot').dataset.kind === 'settings') openSettings(); return; }
   if (el.dataset.speed){ S.speed = +el.dataset.speed; render(); return; }
   if (el.dataset.nav){ S.viewDay = Math.max(0, Math.min(6, S.viewDay + +el.dataset.nav)); render(); return; }
   if (el.classList.contains('card') && el.dataset.id){ openTask(byId(el.dataset.id)); return; }
   const a = el.dataset.act, cur = byId(S.currentId), gid = el.dataset.goal, tpl = S.templates.find(t => t.id === el.dataset.tpl);
-  if (a && a[0] === 'b' && D && $('#sheetRoot').dataset.kind === 'builder' && /^b(sel|up|down|del|addstage|next|deltask|pick|addtask|save|copy)$/.test(a)){ builderAct(a, el); return; }
+  if (D && page && page.kind === 'builder' && /^(b(sel|link|up|down|del|addstage|next|root|deltask|pick|addtask|save|draft|send|copy|approve|reqchg|suggest)|lk(sug|rev|del))$/.test(a)){ builderAct(a, el); return; }
   switch (a){
     case 'startday': closeSheet(); startNext(); break;
     case 'start': closeSheet(); S.dayMode = true; startTask(sheetTask); break;
@@ -1617,9 +2206,10 @@ document.addEventListener('click', ev => {
     case 'pullfit': { let left = (S.now < S.settings.workEnd ? S.settings.workEnd : DAY_END) - S.now, n = 0;
       aheadCandidates().forEach(t => { const e = estOf(t) + S.settings.buffer; if (e <= left){ left -= e; t.ahead = t.day; t.day = S.day; n++; } });
       render(); toast(n ? 'Pulled in ' + n + ' task' + (n>1?'s':'') : 'Nothing fits the time left', n ? 'Finish them early for a special celebration.' : 'Try pulling one in anyway, or call it a day.'); break; }
-    case 'newflow': openBuilder(null); break;
+    case 'newflow': closeNewMenu(); openBuilder(null); break;
     case 'editflow': openBuilder(tpl); break;
     case 'org': openOrg(); break;
+    case 'menu': openDrawer(); break;
     case 'crmtoggle': S.crmConnected = !S.crmConnected; save(); openOrg(); break;
     case 'resume': S.paused = false; render(); break;
     case 'more15': if (cur){ cur.est = estOf(cur) + 15; cur.warned1 = false; cur.warned2 = false; render(); } break;
@@ -1646,7 +2236,41 @@ document.addEventListener('click', ev => {
     case 'aisteps': { const have = new Set(sheetTask.steps.map(s => s.t)); aiSteps(sheetTask.title).forEach(([t,type]) => { if (!have.has(t)) sheetTask.steps.push({t, type}); }); openTask(sheetTask); render(); toast('Suggested steps added', 'Edit or remove any that don\'t fit.'); break; }
     case 'saveadd': saveAdd(); break;
     case 'goals': openGoals(); break;
-    case 'library': openLibrary(); break;
+    case 'board': closeSheet(true); closeDrawer(); closePage(); break;
+    case 'back': goBack(); break;
+    case 'closedrawer': if (ev.target === el) closeDrawer(); break;
+    case 'flows': openFlows(); break;
+    case 'templates': closeNewMenu(); openTemplates(); break;
+    case 'inbox': openInbox(); break;
+    case 'leaderboard': openLeaderboard(); break;
+    case 'crm': openOrg('crm'); break;
+    case 'achievements': openAchievements(); break;
+    case 'insights': openInsights(); break;
+    case 'profile': closeSheet(true); openProfile(); break;
+    case 'settings': closeDrawer(); openSettings(); break;
+    case 'help': closeDrawer(); toast('Help & feedback', 'In the real app this opens guides and a feedback form.'); break;
+    case 'newtask': closeNewMenu(); openAdd(null); break;
+    case 'newgoal': closeNewMenu(); openNewGoal(); break;
+    case 'goaltab': openGoals(el.dataset.tab); break;
+    case 'flowtab': openFlows(el.dataset.tab); break;
+    case 'ideacat': S.ideaCat = el.dataset.cat; openTemplates(); break;
+    case 'lbcat': S.lbCat = el.dataset.cat; openLeaderboard(); break;
+    case 'setcue': S.settings.cue = +el.dataset.cue; render(); openProfile(); break;
+    case 'readall': S.notes.forEach(n => n.read = true); save(); openInbox(); break;
+    case 'opennote': { const n = S.notes[+el.dataset.i]; n.read = true; save(); updateBadges(); const o = n.open || {};
+      if (o.page === 'goals') openGoals(o.tab); else if (o.page === 'flows') openFlows(o.tab); else if (o.flow){ const g = goalById(o.flow); if (g) openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it.', goalStages(g), '', [['Board', 'board'], ['Notifications', 'inbox']]); } else openInbox(); break; }
+    case 'useidea': { const {root, created} = instantiate(tpl, ''); render(); openGoals('own'); toast('Added: ' + root.title, created + ' routine' + (created > 1 ? 's' : '') + ' on your board, starting today.'); break; }
+    case 'savenewgoal': { const t = $('#ngTitle').value.trim(); if (!t){ $('#ngTitle').focus(); return; }
+      const g = {id:newId('g'), title:t, parent:null, owner:'me', horizon:{n:Math.max(1, +$('#ngN').value || 1), unit:$('#ngU').value}, start:S.day, why:$('#ngWhy').value.trim()};
+      S.goals.push(g); let n = 0; if ($('#ngAi').checked) n = suggestRoutines(g); closeSheet(true); render(); openGoals('own');
+      toast('Goal created: ' + t, n ? n + ' routine sub-goals added. Their tasks start today.' : 'Add sub-goals and tasks from its card.'); break; }
+    case 'requpd': { const st = goalById(el.dataset.goal), who = personFor(st.role); st.updReq = stamp(); st.updReply = null;
+      note('You asked ' + who + ' for an update', '"' + st.title + '" in ' + (rootOf(st) || {}).title, 'ask', {page:'goals', tab:'waiting'});
+      toast('Update requested', who + ' got a notification.'); openGoals('waiting');
+      setTimeout(() => { st.updReply = {who, text: REPLIES[st.role] || 'Working on it. Should be done in a day or two.', when: stamp()};
+        note(who + ' replied about "' + st.title + '"', st.updReply.text, 'reply', {page:'goals', tab:'waiting'}); toast(who + ' replied', st.updReply.text);
+        if (page && page.kind === 'goals') openGoals(); }, 4000); break; }
+    case 'library': openFlows('templates'); break;
     case 'savegoal': case 'savesub': {
       const isGoal = a === 'savegoal', inp = isGoal ? $('#newGoal') : $('#newSub'), v = inp.value.trim(); if (!v){ inp.focus(); return; }
       const pre = isGoal ? 'ng' : 'ns', n = Math.max(1, +$('#'+pre+'N').value || 1), unit = $('#'+pre+'U').value;
@@ -1660,8 +2284,8 @@ document.addEventListener('click', ev => {
     case 'addgtask': openAdd(gid); break;
     case 'suggest': { const g = goalById(gid), n = suggestRoutines(g); render(); openGoals(); toast('Added ' + n + ' routine sub-goals to ' + g.title, 'Each one has a small daily or weekly task on your board.'); break; }
     case 'savetpl': { const tp = templateFromGoal(goalById(gid)); save(); toast('Saved as a template: ' + tp.name, 'Find it under My templates in the Library.'); break; }
-    case 'goalflow': { const g = goalById(gid); openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it. Dashed arrows are hand-offs.', goalStages(g), `<button class="btn" data-act="goals">Back to goals</button>`); break; }
-    case 'tplflow': openFlow(tpl.name, scopeLabel(tpl) + ' · ' + horizonLabel(tpl) + '. ' + (tpl.desc||''), tpl.stages.map(s => ({...s})), `<button class="btn" data-act="library">Back to library</button><button class="btn" data-act="editflow" data-tpl="${tpl.id}">Open in builder</button><button class="btn primary" data-act="tpluse" data-tpl="${tpl.id}">Use this process</button>`); break;
+    case 'goalflow': { const g = goalById(gid), from = page && page.kind === 'flows' ? [['Board', 'board'], ['Flows', 'flows']] : [['Board', 'board'], ['My goals', 'goals']]; openFlow(g.title, (g.owner && g.owner !== 'me' ? 'Started by ' + ownerName(g.owner) + '. ' : '') + 'Each stage is a sub-goal, placed in the lane of whoever owns it. Dashed arrows are hand-offs.', goalStages(g), g.fromTemplate ? `<button class="btn" data-act="editflow" data-tpl="${g.fromTemplate}">Open template</button>` : '', from); break; }
+    case 'tplflow': openFlow(tpl.name, scopeLabel(tpl) + ' · ' + horizonLabel(tpl) + '. ' + (tpl.desc||''), ensureStageIds(tpl).stages.map(s => ({...s})), `<button class="btn" data-act="editflow" data-tpl="${tpl.id}">${canStructure(tpl) ? 'Edit' : 'Suggest changes'}</button>${isPublished(tpl) ? `<button class="btn primary" data-act="tpluse" data-tpl="${tpl.id}">Use this process</button>` : ''}`); break;
     case 'tpluse': {
       if ($('#tplFor')){ const {root, created} = instantiate(tpl, $('#tplFor').value.trim()); closeSheet(); render(); openGoals(); toast('Created: ' + root.title, created + ' tasks across ' + tpl.stages.length + ' stages. Yours are on your board.'); break; }
       const host = $('#tu-' + tpl.id) || el.closest('.actions');
@@ -1684,18 +2308,18 @@ document.addEventListener('change', ev => {
   if (el.checked) checkStep(t, i, el); else uncheckStep(t, i);
   const root = $('#sheetRoot');
   if (root.dataset.kind === 'task' && root.dataset.task === t.id) openTask(t);
+  else if (page && page.refresh && page.kind !== 'builder') page.refresh();
 });
 document.addEventListener('keydown', ev => {
-  if (ev.key === 'Escape') closeSheet();
+  if (ev.key === 'Escape'){ if ($('#newMenu') && !$('#newMenu').hidden) closeNewMenu(); else if ($('#sheetRoot').innerHTML) closeSheet(); else if ($('#drawerRoot').innerHTML) closeDrawer(); else if (page) goBack(); }
   if (ev.key === 'Enter' && ev.target.id === 'newGoal') $('[data-act="savegoal"]').click();
   if (ev.key === 'Enter' && ev.target.id === 'newSub') $('[data-act="savesub"]').click();
   if (ev.key === 'Enter' && ev.target.id === 'newStep') $('[data-act="addstep"]').click();
   if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('card') && ev.target.dataset.id){ ev.preventDefault(); openTask(byId(ev.target.dataset.id)); }
 });
-$('#addBtn').onclick = () => openAdd(null);
-$('#goalsBtn').onclick = openGoals;
-$('#libBtn').onclick = openLibrary;
-$('#orgBtn').onclick = openOrg;
+$('#menuBtn').onclick = openDrawer;
+$('#bellBtn').onclick = openInbox;
+$('#newBtn').onclick = ev => { ev.stopPropagation(); const m = $('#newMenu'); if (m.hidden) openNewMenu(); else closeNewMenu(); };
 $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned today so "Get ahead" appears
   S.tasks.filter(t => t.day === S.day && isMine(t) && !t.done && t.status !== 'waiting').forEach(t => {
     S.log.push({title:t.title, day:S.day, taskId:t.id, kind:'task'}); t.completions = (t.completions||0) + 1;
@@ -1706,12 +2330,12 @@ $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned tod
   Object.assign(S, {currentId:null, paused:false, brk:null, breakDue:null, workSince:0});
   closeSheet(); render(); toast('Today cleared (demo)', 'Now try "Get ahead" at the top of Today.');
 };
-$('#settingsBtn').onclick = openSettings;
 $('#playBtn').onclick = () => { S.running = !S.running; render(); };
 $('#endDayBtn').onclick = endDay;
-$('#resetBtn').onclick = () => { S = seed(); render.scrolled = false; closeSheet(); render(); toast('Demo reset'); };
-let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { render(); if ($('#sheetRoot').dataset.kind === 'flow') drawFlow(); }, 150); });
+$('#resetBtn').onclick = () => { S = seed(); S.templates.forEach(ensureStageIds); initRuntime(); render.scrolled = false; closeSheet(true); closeDrawer(); if (page) closePage(); render(); toast('Demo reset'); };
+let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { render(); if (page && ['flowview', 'builder'].includes(page.kind)) drawFlow(); }, 150); });
 
+initRuntime();
 render();
 requestAnimationFrame(tick);
 setInterval(save, 5000);

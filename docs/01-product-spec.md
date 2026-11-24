@@ -348,3 +348,22 @@ CRM · Android/desktop native apps (web covers desktop first).
 - **Fan-in**: a stage that waits on several stages starts only when every one of them is done
   (e.g. Orientation waits for all four). Its "waiting on" label updates as each one finishes.
 - When a stage starts several others, the person finishing it sees which teams get work next and can add an extra task for any of them.
+
+### 12.8 Navigation (main page, menu, pages)
+- Top bar: Menu · Focus (All/Work/Home) · Notifications · **+ New ▾** (Task, Goal, Flow, From a template).
+- Menu drawer: profile card, then **Plan** (Today & week, My goals, Flows, Templates & ideas), **Team** (Notifications,
+  Team activity, Org chart & permissions, CRM), **Me** (Achievements, Insights, Profile & my day), Settings, Help.
+- Menu items open full-screen pages with a menu button, Back and breadcrumbs (e.g. `Board › Flows › Client complaint follow-up`).
+- Phones: optional bottom tab bar (Today, Goals, Flows, Inbox, Menu).
+
+### 12.9 Collaboration
+- **My goals**: I own · I'm part of (with who started it) · Waiting on others (request an update; replies show inline and as notifications).
+- **Notifications**: added to a flow, hand-off reached you, update requested/answered, suggestion submitted/approved.
+- **Flow suggestions**: people without flow rights build or edit a flow as a suggestion; their manager reviews it
+  in the builder, edits if needed, and approves or requests changes with a note.
+- **Team leaderboard**: weekly, team-based, fair across different kinds of work, several categories, no last place.
+
+### 12.10 Builder interactions
+- Drag a stage to another lane to change its owner; drag from its round handle onto another stage to connect them.
+- Click a connection line to set how the two stages relate: starts when finished (default), starts at the same time,
+  or helpful but not required, plus an optional wait, what gets handed over (with suggestions) and an only-when condition.
