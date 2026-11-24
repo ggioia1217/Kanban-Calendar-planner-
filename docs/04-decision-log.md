@@ -22,7 +22,7 @@
 | D17 | Offline-capable; AI queues when offline |
 | D18 | Subscription for AI; one-time purchase for bring-your-own-AI |
 | D19 | Team/org features last (Phase 6), but data model multi-user from day one |
-| D20 | Urgent cards get a light-flare sweep in addition to the periodic shake (both adjustable) |
+| D20 | Urgent cards get a lens flare (glint, streak and ghost rings) in addition to the periodic shake (both adjustable) |
 | D21 | Card color = what it needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey dashed); a dot still shows Work/Home |
 | D22 | Breaks are timed items with options (water, bathroom, meditation, yoga, walk, social, reward); optional **break lock** pauses check-offs until a due break is taken |
 | D23 | Heavy task completion triggers a reward break; working past the break interval triggers a break |

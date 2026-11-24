@@ -9,7 +9,7 @@
   --bg:#ECEFF5; --surface:#FFFFFF; --surface-2:#F4F6FA; --ink:#172033; --muted:#5D667A; --line:#D8DDE7;
   --accent:#3B55F0; --accent-soft:#E3E8FE; --accent-ink:#FFFFFF;
   --work:#0F8B8D; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A; --rest:#1E9E6A;
-  --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45); --flare:rgba(255,255,255,.75);
+  --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45); --flare-core:rgba(255,186,64,.75); --flare-glow:rgba(255,200,90,.28); --ghost-a:rgba(59,85,240,.22); --ghost-b:rgba(224,67,74,.2);
   --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --font-body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
@@ -19,12 +19,12 @@
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
   --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F;
-  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare:rgba(255,255,255,.22); color-scheme:dark}}
+  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare-core:rgba(255,244,214,.7); --flare-glow:rgba(255,230,170,.18); --ghost-a:rgba(129,147,255,.32); --ghost-b:rgba(255,160,90,.28); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
   --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F;
-  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare:rgba(255,255,255,.22); color-scheme:dark}
+  --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); --flare-core:rgba(255,244,214,.7); --flare-glow:rgba(255,230,170,.18); --ghost-a:rgba(129,147,255,.32); --ghost-b:rgba(255,160,90,.28); color-scheme:dark}
 
 html,body{height:100%}
 [hidden]{display:none!important}
@@ -157,7 +157,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .brkcard span{font-size:12.5px;color:var(--muted)}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:16px 8px}
 
-/* Cue levels: glow, periodic shake, light flare sweep */
+/* Cue levels: glow, periodic shake, lens flare */
 .card.lvl-1{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 35%,transparent)}
 .card.lvl-2{box-shadow:0 0 0 2px color-mix(in srgb,var(--warn) 65%,transparent)}
 .card.lvl-3{box-shadow:0 0 0 2px color-mix(in srgb,var(--hot) 65%,transparent)}
@@ -165,14 +165,22 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding-bloc
 .motion .card.lvl-2{animation:shake 5s ease-in-out infinite}
 .motion .card.lvl-3{animation:shake 3s ease-in-out infinite;--k:1.6}
 .motion .card.lvl-4{animation:shake 1.8s ease-in-out infinite;--k:2.4}
-.card::after,.panel.flare::after{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:45%;pointer-events:none;opacity:0;
-  background:linear-gradient(105deg,transparent 0%,var(--flare) 45%,rgba(255,255,255,0) 55%,transparent 100%);transform:translateX(-150%) skewX(-12deg)}
-.flare-on .card.lvl-2::after{opacity:1;animation:flare 5s ease-in-out .9s infinite}
-.flare-on .card.lvl-3::after{opacity:1;animation:flare 3s ease-in-out .7s infinite}
-.flare-on .card.lvl-4::after{opacity:1;animation:flare 1.8s ease-in-out .5s infinite}
+.card::after,.panel.flare::after{content:"";position:absolute;inset:-60%;pointer-events:none;opacity:0;
+  background:
+    radial-gradient(circle at 30% 35%, var(--flare-core) 0, var(--flare-core) 5px, var(--flare-glow) 14px, transparent 46px),
+    radial-gradient(ellipse 110px 2px at 30% 35%, var(--flare-core), transparent),
+    radial-gradient(ellipse 2px 46px at 30% 35%, var(--flare-glow), transparent),
+    radial-gradient(circle at 52% 53%, transparent 9px, var(--ghost-a) 11px, transparent 14px),
+    radial-gradient(circle at 60% 59%, var(--ghost-b) 0, var(--ghost-b) 5px, transparent 7px),
+    radial-gradient(circle at 70% 67%, transparent 16px, var(--ghost-a) 19px, transparent 23px),
+    radial-gradient(circle at 76% 72%, var(--flare-glow) 0, var(--flare-glow) 3px, transparent 5px)}
+.flare-on .card.lvl-2::after{animation:flare 5s ease-in-out .9s infinite}
+.flare-on .card.lvl-3::after{animation:flare 3s ease-in-out .7s infinite}
+.flare-on .card.lvl-4::after{animation:flare 1.8s ease-in-out .5s infinite}
 .panel{position:relative;overflow:hidden}
-.flare-on .panel.flare::after{opacity:1;animation:flare 4s ease-in-out infinite}
-@keyframes flare{0%{transform:translateX(-150%) skewX(-12deg)}22%,100%{transform:translateX(330%) skewX(-12deg)}}
+.flare-on .panel.flare::after{animation:flare 4s ease-in-out infinite}
+/* Lens flare: a bright glint with a streak and ghost rings drifts across the card, then fades */
+@keyframes flare{0%{transform:translate(-22%,-14%);opacity:0}6%{opacity:1}24%{transform:translate(18%,12%);opacity:0}100%{transform:translate(18%,12%);opacity:0}}
 @keyframes shake{
   0%,14%,100%{transform:translateX(0) rotate(0)}
   2%{transform:translateX(calc(var(--amp)*var(--k,1)*-1)) rotate(-.6deg)}
@@ -961,7 +969,7 @@ function openSettings(){
     ${cb('sLock', st.breakLock, 'Break lock: pause check-offs until I take a due break')}</div>
   <div class="sec"><h4>Cues and feedback</h4>
     <div class="field"><label for="sCue">Attention cue intensity: ${['Off','Gentle','Medium','Strong'][st.cue]}</label><input id="sCue" type="range" min="0" max="3" value="${st.cue}"></div>
-    ${cb('sFlare', st.flare, 'Light flare sweep on urgent cards')}
+    ${cb('sFlare', st.flare, 'Lens flare on urgent cards')}
     ${cb('sSound', st.sound, 'Sounds')}${cb('sHap', st.haptics, 'Vibration (on phones that support it)')}
     ${cb('sReduce', st.reduce, 'Reduce motion (no shaking, flare or confetti)')}${cb('sPies', st.pies, 'Pie timers on cards')}${cb('sTimes', st.times, 'Show approximate start times')}</div>
   <div class="sec"><h4>What the colors mean</h4><div class="legend">
