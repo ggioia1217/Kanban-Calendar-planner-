@@ -83,7 +83,7 @@
 | D78 | In the real app, part-of-speech tagging runs on the device: Apple's Natural Language framework on iPhone and iPad; a small on-device tagger on Android and the web. The prototype uses a word list and simple rules, so it gets some words wrong |
 | D79 | **Done so far** on the Now card: an arrow opens the steps already checked in this task and the tasks already finished for the same goal. Each has Undo or Reopen |
 | D80 | **Roadblocks**: any task (from its details or the Now card) can get a roadblock: what kind, what happened, expected delay and what would help. Everyone in the task's goal or flow is pre-selected (who started it, stage owners, and stages that wait on it first); anyone else in the org can be added. They see a preview before it's sent. The card gets a Roadblock chip, the flow's goal card shows the latest update, and "It's cleared" sends a back-on-track update to the same people |
-| O7 | Visual direction: proposed a crisp white base plus hanging times, goal icon tiles, floating glass bars, pressable reward buttons and no breakable streaks (see docs/style-directions.html). Waiting on the owner's choice |
+| O7 | Visual direction: crisp white base plus hanging times, goal icon tiles, floating bars, pressable reward buttons, no breakable streaks (docs/style-directions.html). Proposed five selectable styles (Paper, Calm, Glass, Bold, Night) that share one layout and keep the visual clock everywhere; mockups of Today, menu, task details, Flows hub and flow diagram in docs/screen-styles.html. Waiting on the owner's choice |
 
 ## Open
 | # | Question |

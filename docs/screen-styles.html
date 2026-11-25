@@ -1,0 +1,301 @@
+<title>Cueue Screen Styles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Nunito:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap">
+<style>
+/* VOICE everyday product review: one wall of app screens you can re-skin with a switch
+   IDEA a style picker like the one that will live in Settings, applied to every screen at once
+   PICTURE four phones (Today with the visual clock, menu, task details, flows hub) and a tablet flow diagram
+   COLOUR white page, ink, Cueue indigo; each skin brings its own screen palette
+   TYPE Figtree for the page; skins swap Figtree, Nunito or Fredoka inside the screens
+   LAYOUT laptop: title and picker on one row, four phones in a row, tablet below; phone: picker, then phones stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#111318);--ink:light-dark(#15171c,#eef0f4);--muted:light-dark(#5b6170,#a3a9b6);--line:light-dark(#e3e5ea,#2a2e37);--accent:light-dark(#3D5AFE,#8FA2FF);--panel:light-dark(#f6f7f9,#1a1d24)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+.band{padding-block:clamp(24px,4vw,52px);padding-left:max(5vw,16px,env(safe-area-inset-left,0px));padding-right:max(5vw,16px,env(safe-area-inset-right,0px));max-width:1400px;margin:0 auto}
+h1{font-size:clamp(32px,4.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:0 0 8px;font-weight:800}
+.lede{max-width:72ch;color:var(--muted);margin:0}
+.picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.picker button{font:600 15px Figtree,sans-serif;padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px}
+.picker button i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.picker button[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--bg));color:var(--accent)}
+.about{margin:10px 0 0;font-size:15px;color:var(--muted);min-height:3em;max-width:80ch}
+.wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:26px 20px;margin-top:22px}
+.cap{text-align:center;margin:10px 0 0;font-weight:700;font-size:16px}
+.cap span{display:block;font-weight:400;font-size:14px;color:var(--muted)}
+/* ---------- skins ---------- */
+.skin{--sbg:#fff;--simg:none;--card:#fff;--cardline:#E8EAF0;--bw:1px;--bb:1px;--nowbg:#F3F5FF;--nowline:#C9D2FF;--sink:#17181d;--smut:#6b7183;--acc:#3D5AFE;--accd:#2A40C4;--r:18px;--font:Figtree,system-ui,sans-serif;--bar:rgba(255,255,255,.75);--blur:16px;--tint:10%;--track:#E4E8FF;--dim:rgba(18,20,28,.42);--onacc:#fff;--shadow:0 6px 18px rgba(30,40,80,.08)}
+.skin[data-skin=calm]{--sbg:#FBF7F2;--card:#FFFDFA;--cardline:#EFE6DA;--nowbg:#E7ECFF;--nowline:#CBD5FF;--sink:#2A2622;--smut:#7D7368;--acc:#4F63F0;--accd:#3A4BC8;--r:24px;--font:Nunito,system-ui,sans-serif;--bar:#FBF7F2;--tint:24%;--track:#D7DEFF;--shadow:none}
+.skin[data-skin=glass]{--sbg:#EEF0F8;--simg:radial-gradient(circle at 12% 8%,#B9C6FF 0,transparent 42%),radial-gradient(circle at 92% 38%,#FFD3E8 0,transparent 42%),radial-gradient(circle at 25% 88%,#C8F2E2 0,transparent 48%);--card:rgba(255,255,255,.58);--cardline:rgba(255,255,255,.85);--nowbg:rgba(255,255,255,.66);--nowline:rgba(255,255,255,.95);--r:22px;--bar:rgba(255,255,255,.55);--blur:18px;--tint:0%;--track:rgba(61,90,254,.16);--shadow:0 1px 0 rgba(255,255,255,.9) inset,0 8px 22px rgba(40,50,90,.12)}
+.skin[data-skin=bold]{--sbg:#fff;--card:#fff;--cardline:#E2E2E2;--bw:2px;--bb:5px;--nowbg:#fff;--nowline:#D8DDF0;--sink:#121212;--smut:#666;--acc:#2F6BFF;--accd:#1F4FD1;--r:18px;--font:Fredoka,system-ui,sans-serif;--bar:#fff;--tint:0%;--track:#DCE6FF;--shadow:none}
+.skin[data-skin=night]{--sbg:#141823;--card:#1D2230;--cardline:#2B3245;--nowbg:#1E2642;--nowline:#3A4A85;--sink:#EEF0F6;--smut:#9AA3B8;--acc:#8FA2FF;--accd:#5F74D8;--bar:rgba(29,34,48,.78);--tint:20%;--track:#2B3245;--dim:rgba(0,0,0,.55);--shadow:none;--onacc:#0f1424}
+/* ---------- device shells ---------- */
+.phone{width:280px;max-width:100%;height:590px;margin:0 auto;border-radius:44px;padding:9px;background:#0d0e12;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.scr{position:relative;height:100%;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;background:var(--sbg);background-image:var(--simg);color:var(--sink);font-family:var(--font)}
+.sb{display:flex;justify-content:space-between;padding:12px 22px 2px;font:600 12px/1 Figtree,system-ui,sans-serif}
+.body{flex:1;overflow:hidden;padding:4px 13px 74px;display:flex;flex-direction:column;gap:9px}
+.tabs{position:absolute;left:14px;right:14px;bottom:13px;display:flex;justify-content:space-around;padding:10px 12px;border-radius:999px;font-size:10.5px;font-weight:700;color:var(--smut);background:var(--bar);backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));border:1px solid var(--cardline);box-shadow:0 8px 22px rgba(30,40,80,.12)}
+.tabs b{color:var(--acc)}
+.card{background:var(--card);border:var(--bw) solid var(--cardline);border-bottom-width:var(--bb);border-radius:var(--r);box-shadow:var(--shadow);backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur))}
+.skin:not([data-skin=glass]) .card{backdrop-filter:none;-webkit-backdrop-filter:none}
+h4{margin:4px 0 0;font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.date{font-size:12px;color:var(--smut);margin-top:-6px}
+.mantra{font-size:12.5px;font-weight:700;color:#7A5AF8;background:color-mix(in srgb,#7A5AF8 10%,var(--card));border-radius:12px;padding:7px 11px}
+.gv{font-weight:800}.gn{text-decoration:underline;text-decoration-thickness:.12em;text-underline-offset:.2em;text-decoration-color:color-mix(in srgb,var(--acc) 55%,transparent)}.gf{opacity:.7;font-weight:400}
+.btn3{display:block;text-align:center;border-radius:14px;padding:9px;font-weight:800;font-size:14px;color:var(--onacc);background:var(--acc);border-bottom:4px solid var(--accd)}
+.ghost{display:inline-block;border-radius:12px;padding:7px 10px;font-size:12.5px;font-weight:700;border:1px solid var(--cardline);background:var(--card);color:var(--sink)}
+/* visual clock */
+.clock{--p:.27;position:relative;width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--acc) calc(var(--p)*360deg),var(--track) 0);flex:none}
+.clock::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--nowbg)}
+.clock b{position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-size:12.5px;font-weight:800;line-height:1}
+.clock.big{width:90px;height:90px}
+.clock.big::after{inset:10px;background:var(--card)}
+.clock.big b{font-size:19px}
+.clock.big small{position:absolute;left:0;right:0;top:64%;text-align:center;z-index:1;font-size:10.5px;color:var(--smut);font-weight:600}
+.skin[data-skin=glass] .clock::after{background:#fff}
+.now{padding:12px;background:var(--nowbg);border-color:var(--nowline)}
+.lab{font-size:10.5px;font-weight:800;color:var(--acc);letter-spacing:.02em}
+.ck{display:flex;gap:8px;align-items:center;font-size:13px;margin-top:7px}
+.ck i{width:18px;height:18px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--sink) 35%,transparent);flex:none}
+.ck.done i{background:var(--acc);border-color:var(--acc)}
+.ck.done span{text-decoration:line-through;color:var(--smut)}
+.more{font-size:12px;color:var(--smut);margin-top:8px;font-weight:600}
+.tl{display:grid;grid-template-columns:40px 1fr;gap:6px 8px;font-size:13px;align-items:center}
+.tl time{font-size:11px;color:var(--smut);text-align:right;font-variant-numeric:tabular-nums}
+.pill{border-radius:calc(var(--r) - 4px);padding:7px 9px;display:flex;gap:8px;align-items:center;font-weight:600;background:color-mix(in srgb,var(--gc) var(--tint),var(--card));border:var(--bw) solid var(--cardline);border-bottom-width:var(--bb)}
+.ico{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex:none;background:var(--gc)}
+.mini{width:16px;height:16px;border-radius:50%;margin-left:auto;flex:none;background:conic-gradient(var(--gc) calc(var(--p)*360deg),color-mix(in srgb,var(--gc) 18%,transparent) 0)}
+/* menu */
+.dimmed{position:absolute;inset:0;background:var(--dim)}
+.drawer{position:absolute;left:0;top:0;bottom:0;width:84%;background:var(--sbg);background-image:var(--simg);padding:36px 14px 14px;display:flex;flex-direction:column;gap:2px;box-shadow:8px 0 30px rgba(0,0,0,.2)}
+.me{display:flex;gap:10px;align-items:center;padding:10px;margin-bottom:6px}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;background:var(--acc);flex:none}
+.me small{display:block;color:var(--smut);font-size:11.5px}
+.grp{font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--smut);margin:8px 8px 2px;text-transform:uppercase}
+.mi{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:12px;font-size:13.5px;font-weight:600}
+.mi .ico{width:22px;height:22px;border-radius:7px;font-size:10px}
+.mi.on{background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc)}
+.cnt{margin-left:auto;font-size:11px;font-weight:800;background:var(--acc);color:#fff;border-radius:999px;padding:1px 7px}
+/* sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;top:40px;background:var(--sbg);background-image:var(--simg);border-radius:26px 26px 0 0;padding:8px 14px 14px;display:flex;flex-direction:column;gap:9px;box-shadow:0 -10px 30px rgba(0,0,0,.18)}
+.grab{width:38px;height:5px;border-radius:9px;background:color-mix(in srgb,var(--sink) 22%,transparent);margin:0 auto 2px}
+.crumb{font-size:11.5px;color:var(--acc);font-weight:700}
+.sheet h5{margin:0;font-size:19px;line-height:1.2;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;border:1px solid var(--cardline);background:var(--card)}
+.chip.due{color:#B26B00;background:color-mix(in srgb,#E08A00 14%,var(--card));border-color:transparent}
+.clockrow{display:flex;gap:12px;align-items:center;padding:8px 10px}
+.clockrow p{margin:0;font-size:12.5px;color:var(--smut)}
+.clockrow p b{color:var(--sink);display:block;font-size:14px}
+.dw{font-size:12.5px;padding:9px 11px}
+.row2{display:flex;gap:6px;flex-wrap:wrap}
+.warn{color:#D64545}
+/* flows hub */
+.seg{display:flex;background:color-mix(in srgb,var(--sink) 6%,transparent);border-radius:12px;padding:3px;font-size:11.5px;font-weight:700}
+.seg span{flex:1;text-align:center;padding:5px 0;border-radius:9px;color:var(--smut)}
+.seg span.on{background:var(--card);color:var(--sink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.run{padding:11px;display:flex;flex-direction:column;gap:7px}
+.run .top{display:flex;gap:10px;align-items:center}
+.ring{--p:.45;width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:11px;font-weight:800;background:radial-gradient(closest-side,var(--card) 76%,transparent 78%),conic-gradient(var(--gc) calc(var(--p)*360deg),color-mix(in srgb,var(--gc) 18%,transparent) 0)}
+.run b{font-size:13.5px;line-height:1.2;display:block}
+.run small{font-size:11.5px;color:var(--smut)}
+.chain{display:flex;align-items:center;gap:3px}
+.chain span{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:800;color:#fff}
+.chain em{flex:1;height:2px;background:var(--cardline);min-width:4px}
+.blk{font-size:11px;font-weight:700;color:#D64545;background:color-mix(in srgb,#D64545 10%,var(--card));border-radius:8px;padding:5px 8px}
+/* tablet flow */
+.tabletwrap{overflow-x:auto;margin-top:34px;padding-bottom:6px}
+.tablet{width:860px;height:500px;margin:0 auto;border-radius:30px;padding:10px;background:#0d0e12;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.tablet .scr{border-radius:22px}
+.fbar{display:flex;align-items:center;gap:10px;padding:12px 18px 6px}
+.fbar h6{margin:0;font-size:17px;font-weight:800;flex:1}
+.lanes{position:relative;flex:1;margin:4px 14px 14px;border-radius:var(--r);overflow:hidden}
+.lane{position:absolute;left:0;right:0;display:flex;align-items:center;border-top:1px solid color-mix(in srgb,var(--cardline) 70%,transparent)}
+.lane:nth-child(odd){background:color-mix(in srgb,var(--sink) 3%,transparent)}
+.lname{width:108px;padding-left:12px;font-size:11.5px;font-weight:800;display:flex;gap:6px;align-items:center}
+.lname i{width:9px;height:9px;border-radius:50%;background:var(--gc)}
+.node{position:absolute;width:132px;padding:7px 9px;font-size:11.5px;font-weight:700;line-height:1.25;z-index:2}
+.node small{display:block;font-weight:600;color:var(--smut);font-size:10px;margin-top:2px}
+.node.ok{border-color:#1E9E6A}.node.ok small{color:#1E9E6A}
+.node.act{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent)}
+.node.bl{border-color:#D64545;border-style:dashed}.node.bl small{color:#D64545}
+.node.wait{opacity:.7;border-style:dashed}
+.wires{position:absolute;inset:0;z-index:1}
+.wires path{fill:none;stroke:color-mix(in srgb,var(--sink) 30%,transparent);stroke-width:1.6}
+.wires path.go{stroke:var(--acc)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);justify-content:center;margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:2px solid var(--c)}
+.next{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.nx{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.nx b{display:block;margin-bottom:4px}
+.nx p{margin:0;font-size:14.5px;color:var(--muted)}
+@media(prefers-reduced-motion:no-preference){.clock.live{animation:tick 6s linear infinite alternate}@keyframes tick{to{--p:.36}}}
+@property --p{syntax:'<number>';inherits:true;initial-value:0}
+</style>
+
+<div class="band">
+  <h1>Pick a style, see every screen</h1>
+  <p class="lede">The recommended layout with five selectable styles. This is the same picker that would live in Settings, under Display. The visual clock stays in every style: on the Now card, in task details and as small clocks on what's next.</p>
+  <div class="picker" role="group" aria-label="Style">
+    <button data-s="paper" aria-pressed="true"><i style="background:#fff"></i>Paper</button>
+    <button data-s="calm" aria-pressed="false"><i style="background:#FBF7F2"></i>Calm</button>
+    <button data-s="glass" aria-pressed="false"><i style="background:linear-gradient(135deg,#B9C6FF,#FFD3E8)"></i>Glass</button>
+    <button data-s="bold" aria-pressed="false"><i style="background:#2F6BFF"></i>Bold</button>
+    <button data-s="night" aria-pressed="false"><i style="background:#141823"></i>Night</button>
+  </div>
+  <p class="about" id="about"></p>
+
+  <div class="skin" id="skin" data-skin="paper">
+    <div class="wall">
+      <div>
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+          <div class="body">
+            <h4>Today</h4><div class="date">Tue Nov 24 · 8 tasks · 2 done</div>
+            <div class="mantra">"One day, or Day One?"</div>
+            <div class="card now">
+              <div style="display:flex;gap:10px;align-items:center"><div class="clock live" style="--p:.27"><b>33m</b></div>
+                <div><div class="lab">NOW · RENEW RIVERSIDE CONTRACT</div><div style="font-size:16px;font-weight:800;line-height:1.2;margin-top:3px"><span class="gv">Draft</span> <span class="gf">the</span> service <span class="gn">agreement</span></div></div></div>
+              <div class="ck"><i></i><span><span class="gv">Run</span> <span class="gf">the</span> legal <span class="gn">checklist</span></span></div>
+              <div class="ck"><i></i><span><span class="gv">Send</span> <span class="gf">to</span> <span class="gn">Mara</span></span></div>
+              <div class="more">▸ Done so far (2)</div>
+              <span class="btn3" style="margin-top:9px">Complete</span>
+            </div>
+            <div class="tl">
+              <time>9:40</time><div class="pill" style="--gc:#1E9E6A"><span class="ico">≈</span>Water break<span class="mini" style="--p:0"></span></div>
+              <time>9:45</time><div class="pill" style="--gc:#0E8F8F"><span class="ico">↻</span><span><span class="gv">Follow</span> <span class="gf">up</span>: Acme <span class="gn">record</span></span></div>
+              <time>11:00</time><div class="pill" style="--gc:#E08A00"><span class="ico">▤</span>Billing sync with AR</div>
+              <time>11:30</time><div class="pill" style="--gc:#7A5AF8"><span class="ico">$</span><span><span class="gv">Reconcile</span> <span class="gn">payroll</span></span></div>
+            </div>
+          </div>
+          <div class="tabs"><b>Today</b><span>Goals</span><span>Flows</span><span>Inbox</span><span>Menu</span></div>
+        </div></div>
+        <p class="cap">Today<span>Visual clock on the Now card</span></p>
+      </div>
+
+      <div>
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+          <div class="body"><h4>Today</h4><div class="card now" style="height:120px"></div><div class="card" style="height:60px"></div><div class="card" style="height:60px"></div></div>
+          <div class="dimmed"></div>
+          <div class="drawer">
+            <div class="card me"><span class="av">ME</span><div><b style="font-size:14px">You</b><small>Account Manager · 2 of 8 done</small></div></div>
+            <div class="grp">Plan</div>
+            <div class="mi on"><span class="ico" style="--gc:var(--acc)">▦</span>Today &amp; week</div>
+            <div class="mi"><span class="ico" style="--gc:#1E9E6A">◎</span>My goals</div>
+            <div class="mi"><span class="ico" style="--gc:#0E8F8F">⇄</span>Flows<span class="cnt">2</span></div>
+            <div class="mi"><span class="ico" style="--gc:#E08A00">✎</span>Later pocket<span class="cnt">1</span></div>
+            <div class="grp">Team</div>
+            <div class="mi"><span class="ico" style="--gc:#D64575">●</span>Notifications<span class="cnt">4</span></div>
+            <div class="mi"><span class="ico" style="--gc:#7A5AF8">★</span>Team activity</div>
+            <div class="mi"><span class="ico" style="--gc:#5B6170">⌂</span>Org chart &amp; CRM</div>
+            <div class="grp">Me</div>
+            <div class="mi"><span class="ico" style="--gc:#7A5AF8">”</span>Mantras</div>
+            <div class="mi"><span class="ico" style="--gc:#E0A800">✦</span>Achievements</div>
+            <div class="mi"><span class="ico" style="--gc:#5B6170">⚙</span>Settings</div>
+          </div>
+        </div></div>
+        <p class="cap">Menu<span>Colored icon tiles, counts on the right</span></p>
+      </div>
+
+      <div>
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+          <div class="dimmed"></div>
+          <div class="sheet">
+            <div class="grab"></div>
+            <div class="crumb">Renew Riverside contract ›</div>
+            <h5><span class="gv">Draft</span> <span class="gf">the</span> Q4 service <span class="gn">agreement</span></h5>
+            <div class="chips"><span class="chip">● Work</span><span class="chip">Heavy</span><span class="chip">High priority</span><span class="chip due">Due today</span></div>
+            <div class="card clockrow"><div class="clock big live" style="--p:.27"><b>33</b><small>min left</small></div>
+              <p><b>12 of 45 min</b>Plenty of time. Check-in at 45, re-plan at 90.</p></div>
+            <div class="dw" style="padding:0 2px"><b>Done when:</b> agreement sent and signed</div>
+            <div>
+              <div class="more" style="margin:0">▸ 2 steps done</div>
+              <div class="ck"><i></i><span><span class="gv">Run</span> <span class="gf">the</span> legal <span class="gn">checklist</span></span></div>
+              <div class="ck"><i></i><span><span class="gv">Send</span> <span class="gf">to</span> <span class="gn">Mara</span></span></div>
+            </div>
+            <span class="btn3">Complete</span>
+            <div class="row2"><span class="ghost warn">Roadblock</span><span class="ghost">Waiting on someone</span><span class="ghost">Focus read</span></div>
+          </div>
+        </div></div>
+        <p class="cap">Task details<span>A big clock, steps, then actions</span></p>
+      </div>
+
+      <div>
+        <div class="phone"><div class="scr">
+          <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+          <div class="body">
+            <h4>Flows</h4>
+            <div class="seg"><span class="on">Active</span><span>Templates</span><span>Drafts</span><span>Ideas</span></div>
+            <div class="card run" style="--gc:#0E8F8F"><div class="top"><span class="ring" style="--p:.45">45%</span><div><b>Nurse onboarding: Avery Park</b><small>Started by Morgan · Day 4 of 21</small></div></div>
+              <div class="chain"><span style="background:#1E9E6A">✓</span><em></em><span style="background:#1E9E6A">✓</span><em></em><span style="background:#E08A00">HR</span><em></em><span style="background:#D64545">PY</span><em></em><span style="background:#9aa0ad">YOU</span></div>
+              <div class="blk">Roadblock: Payroll is missing the deposit form · ~1 day</div></div>
+            <div class="card run" style="--gc:#7A5AF8"><div class="top"><span class="ring" style="--p:.7">70%</span><div><b>Missing-time billing correction</b><small>Yours · Day 3 of 7</small></div></div>
+              <div class="chain"><span style="background:#1E9E6A">✓</span><em></em><span style="background:#1E9E6A">✓</span><em></em><span style="background:var(--acc)">YOU</span><em></em><span style="background:#9aa0ad">AR</span></div></div>
+            <div class="card run" style="--gc:#E08A00"><div class="top"><span class="ring" style="--p:.2">20%</span><div><b>Sunday family reset</b><small>Family · 4 people</small></div></div></div>
+          </div>
+          <div class="tabs"><span>Today</span><span>Goals</span><b>Flows</b><span>Inbox</span><span>Menu</span></div>
+        </div></div>
+        <p class="cap">Flows hub<span>Who holds each stage, roadblocks on top</span></p>
+      </div>
+    </div>
+
+    <div class="tabletwrap"><div class="tablet"><div class="scr">
+      <div class="fbar"><span class="ghost">‹ Flows</span><h6>Nurse onboarding: Avery Park</h6><span class="ghost">Fit</span><span class="ghost">Step list</span><span class="btn3" style="padding:7px 14px;font-size:13px">Save</span></div>
+      <div class="lanes card" id="lanes"></div>
+    </div></div></div>
+    <div class="legend"><span style="--c:#1E9E6A">Done</span><span style="--c:#3D5AFE">In progress</span><span style="--c:#D64545">Roadblock</span><span style="--c:#9aa0ad">Waiting</span></div>
+    <p class="cap">Flow diagram on iPad<span>Lanes are people or teams; the roadblock shows on the stage it's holding up</span></p>
+  </div>
+
+  <div class="next">
+    <div class="nx"><b>What's the same in every style</b><p>Layout, the visual clock, colors that mean something (amber due, red late or roadblock, green done or break) and the word styling.</p></div>
+    <div class="nx"><b>What changes</b><p>Background, card shape and edges, font, how much each goal color tints its items, and whether bars are frosted.</p></div>
+    <div class="nx"><b>Accessibility</b><p>Glass keeps blur on bars and cards only, never behind small text. Every style keeps text contrast at 4.5:1 or better.</p></div>
+    <div class="nx"><b>Next step</b><p>Tell me which styles to keep (all five, or fewer) and anything to change on these screens. Then I'll build the picker into the prototype.</p></div>
+  </div>
+</div>
+
+<script>
+{
+  const ABOUT = {
+    paper:'Paper (default): crisp white, thin edges, color only where it means something. The quietest, so word styling reads best.',
+    calm:'Calm: warm off-white, softer rounder cards, and items tinted with their goal color, like a visual timeline planner. Rounded Nunito type.',
+    glass:'Glass: frosted, see-through cards over a soft color wash, matching the iOS 26 look. Feels the most native on iPhone and iPad.',
+    bold:'Bold: thick edges and chunky cards that look pressable, with a rounded playful font. Every tap feels like a button.',
+    night:'Night: deep blue-grey for evenings, with goal colors kept bright. Pairs with any style when your phone switches to dark.'
+  };
+  const skin = document.getElementById('skin'), about = document.getElementById('about');
+  const set = k => { skin.dataset.skin = k; about.textContent = ABOUT[k]; document.querySelectorAll('.picker button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === k)); try { localStorage.setItem('cueue-skin', k); } catch(e) {} };
+  document.querySelectorAll('.picker button').forEach(b => b.addEventListener('click', () => set(b.dataset.s)));
+  let start = 'paper'; try { start = localStorage.getItem('cueue-skin') || 'paper'; } catch(e) {}
+  set(ABOUT[start] ? start : 'paper');
+
+  // flow diagram: lanes, stages and wires drawn at fixed size inside the tablet
+  const LANES = [['Recruiting', '#1E9E6A'], ['Compliance', '#0E8F8F'], ['HR', '#E08A00'], ['Payroll', '#D64545'], ['You', '#3D5AFE']];
+  const NODES = [
+    {id:'a', lane:0, col:0, t:'Offer approved', s:'ok', sub:'Done Mon'},
+    {id:'b', lane:0, col:1, t:'Welcome the nurse', s:'ok', sub:'Done Tue'},
+    {id:'c', lane:1, col:1, t:'Compliance packet', s:'ok', sub:'Done Tue'},
+    {id:'d', lane:2, col:1, t:'Background check', s:'act', sub:'Pat Kim · due Thu'},
+    {id:'e', lane:3, col:1, t:'Set up direct deposit', s:'bl', sub:'Roadblock: missing form'},
+    {id:'f', lane:4, col:2, t:'Schedule orientation', s:'wait', sub:'Waits on HR + Payroll'},
+    {id:'g', lane:4, col:3, t:'First-shift check-in', s:'wait', sub:'Starts after orientation'}];
+  const WIRES = [['a','b'],['a','c'],['a','d'],['a','e'],['b','f'],['c','f'],['d','f'],['e','f'],['f','g']];
+  const box = document.getElementById('lanes');
+  const draw = () => {
+    const W = box.clientWidth, H = box.clientHeight, lh = H / LANES.length, x0 = 118, cw = (W - x0 - 140) / 3;
+    const pos = n => ({x: x0 + n.col * cw, y: n.lane * lh + lh / 2 - 22});
+    let html = LANES.map(([n, c], i) => `<div class="lane" style="top:${i * lh}px;height:${lh}px;--gc:${c}"><span class="lname"><i></i>${n}</span></div>`).join('');
+    const paths = WIRES.map(([a, b]) => { const A = NODES.find(n => n.id === a), B = NODES.find(n => n.id === b), p = pos(A), q = pos(B);
+      const x1 = p.x + 132, y1 = p.y + 22, x2 = q.x, y2 = q.y + 22, mx = (x1 + x2) / 2;
+      return `<path class="${A.s === 'ok' ? 'go' : ''}" d="M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2 - 4} ${y2}"/>`; }).join('');
+    html += `<svg class="wires" width="${W}" height="${H}">${paths}</svg>`;
+    html += NODES.map(n => { const p = pos(n); return `<div class="card node ${n.s}" style="left:${p.x}px;top:${p.y}px">${n.t}<small>${n.sub}</small></div>`; }).join('');
+    box.innerHTML = html;
+  };
+  const ro = new ResizeObserver(draw); ro.observe(box);
+}
+</script>
