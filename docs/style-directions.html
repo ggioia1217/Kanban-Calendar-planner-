@@ -1,0 +1,259 @@
+<title>Cueue Style Directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Nunito:wght@500;700;800&family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* VOICE everyday product review: four phone screens side by side, then the pick
+   IDEA a designer's pin-up wall: the same Today screen printed four ways
+   PICTURE the row of four phones showing the identical task in each style
+   COLOUR white page, ink, Cueue indigo as the one working accent; each phone carries its own palette
+   TYPE Figtree for the page; each mockup uses the face that style calls for
+   LAYOUT laptop: title row, then four phones in a row with notes under each, then the hybrid beside its change list; phone: stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#111318);--ink:light-dark(#15171c,#eef0f4);--muted:light-dark(#5b6170,#a3a9b6);--line:light-dark(#e3e5ea,#2a2e37);--accent:light-dark(#3D5AFE,#8FA2FF);--panel:light-dark(#f6f7f9,#1a1d24)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+.band{padding-block:clamp(24px,4vw,56px);padding-left:max(5vw,16px,env(safe-area-inset-left,0px));padding-right:max(5vw,16px,env(safe-area-inset-right,0px));max-width:1400px;margin:0 auto}
+h1{font-size:clamp(32px,4.4vw,48px);line-height:1.05;letter-spacing:-.02em;margin:0 0 10px;font-weight:800}
+h2{font-size:28px;line-height:1.1;letter-spacing:-.01em;margin:0 0 8px;font-weight:800}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+.wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px 22px;margin-top:28px}
+.col{display:flex;flex-direction:column;gap:12px}
+.col h3{margin:4px 0 0;font-size:20px;font-weight:800}
+.col .from{font-size:14px;color:var(--muted);margin:0}
+.pros{margin:0;padding:0;list-style:none;font-size:14.5px;display:flex;flex-direction:column;gap:5px}
+.pros li{padding-left:22px;position:relative}
+.pros li::before{position:absolute;left:0;top:0;font-weight:800}
+.pros .y::before{content:"+";color:#1E9E6A}
+.pros .no::before{content:"–";color:#D64545}
+/* phone shell */
+.phone{width:290px;max-width:100%;height:600px;margin:0 auto;border-radius:44px;padding:10px;background:#0d0e12;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 10px 30px rgba(0,0,0,.18)}
+.scr{position:relative;height:100%;border-radius:35px;overflow:hidden;display:flex;flex-direction:column;color:#17181d}
+.sb{display:flex;justify-content:space-between;padding:12px 22px 4px;font:600 12px/1 Inter,system-ui,sans-serif}
+.body{flex:1;overflow:hidden;padding:4px 14px 70px;display:flex;flex-direction:column;gap:9px}
+.tabs{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-around;padding:10px 12px 18px;font:600 10.5px/1.2 Inter,system-ui,sans-serif;color:#7b8090}
+.tabs b{color:var(--t,#3D5AFE)}
+.gv{font-weight:800}.gn{text-decoration:underline;text-decoration-thickness:.12em;text-underline-offset:.2em;text-decoration-color:rgba(61,90,254,.5)}.gf{opacity:.7;font-weight:400}
+/* A: soft timeline */
+.a .scr{background:#FBF7F2;font-family:Nunito,system-ui,sans-serif}
+.a h4{margin:6px 0 2px;font-size:24px;font-weight:800}
+.a .mantra{background:#EFE7FF;border-radius:16px;padding:8px 12px;font-size:13px;font-weight:700;color:#5B3BB8}
+.a .rail{position:relative;display:flex;flex-direction:column;gap:8px;padding-left:46px}
+.a .rail::before{content:"";position:absolute;left:21px;top:10px;bottom:10px;width:2px;background:repeating-linear-gradient(#d9cfc3 0 4px,transparent 4px 8px)}
+.a .it{position:relative;border-radius:20px;padding:9px 12px;font-size:13.5px;font-weight:700}
+.a .it small{display:block;font-weight:600;opacity:.7;font-size:11.5px}
+.a .ic{position:absolute;left:-46px;top:4px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff}
+.a .now{background:#DCE4FF;padding:12px;box-shadow:0 0 0 3px #3D5AFE33}
+.a .now .ic{background:#3D5AFE;height:96px;border-radius:21px}
+.a .ck{display:flex;gap:7px;align-items:center;font-size:12.5px;margin-top:5px;font-weight:600}
+.a .ck i{width:15px;height:15px;border-radius:50%;border:2px solid #3D5AFE;flex:none}
+/* B: crisp paper */
+.b .scr{background:#fff;font-family:Inter,system-ui,sans-serif}
+.b h4{margin:10px 0 0;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.b .sub{font-size:12px;color:#8b90a0;margin-top:-6px}
+.b .mantra{font-size:12.5px;color:#6b4bd1;border-left:2px solid #c9b8ff;padding:2px 0 2px 9px}
+.b .row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #eef0f3;font-size:14px}
+.b .row i{width:18px;height:18px;border-radius:50%;border:1.5px solid #b4b9c6;flex:none;margin-top:1px}
+.b .row small{display:block;color:#8b90a0;font-size:11.5px;margin-top:2px}
+.b .tag{font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:5px;background:#FFF2D6;color:#A86A00;margin-left:4px}
+.b .now{background:#F4F6FF;border-radius:12px;padding:11px 12px;border:0}
+.b .now .lab{font-size:10.5px;font-weight:700;color:#3D5AFE;letter-spacing:.02em}
+.b .now b{display:block;font-size:16px;margin:2px 0 4px}
+/* C: liquid glass */
+.c .scr{background:radial-gradient(circle at 15% 10%,#B9C6FF 0,transparent 45%),radial-gradient(circle at 90% 35%,#FFD3E8 0,transparent 45%),radial-gradient(circle at 30% 85%,#C8F2E2 0,transparent 50%),#EEF0F8;font-family:Figtree,system-ui,sans-serif}
+.c h4{margin:6px 0 0;font-size:28px;font-weight:800;letter-spacing:-.02em}
+.c .g{background:rgba(255,255,255,.55);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(255,255,255,.8);border-radius:22px;box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 6px 20px rgba(40,50,90,.10)}
+.c .mantra{padding:8px 12px;font-size:12.5px;font-weight:600}
+.c .now{padding:13px}
+.c .now b{font-size:17px;display:block;line-height:1.2}
+.c .pie{width:44px;height:44px;border-radius:50%;background:conic-gradient(#3D5AFE 0 28%,rgba(61,90,254,.15) 0);float:right;margin-left:8px}
+.c .ck{display:flex;gap:8px;align-items:center;font-size:13px;margin-top:7px}
+.c .ck i{width:17px;height:17px;border-radius:6px;border:1.5px solid rgba(23,24,29,.35);flex:none}
+.c .sm{padding:9px 12px;font-size:13px;font-weight:600}
+.c .sm small{display:block;font-weight:500;color:#5b6170;font-size:11.5px}
+.c .tabs{left:16px;right:16px;bottom:14px;border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.85);box-shadow:0 8px 24px rgba(40,50,90,.15)}
+.c .fab{position:absolute;right:20px;bottom:76px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:26px;font-weight:300;color:#fff;background:linear-gradient(160deg,#6A82FF,#3D5AFE);box-shadow:0 8px 18px rgba(61,90,254,.4)}
+/* D: playful reward */
+.d .scr{background:#FFFFFF;font-family:Fredoka,system-ui,sans-serif}
+.d .top{display:flex;align-items:center;gap:10px;margin-top:4px}
+.d .ring{width:46px;height:46px;border-radius:50%;background:conic-gradient(#58CC02 0 62%,#E8F7DA 0);display:grid;place-items:center}
+.d .ring span{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.d h4{margin:0;font-size:24px;font-weight:700}
+.d .streak{margin-left:auto;font-weight:700;color:#FF9600;font-size:15px}
+.d .mantra{background:#FFF4CC;border:2px solid #FFD84D;border-radius:14px;padding:7px 11px;font-size:13px;font-weight:600}
+.d .now{border:2px solid #E5E5E5;border-bottom-width:5px;border-radius:18px;padding:11px 12px}
+.d .now b{font-size:17px;font-weight:600;display:block;line-height:1.2}
+.d .ck{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:6px;font-weight:500}
+.d .ck i{width:20px;height:20px;border-radius:7px;border:2px solid #CFCFCF;border-bottom-width:3px;flex:none}
+.d .ck.done i{background:#58CC02;border-color:#46A302}
+.d .ck.done span{opacity:.5;text-decoration:line-through}
+.d .btn3{display:block;text-align:center;border-radius:14px;padding:10px;font-weight:700;color:#fff;background:#58CC02;border-bottom:4px solid #46A302;letter-spacing:.02em;margin-top:9px}
+.d .chip{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:#E9F3FF;color:#1C7ED6;margin:2px 2px 0 0}
+.d .sm{border:2px solid #E5E5E5;border-radius:14px;padding:8px 11px;font-size:13.5px;font-weight:500}
+.d .tabs{border-top:2px solid #EFEFEF;background:#fff}
+/* E: hybrid */
+.e .scr{background:#fff;font-family:Figtree,system-ui,sans-serif}
+.e h4{margin:6px 0 0;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.e .mantra{font-size:12.5px;color:#6b4bd1;background:#F5F1FF;border-radius:12px;padding:7px 11px;font-weight:600}
+.e .now{border-radius:20px;background:#F3F5FF;padding:12px;position:relative;border:1.5px solid #C9D2FF}
+.e .lab{font-size:11px;font-weight:700;color:#3D5AFE;display:flex;gap:6px;align-items:center}
+.e .dot{width:22px;height:22px;border-radius:7px;background:#3D5AFE;color:#fff;display:grid;place-items:center;font-size:12px}
+.e .now b{font-size:17px;display:block;margin:6px 0 2px;line-height:1.2}
+.e .ck{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:7px}
+.e .ck i{width:18px;height:18px;border-radius:50%;border:1.5px solid #9aa3bd;flex:none}
+.e .more{font-size:12px;color:#5b6170;margin-top:8px}
+.e .cta{display:block;text-align:center;border-radius:14px;padding:9px;font-weight:800;color:#fff;background:#3D5AFE;border-bottom:4px solid #2A40C4;margin-top:10px;font-size:14px}
+.e .tl{display:grid;grid-template-columns:44px 1fr;gap:6px 8px;font-size:13.5px;align-items:center}
+.e .tl time{font-size:11.5px;color:#8b90a0;text-align:right;font-variant-numeric:tabular-nums}
+.e .tl .pill{border-radius:14px;padding:8px 10px;display:flex;gap:8px;align-items:center;font-weight:600}
+.e .tl .pill .ico{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:11px;color:#fff;flex:none}
+.e .tabs{left:16px;right:16px;bottom:14px;border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid #e6e8ef;box-shadow:0 8px 24px rgba(40,50,90,.14)}
+.pick{display:grid;grid-template-columns:320px minmax(0,1fr);gap:36px;align-items:start;margin-top:22px}
+.changes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.chg{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.chg b{display:block;font-size:16px;margin-bottom:4px}
+.chg p{margin:0;font-size:14.5px;color:var(--muted)}
+.chg .src{display:block;margin-top:6px;font-size:13px;color:var(--accent)}
+.notes{font-size:14px;color:var(--muted);max-width:80ch}
+.notes a{color:var(--accent)}
+@media(max-width:760px){.pick{grid-template-columns:1fr}}
+</style>
+
+<div class="band">
+  <h1>Four looks for Cueue, then the pick</h1>
+  <p class="lede">The same Today screen, the same task, styled the way today's best planners do it. Nothing in the app has changed yet. Tell me which parts you like, and I'll apply them.</p>
+
+  <div class="wall">
+    <div class="col">
+      <div class="phone a"><div class="scr">
+        <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+        <div class="body">
+          <h4>Tuesday</h4>
+          <div class="mantra">This week: "One day, or Day One?"</div>
+          <div class="rail">
+            <div class="it now"><span class="ic">9:20</span><span class="gv">Draft</span> service <span class="gn">agreement</span><small>Riverside Clinic · 45 min</small>
+              <div class="ck"><i></i><span><span class="gv">Run</span> the legal <span class="gn">checklist</span></span></div>
+              <div class="ck"><i></i><span><span class="gv">Send</span> to <span class="gn">Mara</span></span></div></div>
+            <div class="it" style="background:#D9F4E8"><span class="ic" style="background:#1E9E6A">💧</span>Water break<small>3 min</small></div>
+            <div class="it" style="background:#FFE9CC"><span class="ic" style="background:#E08A00">11</span>Billing sync with AR<small>11:00 – 11:30</small></div>
+            <div class="it" style="background:#FFE0E6"><span class="ic" style="background:#D64575">12</span><span class="gv">Follow</span> up: Acme <span class="gn">record</span><small>Due tomorrow</small></div>
+          </div>
+        </div>
+        <div class="tabs" style="background:#FBF7F2"><b>Today</b><span>Goals</span><span>Flows</span><span>Inbox</span><span>Menu</span></div>
+      </div></div>
+      <h3>A · Soft timeline</h3>
+      <p class="from">Like Tiimo and Structured: each item is a colored bubble with an icon on a dotted time rail.</p>
+      <ul class="pros"><li class="y">Time is something you can see. Gaps and breaks stand out</li><li class="y">Calm, friendly colors suit anxious mornings</li><li class="y">Icons let you scan without reading</li><li class="no">Lots of color fights the urgency glow and status colors</li><li class="no">Takes more space per task, so the week view gets long</li></ul>
+    </div>
+
+    <div class="col">
+      <div class="phone b"><div class="scr">
+        <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+        <div class="body">
+          <h4>Today</h4><div class="sub">Tue Nov 24 · 8 tasks</div>
+          <div class="mantra">"One day, or Day One?"</div>
+          <div class="row now"><div style="flex:1"><span class="lab">NOW · 12 MIN IN</span><b><span class="gv">Draft</span> service <span class="gn">agreement</span></b>
+            <div class="row" style="border:0;padding:4px 0"><i></i><span><span class="gv">Run</span> the legal <span class="gn">checklist</span></span></div>
+            <div class="row" style="border:0;padding:4px 0"><i></i><span><span class="gv">Send</span> to <span class="gn">Mara</span></span></div></div></div>
+          <div class="row"><i></i><div><span class="gv">Follow</span> up: Acme <span class="gn">record</span><span class="tag">Tomorrow</span><small>Text Dana if no reply by noon</small></div></div>
+          <div class="row"><i></i><div><span class="gv">Reconcile</span> payroll <span class="gn">exceptions</span><small>Billing</small></div></div>
+          <div class="row"><i style="border-style:dashed"></i><div>Billing sync with AR<small>11:00 – 11:30</small></div></div>
+          <div class="row"><i></i><div><span class="gv">Pick</span> up <span class="gn">prescription</span><small>Home</small></div></div>
+        </div>
+        <div class="tabs" style="background:#fff;border-top:1px solid #eef0f3"><b>Today</b><span>Goals</span><span>Flows</span><span>Inbox</span><span>Menu</span></div>
+      </div></div>
+      <h3>B · Crisp paper</h3>
+      <p class="from">Like Things 3 (Apple Design Award) and Todoist: white, round checkboxes, color only where it means something.</p>
+      <ul class="pros"><li class="y">Quietest screen, so the grammar styling reads best here</li><li class="y">Fits the most tasks on one screen</li><li class="y">Color stays meaningful: amber means due, red means late</li><li class="no">Can feel plain, and may give less of a dopamine pull</li><li class="no">Time is easy to forget without a visible timeline</li></ul>
+    </div>
+
+    <div class="col">
+      <div class="phone c"><div class="scr">
+        <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+        <div class="body">
+          <h4>Today</h4>
+          <div class="g mantra">✦ "One day, or Day One?"</div>
+          <div class="g now"><span class="pie"></span><span style="font-size:11px;font-weight:700;color:#3D5AFE">NOW</span><b><span class="gv">Draft</span> service <span class="gn">agreement</span></b>
+            <div class="ck"><i></i><span><span class="gv">Run</span> the legal <span class="gn">checklist</span></span></div>
+            <div class="ck"><i></i><span><span class="gv">Send</span> to <span class="gn">Mara</span></span></div></div>
+          <div class="g sm">Water break<small>Next · 3 min</small></div>
+          <div class="g sm">Billing sync with AR<small>11:00 – 11:30</small></div>
+          <div class="g sm"><span class="gv">Follow</span> up: Acme <span class="gn">record</span><small>Due tomorrow</small></div>
+        </div>
+        <div class="fab">+</div>
+        <div class="tabs"><b>Today</b><span>Goals</span><span>Flows</span><span>Inbox</span><span>Menu</span></div>
+      </div></div>
+      <h3>C · Liquid glass</h3>
+      <p class="from">Apple's iOS 26 look: frosted, see-through layers with a floating pill tab bar and big rounded corners.</p>
+      <ul class="pros"><li class="y">Feels native and current on iPhone and iPad</li><li class="y">The floating bar and + button stay in reach without taking space</li><li class="no">Text over blurry color is harder to read, a real risk for this audience</li><li class="no">Heavy blur drains battery on fridge displays and older Android phones</li></ul>
+    </div>
+
+    <div class="col">
+      <div class="phone d"><div class="scr">
+        <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+        <div class="body">
+          <div class="top"><div class="ring"><span>5/8</span></div><h4>Today</h4><span class="streak">🔥 6 days</span></div>
+          <div class="mantra">💬 "One day, or Day One?"</div>
+          <div class="now"><b><span class="gv">Draft</span> service <span class="gn">agreement</span></b>
+            <div class="ck done"><i></i><span>Copy the template</span></div>
+            <div class="ck"><i></i><span><span class="gv">Run</span> the legal <span class="gn">checklist</span></span></div>
+            <div class="ck"><i></i><span><span class="gv">Send</span> to <span class="gn">Mara</span></span></div>
+            <span class="btn3">COMPLETE STEP</span></div>
+          <div><span class="chip">+12 effort points</span><span class="chip" style="background:#FFF0E0;color:#E07000">3 done early</span></div>
+          <div class="sm">💧 Water break · 3 min</div>
+          <div class="sm"><span class="gv">Follow</span> up: Acme <span class="gn">record</span></div>
+        </div>
+        <div class="tabs"><b style="--t:#58CC02;color:#58CC02">Today</b><span>Goals</span><span>Flows</span><span>Inbox</span><span>Menu</span></div>
+      </div></div>
+      <h3>D · Playful reward</h3>
+      <p class="from">Like Finch and Duolingo: chunky buttons that press down, a progress ring, streaks and stickers.</p>
+      <ul class="pros"><li class="y">Every tap feels like a win, the strongest dopamine pull</li><li class="y">Buttons that physically press in make "done" feel real</li><li class="no">Streaks can shame people on bad days, which clashes with light days</li><li class="no">Can feel childish at work and in front of a manager</li></ul>
+    </div>
+  </div>
+</div>
+
+<div class="band" style="border-top:1px solid var(--line)">
+  <h2>My pick: crisp paper as the base, borrowing one thing from each</h2>
+  <p class="lede">A quiet base keeps the grammar styling, urgency glow and status colors readable. The other styles each add one thing that works for ADHD.</p>
+  <div class="pick">
+    <div class="phone e"><div class="scr">
+      <div class="sb"><span>9:26</span><span>●●● 82%</span></div>
+      <div class="body">
+        <h4>Today</h4>
+        <div class="mantra">"One day, or Day One?"</div>
+        <div class="now"><div class="lab"><span class="dot">✎</span>NOW · Renew Riverside contract</div>
+          <b><span class="gv">Draft</span> <span class="gf">the</span> service <span class="gn">agreement</span></b>
+          <div class="ck"><i></i><span><span class="gv">Run</span> <span class="gf">the</span> legal <span class="gn">checklist</span></span></div>
+          <div class="ck"><i></i><span><span class="gv">Send</span> <span class="gf">to</span> <span class="gn">Mara</span></span></div>
+          <div class="more">▸ Done so far (2)</div>
+          <span class="cta">Complete</span></div>
+        <div class="tl">
+          <time>9:40</time><div class="pill" style="background:#E3F6EE"><span class="ico" style="background:#1E9E6A">💧</span>Water break</div>
+          <time>9:45</time><div class="pill" style="background:#F4F5F8"><span class="ico" style="background:#0E8F8F">↻</span><span><span class="gv">Follow</span> up: Acme <span class="gn">record</span></span></div>
+          <time>11:00</time><div class="pill" style="background:#FFF3DE"><span class="ico" style="background:#E08A00">▤</span>Billing sync with AR</div>
+          <time>11:30</time><div class="pill" style="background:#F4F5F8"><span class="ico" style="background:#7A5AF8">$</span><span><span class="gv">Reconcile</span> <span class="gn">payroll</span></span></div>
+        </div>
+      </div>
+      <div class="tabs"><b>Today</b><span>Goals</span><span>Flows</span><span>Inbox</span><span>Menu</span></div>
+    </div></div>
+    <div class="changes">
+      <div class="chg"><b>Calm white base</b><p>Plain white surfaces and thin lines. Color only means something: due, late, break, now. More tasks fit on screen.</p><span class="src">From B: Things 3</span></div>
+      <div class="chg"><b>Hanging times and icon tiles</b><p>Upcoming items hang off a time column, each with a small colored icon tile for its goal, so you can scan without reading.</p><span class="src">From A: Tiimo, Structured</span></div>
+      <div class="chg"><b>Goal colors</b><p>Each goal picks a color and icon once. Its tasks carry that tile everywhere: board, flows, notifications.</p><span class="src">From A</span></div>
+      <div class="chg"><b>Floating tab bar and + button</b><p>A frosted pill bar that floats above content and shrinks while you scroll. Glass only on bars, never behind text.</p><span class="src">From C: iOS 26</span></div>
+      <div class="chg"><b>Pressable reward buttons</b><p>Complete and other win moments get a chunky button that presses in, plus the celebration. Everything else stays flat.</p><span class="src">From D: Duolingo, Finch</span></div>
+      <div class="chg"><b>Round checkboxes, bigger radius</b><p>Round checks for steps, 20px corners on the Now card, and a softer, larger Now card that reads as "the one thing."</p><span class="src">From B and C</span></div>
+      <div class="chg"><b>No streaks that break</b><p>Keep progress rings and lifetime counts. Skip streaks that reset to zero; they punish bad days.</p><span class="src">Lesson from D</span></div>
+      <div class="chg"><b>Same idea at night</b><p>Dark mode uses deep blue-grey, not black, with the same goal colors made a little brighter.</p><span class="src">All four</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="band" style="border-top:1px solid var(--line)">
+  <p class="notes">Notes: emoji in these mockups stand in for real icons. Tiimo was named iPhone App of the Year 2025 and praised for its calm timeline and thousands of colors and icons; Structured is built around a visual timeline with color-coding and icons; Apple introduced Liquid Glass in 2025 as a see-through layer for controls and navigation; Things 3 is an Apple Design Award winner known for its minimal design; Finch uses a pet and rewards to make self-care feel like a game. Sources:
+  <a href="https://apps.apple.com/app/id1480220328">Tiimo on the App Store</a> ·
+  <a href="https://apps.apple.com/app/structured-daily-planner/id1499198946">Structured on the App Store</a> ·
+  <a href="https://www.apple.com/newsroom/2025/06/apple-introduces-a-delightful-and-elegant-new-software-design/">Apple: new software design</a> ·
+  <a href="https://www.macstories.net/reviews/things-3-beauty-and-delight-in-a-task-manager/">MacStories on Things 3</a> ·
+  <a href="https://ixd.prattsi.org/2026/02/design-critique-finch-self-care-pet-ios-app/">Design critique of Finch</a></p>
+</div>

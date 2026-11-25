@@ -617,6 +617,26 @@ html[data-weight="1"] .gw{font-weight:600}
 .ladder{font-size:12.5px;color:var(--muted);margin-top:6px}
 .ladder b{color:var(--ink)}
 
+/* Done-so-far drawer on the Now card */
+.donetoggle{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;padding:4px 0;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;text-align:left}
+.donetoggle .arr{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);transition:transform .2s;font-size:11px}
+.donetoggle[aria-expanded="true"] .arr{transform:rotate(90deg)}
+.donelist{display:flex;flex-direction:column;gap:4px;margin:2px 0 4px}
+.donelist h5{margin:6px 0 2px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.donerow{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:5px 8px;border-radius:8px;background:var(--surface-2)}
+.donerow span{flex:1;min-width:0;text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--muted) 60%,transparent);color:var(--muted)}
+.donerow .when{flex:none;text-decoration:none;font-size:12px}
+/* Roadblocks */
+.chip.block{color:var(--hot);border-color:color-mix(in srgb,var(--hot) 45%,var(--line));background:color-mix(in srgb,var(--hot) 8%,var(--surface))}
+.card.has-block{border-color:color-mix(in srgb,var(--hot) 55%,var(--line));border-style:dashed}
+.blocknote{border-radius:12px;padding:10px 12px;background:color-mix(in srgb,var(--hot) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--hot) 35%,var(--line));font-size:13.5px}
+.blocknote b{color:var(--hot)}
+.blocknote .row{margin-top:8px}
+.msgprev{border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 10px 10px 0;padding:10px 12px;font-size:13.5px;white-space:pre-line}
+.who{display:flex;flex-direction:column;gap:4px}
+.who label{display:flex;gap:8px;align-items:center;font-size:14px}
+.who small{color:var(--muted)}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -1099,12 +1119,12 @@ function cardHTML(t, start, dayIdx, chunk){
   if (t.status === 'waiting') next = `<div class="next">Waiting on <b>${esc(t.waitingOn)}</b></div>`;
   else if (ns) next = `<div class="next"><label class="nextck">${locked()?`<span style="width:20px;height:20px;color:var(--muted);flex:none">${ICON.lock}</span>`:`<input type="checkbox" data-task="${t.id}" data-step="${nsIdx}" aria-label="Check off: ${esc(ns.t)}">`}<span>${esc(ns.t)}</span></label></div>`;
   else next = `<div class="next"><span class="ready">All steps done</span></div>`;
-  return `<div class="card lvl-${lvl} ${st?'s-'+st:''}" data-id="${t.id}" data-ctx="${t.ctx}" tabindex="0" role="button" aria-label="${esc(t.title)}" style="${edgeDelay()}">
+  return `<div class="card lvl-${lvl} ${st?'s-'+st:''} ${t.roadblock?'has-block':''}" data-id="${t.id}" data-ctx="${t.ctx}" tabindex="0" role="button" aria-label="${esc(t.title)}" style="${edgeDelay()}">
     <div class="top">${timeTxt}<span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span>${chunk?`<span>· part ${chunk}</span>`:''}<span class="diff" title="${DIFF[t.diff]}">${diff}</span></div>
     <div class="title">${esc(t.title)}</div>
     ${next}
     ${!ns && t.status !== 'waiting' ? `<button class="verify" data-finish="${t.id}">Complete</button>` : ''}
-    <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}${t.spent>0&&S.currentId!==t.id?`<span class="chip">Paused · ${fmtDur(t.spent)} in</span>`:''}${t.ahead!=null?'<span class="chip ahead">Getting ahead</span>':''}</div>
+    <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}${t.spent>0&&S.currentId!==t.id?`<span class="chip">Paused · ${fmtDur(t.spent)} in</span>`:''}${t.ahead!=null?'<span class="chip ahead">Getting ahead</span>':''}${t.roadblock?'<span class="chip block">Roadblock</span>':''}</div>
     <div class="prog" aria-label="${stepsDone(t)} of ${t.steps.length} steps"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
   </div>`;
 }
@@ -1134,6 +1154,7 @@ function topPanel(){
     const lvl = level(t, S.day);
     return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel" style="${edgeDelay()}">
       <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
+      ${blockNoteHTML(t)}
       <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
         <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
       ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="switch">Switch</button></div>`:''}
@@ -1141,9 +1162,11 @@ function topPanel(){
         : `<div class="row"><button class="btn ok" data-finish="${t.id}">All steps done. Complete the task</button></div>`}
       ${t.notes ? `<div class="sub">${esc(t.notes)}</div><div class="row"><button class="btn small ghost readbtn" data-act="fread" data-id="${t.id}">Focus read the notes</button></div>` : ''}
       <div class="bar thin"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
+      ${doneSoFarHTML(t)}
       <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
         <button class="btn small" data-act="ltnew">Jot for later</button>
+        ${t.roadblock ? '' : `<button class="btn small" data-act="blkopen" data-task="${t.id}">Roadblock</button>`}
         <button class="btn small" data-open="${t.id}">Details</button>
         <button class="btn small ghost" data-act="switch">Switch task</button></div></div>`;
   }
@@ -1570,6 +1593,70 @@ function frSchedule(){
     if (freader.i < freader.chunks.length - 1){ freader.i++; frShow(); frSchedule(); } else { freader.playing = false; frShow(); } }, words * 60000 / freader.wpm + pause);
 }
 
+/* ---------- Done so far (on the Now card) ---------- */
+function doneSoFar(t){
+  const steps = t.steps.map((x, i) => [x, i]).filter(([x]) => x.done);
+  const goalDone = t.goalId ? goalTasks(t.goalId).filter(x => x.done && x.id !== t.id && isMine(x)) : [];
+  return {steps, goalDone};
+}
+function doneSoFarHTML(t){
+  const {steps, goalDone} = doneSoFar(t), n = steps.length + goalDone.length, open = !!S.nowDoneOpen;
+  if (!n) return '';
+  const g = t.goalId && goalById(t.goalId);
+  return `<button class="donetoggle" data-act="nowdone" aria-expanded="${open}"><span class="arr" aria-hidden="true">▶</span>Done so far (${n})${open ? '' : ' · tap to see or undo'}</button>
+    ${open ? `<div class="donelist">
+      ${steps.length ? `<h5>Steps in this task</h5>${steps.map(([x, i]) => `<div class="donerow"><span>${esc(x.t)}</span>${x.at ? `<span class="when">${esc(x.at)}</span>` : ''}<button class="btn small ghost" data-act="undostep" data-task="${t.id}" data-i="${i}">Undo</button></div>`).join('')}` : ''}
+      ${goalDone.length ? `<h5>Finished for ${esc(g ? g.title : 'this goal')}</h5>${goalDone.map(x => `<div class="donerow"><span>${esc(x.title)}</span><button class="btn small ghost" data-act="reopentask" data-task="${x.id}">Reopen</button></div>`).join('')}` : ''}
+    </div>` : ''}`;
+}
+function reopenTask(t){
+  t.done = false; t.day = S.day; t.steps.forEach(x => {}); const li = S.log.map(l => l.taskId === t.id && l.kind === 'task').lastIndexOf(true); if (li > -1) S.log.splice(li, 1);
+  render(); toast('Task reopened', '"' + t.title + '" is back on today\'s board.');
+}
+
+/* ---------- Roadblocks: tell everyone in the workflow what happened and why ---------- */
+const BLOCK_CATS = [['person', 'Waiting on someone'], ['info', 'Missing info or files'], ['system', 'A tool or system is down'], ['load', 'Too much on my plate'], ['other', 'Something else']];
+const BLOCK_DELAYS = [['unknown', 'Not sure yet'], ['hours', 'A few hours'], ['1d', 'About a day'], ['3d', '2 to 3 days'], ['1w', 'A week or more']];
+function workflowPeople(t){
+  // everyone else with a part in the same goal or flow: owners of its stages, whoever started it, and stages waiting on this one
+  const out = new Map(), g = t.goalId && goalById(t.goalId), root = g && rootOf(g);
+  const add = (role, why) => { if (!role || role === 'me') return; const name = personFor(role); if (!out.has(name)) out.set(name, {role, name, why}); };
+  if (root){
+    if (root.owner && root.owner !== 'me'){ const p = S.org.find(x => x.id === root.owner); if (p && !out.has(p.name)) out.set(p.name, {role:root.owner, name:p.name, why:'Started this flow'}); }
+    (function walk(id){ goalTasks(id).forEach(x => add(x.owner, (x.waitStages || []).includes(t.goalId) ? 'Waits on your stage' : 'Owns a stage')); goalKids(id).forEach(k => walk(k.id)); })(root.id);
+  }
+  return [...out.values()].sort((a, b) => (a.why === 'Waits on your stage' ? -1 : 0) - (b.why === 'Waits on your stage' ? -1 : 0));
+}
+function delayedBy(t){ return S.tasks.filter(x => !x.done && x.id !== t.id && (x.waitStages || []).includes(t.goalId)).map(x => x.title); }
+function blockMsg(t, d){
+  const cat = (BLOCK_CATS.find(c => c[0] === d.cat) || ['', 'Something else'])[1], delay = (BLOCK_DELAYS.find(c => c[0] === d.delay) || ['', 'Not sure yet'])[1];
+  const later = delayedBy(t);
+  return `Roadblock on "${t.title}"\nWhy: ${cat}${d.text ? ': ' + d.text : ''}\nExpected delay: ${delay}` + (later.length ? '\nThis may delay: ' + later.join(', ') : '') + (d.help ? '\nWhat would help: ' + d.help : '');
+}
+function openRoadblock(t){
+  const people = workflowPeople(t), others = S.org.filter(p => !p.me && !people.some(x => x.name === p.name));
+  S._blk = {task:t.id, cat:'person', delay:'1d'};
+  openSheet(`<h2>Report a roadblock</h2><p class="note">For "${esc(t.title)}". Everyone you pick gets an update right away, so nobody is left guessing why it's late.</p>
+    <div class="field"><label>What kind of roadblock?</label><div class="timerchips">${BLOCK_CATS.map(([k, l]) => `<button class="chipbtn" data-act="blkcat" data-v="${k}" aria-pressed="${k === 'person'}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label for="blkText">What happened?</label><textarea id="blkText" rows="2" placeholder="e.g. Mara is out until Thursday and she has to sign first"></textarea></div>
+    <div class="field"><label>How long might it hold things up?</label><div class="timerchips">${BLOCK_DELAYS.map(([k, l]) => `<button class="chipbtn" data-act="blkdelay" data-v="${k}" aria-pressed="${k === '1d'}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label for="blkHelp">What would help? (optional)</label><input id="blkHelp" placeholder="e.g. Can someone else at Riverside sign?"></div>
+    <div class="field"><label>Tell</label><div class="who">
+      ${people.length ? people.map(x => `<label><input type="checkbox" class="blkWho" value="${esc(x.name)}" checked> ${esc(x.name)} <small>· ${esc(x.why)}</small></label>`).join('') : '<p class="note" style="margin:0">Nobody else is part of this task\'s goal or flow. Pick anyone who should know:</p>'}
+      ${others.slice(0, people.length ? 3 : 5).map(p => `<label><input type="checkbox" class="blkWho" value="${esc(p.name)}" ${!people.length && p.id === 'p-morgan' ? 'checked' : ''}> ${esc(p.name)} <small>· ${esc(p.title)}</small></label>`).join('')}</div></div>
+    <div class="field"><label>They'll see</label><div class="msgprev" id="blkPrev"></div></div>
+    <div class="actions"><button class="btn primary" data-act="blksend">Send update</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'roadblock');
+  const upd = () => { const p = $('#blkPrev'); if (p) p.textContent = blockMsg(t, {cat:S._blk.cat, delay:S._blk.delay, text:$('#blkText').value.trim(), help:$('#blkHelp').value.trim()}); };
+  S._blkUpd = upd; upd(); $('#blkText').addEventListener('input', upd); $('#blkHelp').addEventListener('input', upd);
+}
+function blockNoteHTML(t){
+  const b = t.roadblock; if (!b) return '';
+  const cat = (BLOCK_CATS.find(c => c[0] === b.cat) || ['', ''])[1], delay = (BLOCK_DELAYS.find(c => c[0] === b.delay) || ['', ''])[1];
+  return `<div class="blocknote"><b>Roadblock:</b> ${esc(cat)}${b.text ? ': ' + esc(b.text) : ''}. Expected delay: ${esc(delay.toLowerCase())}.
+    <div class="note" style="margin-top:4px">${b.sentTo.length ? 'Sent to ' + esc(b.sentTo.join(', ')) + ' · ' : ''}${esc(b.when)}</div>
+    <div class="row"><button class="btn small ok" data-act="blkclear" data-task="${t.id}">It's cleared</button><button class="btn small ghost" data-act="blkedit" data-task="${t.id}">Update</button></div></div>`;
+}
+
 /* ---------- Later pocket ---------- */
 const LATER_TIMERS = [[5, '5 min'], [15, '15 min'], [30, '30 min'], [60, '1 hr'], [120, '2 hr'], [240, '4 hr'], [480, '8 hr']];
 const LATER_MIN_SNOOZE = 5; // once the next wait would be under 5 minutes, there is no snooze: decide
@@ -1925,6 +2012,7 @@ function openTask(t){
     ${t.goalId ? `<button class="crumb" data-act="goals">${esc(goalPath(t.goalId))}</button>` : ''}
     <h2 class="ttitle">${esc(t.title)}</h2>
     <div class="chips">${t.done?'<span class="chip okc">Completed</span>':''}${!isMine(t)?avatar(t.owner,true):''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
+    ${t.roadblock ? `<div style="margin-bottom:10px">${blockNoteHTML(t)}</div>` : ''}
     ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
     ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
     <div class="grid2">
@@ -1947,6 +2035,7 @@ function openTask(t){
       ${t.done ? `<button class="btn primary" data-act="reopen">Reopen task</button>` : !isMine(t) ? `<button class="btn" data-act="othersdone" data-task="${t.id}">Mark done as ${esc(roleOf(t.owner).name)} (demo)</button>` :
         `${S.currentId===t.id ? `<button class="btn" data-act="stop">Stop working on it</button>` : `<button class="btn primary" data-act="start">Start now</button>`}
          ${t.status==='waiting' ? `<button class="btn" data-act="unblock">Unblock</button>` : `<button class="btn" data-act="wait">Waiting on someone</button>`}
+         ${t.roadblock ? '' : `<button class="btn" data-act="blkopen" data-task="${t.id}" style="color:var(--hot)">Report a roadblock</button>`}
          <button class="btn ${nextStep(t)?'':'ok'}" data-finish="${t.id}">Complete</button>`}
       <div class="spacer"></div><button class="btn ghost" data-close="1">Close</button>
     </div>`, 'task', t.id);
@@ -2008,6 +2097,7 @@ function goalCard(g){
     <div class="ghead"><span class="ring" style="--p:${pct.toFixed(3)}">${Math.round(pct*100)}%</span>
       <div style="min-width:0"><h3 class="gtitle">${esc(g.title)}</h3><div class="gmeta">${theirs ? `<span class="chip" style="color:var(--violet)">Started by ${esc(ownerName(g.owner))}</span>` : ''}${g.fromTemplate ? '<span class="chip">Flow</span>' : ''}${tm ? `<span class="chip">${esc(horizonLabel(g))}</span><span class="chip">Day ${tm.dayN} of ${tm.total}</span>` : ''}${pace}${roles.size > 1 ? [...roles].map(r => avatar(r)).join('') : ''}</div></div></div>
     ${g.why ? `<p class="why"><b>Why:</b> ${esc(g.why)}</p>` : ''}
+    ${(g.updates || []).length ? `<div class="blocknote" style="margin:8px 0">${g.updates[0].clear ? '<b style="color:var(--ok)">Back on track:</b>' : '<b>Roadblock:</b>'} ${esc(g.updates[0].text)} <span class="note">· ${esc(g.updates[0].who)}, ${esc(g.updates[0].when)}</span></div>` : ''}
     ${tm ? `<div class="tline"><div class="bar"><i style="width:${Math.round(pct*100)}%"></i><span class="elapsed" style="left:${(tm.frac*100).toFixed(1)}%"></span></div>
       <div class="legendrow"><span>Progress (green) vs time passed (line)</span><span>Ends ${tm.end}</span></div></div>` : ''}
     <div class="gchildren">${tasks.map(taskRow).join('')}${kids.map(subNode).join('')}</div>
@@ -3012,6 +3102,27 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'nowdone': S.nowDoneOpen = !S.nowDoneOpen; render(); return;
+    case 'undostep': { const t = byId(el.dataset.task); uncheckStep(t, +el.dataset.i); save(); return; }
+    case 'reopentask': reopenTask(byId(el.dataset.task)); save(); return;
+    case 'blkopen': case 'blkedit': openRoadblock(byId(el.dataset.task)); return;
+    case 'blkcat': case 'blkdelay': S._blk[a === 'blkcat' ? 'cat' : 'delay'] = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); S._blkUpd && S._blkUpd(); return;
+    case 'blksend': { const t = byId(S._blk.task), d = {cat:S._blk.cat, delay:S._blk.delay, text:$('#blkText').value.trim(), help:$('#blkHelp').value.trim()};
+      const sentTo = [...document.querySelectorAll('.blkWho:checked')].map(x => x.value), when = DAYS[S.day] + ' ' + fmt(S.now);
+      t.roadblock = {...d, sentTo, when};
+      const g = t.goalId && goalById(t.goalId), root = g && rootOf(g), cat = (BLOCK_CATS.find(c => c[0] === d.cat) || ['', ''])[1];
+      if (root){ root.updates = root.updates || []; root.updates.unshift({who:'You', when, text:'"' + t.title + '": ' + cat + (d.text ? '. ' + d.text : '')}); }
+      note('You reported a roadblock on "' + t.title + '"', sentTo.length ? 'Sent to ' + sentTo.join(', ') + '.' : 'Saved on the task.', 'ask', {task:t.id});
+      closeSheet(); render(); save();
+      toast(sentTo.length ? 'Update sent to ' + sentTo.length + (sentTo.length > 1 ? ' people' : ' person') : 'Roadblock saved', sentTo.length ? sentTo.join(', ') : 'Nobody else was picked.');
+      if (sentTo.length){ const who = sentTo[0].split(' (')[0]; setTimeout(() => { note(who + ' replied about "' + t.title + '"', 'Thanks for the heads-up. I\'ll plan around it.', 'reply', {task:t.id}); toast(who + ' replied', 'Thanks for the heads-up. I\'ll plan around it.'); }, 2600); }
+      break; }
+    case 'blkclear': { const t = byId(el.dataset.task), b = t.roadblock, when = DAYS[S.day] + ' ' + fmt(S.now);
+      const g = t.goalId && goalById(t.goalId), root = g && rootOf(g);
+      if (root){ root.updates = root.updates || []; root.updates.unshift({who:'You', when, clear:true, text:'"' + t.title + '" is moving again.'}); }
+      if (b.sentTo.length) note('You told ' + b.sentTo.length + ' people "' + t.title + '" is moving again', b.sentTo.join(', '), 'ok', {task:t.id});
+      delete t.roadblock; save(); render(); if ($('#sheetRoot').dataset.kind === 'task') openTask(t);
+      toast('Back on track', b.sentTo.length ? 'Everyone you told about the roadblock got the update.' : 'Roadblock cleared.'); break; }
     case 'tstyle': S.settings.textStyle = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); gPreview(); save(); applyGram(); return;
     case 'fread': { const t = byId(el.dataset.id); openFocusReader(t.notes, t.title); return; }
     case 'frtoggle': if (!freader) return; if (!freader.playing && freader.i >= freader.chunks.length - 1) freader.i = 0; freader.playing = !freader.playing; frShow(); frSchedule(); return;
@@ -3075,7 +3186,7 @@ document.addEventListener('click', ev => {
     case 'setcue': S.settings.cue = +el.dataset.cue; render(); openProfile(); break;
     case 'readall': S.notes.forEach(n => n.read = true); save(); openInbox(); break;
     case 'opennote': { const n = S.notes[+el.dataset.i]; n.read = true; save(); updateBadges(); const o = n.open || {};
-      if (o.page === 'goals') openGoals(o.tab); else if (o.page === 'flows') openFlows(o.tab); else if (o.page === 'profile') openProfile(); else if (o.flow){ const g = goalById(o.flow); if (g) openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it.', goalStages(g), '', [['Board', 'board'], ['Notifications', 'inbox']]); } else openInbox(); break; }
+      if (o.task){ const t = byId(o.task); if (t){ if (page) closePage(); openTask(t); } } else if (o.page === 'goals') openGoals(o.tab); else if (o.page === 'flows') openFlows(o.tab); else if (o.page === 'profile') openProfile(); else if (o.flow){ const g = goalById(o.flow); if (g) openFlow(g.title, 'Each stage is a sub-goal, placed in the lane of whoever owns it.', goalStages(g), '', [['Board', 'board'], ['Notifications', 'inbox']]); } else openInbox(); break; }
     case 'useidea': { const {root, created} = instantiate(tpl, ''); render(); openGoals('own'); toast('Added: ' + root.title, created + ' routine' + (created > 1 ? 's' : '') + ' on your board, starting today.'); break; }
     case 'savenewgoal': { const t = $('#ngTitle').value.trim(); if (!t){ $('#ngTitle').focus(); return; }
       const g = {id:newId('g'), title:t, parent:null, owner:'me', horizon:{n:Math.max(1, +$('#ngN').value || 1), unit:$('#ngU').value}, start:S.day, why:$('#ngWhy').value.trim()};
