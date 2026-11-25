@@ -12,5 +12,6 @@ progress.
 5. [Market, integration & research notes](docs/05-market-and-research-notes.md)
 6. [ADHD research update: newest and overlooked findings](docs/06-adhd-research-update.md)
 7. [Idea backlog: ideas parked for later](docs/07-idea-backlog.md)
+8. [Text styling research: variable text, grammar cues and focus reading](docs/08-text-styling-research.md)
 
 Status: Phase 0 — clickable prototype in [`prototype/index.html`](prototype/index.html).

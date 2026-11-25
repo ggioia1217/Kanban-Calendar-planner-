@@ -2,7 +2,7 @@
 <title>Cueue Prototype</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: one-screen app. Header + board (7 day columns in landscape, one day in portrait) + demo clock bar.
    Card color = what the card needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey).
@@ -600,6 +600,23 @@ a{color:var(--accent)}
 .bigquote{font-family:var(--font-display);font-size:30px;line-height:1.15;letter-spacing:-.01em;margin:6px 0 10px;text-wrap:balance}
 .story{border-left:3px solid var(--violet);background:var(--surface);border-radius:0 12px 12px 0;padding:10px 12px}
 
+/* Reading style: grammar cues + variable weight */
+.gv{font-weight:800}
+.ga{font-style:italic}
+.gn{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration-thickness:.13em;text-underline-offset:.2em;text-decoration-skip-ink:auto}
+.gf{font-weight:400;opacity:.72}
+html[data-weight="1"] .gw{font-weight:600}
+.gpreview{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);font-size:15px;line-height:1.5}
+/* Focus reader (one phrase at a time) */
+.freader{display:grid;place-items:center;min-height:150px;padding:18px 8px;text-align:center;font-size:clamp(24px,6vw,34px);line-height:1.25;font-weight:500;border-radius:16px;background:var(--surface-2);cursor:pointer;user-select:none}
+.freader .fprog{height:4px;border-radius:999px;background:var(--line);overflow:hidden;width:100%;margin-top:12px}
+.freader .fprog i{display:block;height:100%;background:var(--accent);transition:width .2s}
+.readbtn{display:inline-flex;align-items:center;gap:6px}
+/* Later timer chips */
+.timerchips{display:flex;flex-wrap:wrap;gap:6px}
+.ladder{font-size:12.5px;color:var(--muted);margin-top:6px}
+.ladder b{color:var(--ink)}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -822,7 +839,7 @@ function seed(){
   return {
     day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
     currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
-    settings:{cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
+    settings:{textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       tabbar:true, leaderboard:true, medTime:'',
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
@@ -1122,7 +1139,7 @@ function topPanel(){
       ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="switch">Switch</button></div>`:''}
       ${open.length ? `<ul class="steps">${open.slice(0,4).map(([s,i],k) => stepLI(t, s, i, k===0?'nextup':'')).join('')}</ul>${open.length > 4 ? `<div class="sub">+${open.length-4} more steps</div>` : ''}`
         : `<div class="row"><button class="btn ok" data-finish="${t.id}">All steps done. Complete the task</button></div>`}
-      ${t.notes ? `<div class="sub">${esc(t.notes)}</div>` : ''}
+      ${t.notes ? `<div class="sub">${esc(t.notes)}</div><div class="row"><button class="btn small ghost readbtn" data-act="fread" data-id="${t.id}">Focus read the notes</button></div>` : ''}
       <div class="bar thin"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
       <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
@@ -1422,11 +1439,146 @@ function endDay(){
   render();
 }
 
+/* ---------- Reading style: verbs heavy, nouns underlined, adjectives italic ----------
+   Research (docs/08): cueing a few key words helps (signaling), styling every word does not
+   (Bionic Reading, over-emphasis). So the default marks only the action and its object. */
+const G_STOP = new Set(('a an the and or but nor if then than so to of in on at for with from by as into onto about over under up down out off via per vs ' +
+  'is are was were be been being am do does did done have has had will would can could should may might must shall ' +
+  'it its this that these those my your our their his her i you we they me us them he she him who what which when where why how ' +
+  'not no all any each every some more most less very too also just only even still yet again there here once ' +
+  'before after until while because though although whether both either neither own same such into through during without within ' +
+  'one two three four five six seven eight nine ten am pm min mins hr hrs ok').split(' '));
+const G_VERB = new Set(('add ask book buy call cancel check clean clear close collect confirm copy create draft drop email empty fill file find finish fix follow ' +
+  'gather get give go grab hand help invite list load log look make meet move open order pack pay pick plan prep prepare print put read reply review ' +
+  'run schedule send set share sign sort start submit take talk text update upload walk wash water write renew remove return reset save scan test try use ' +
+  'visit wipe stop change choose decide eat feed fold hang keep let play pull push rinse sweep vacuum mop tidy toss trash unload organize attach approve ' +
+  'assign bring build compare complete count cut deliver design edit enter explain export import install label lock mail map mark note outline post ' +
+  'practice record refill register remind rename repair replace research respond ship shop show skim sketch spend split stack store swap tell think ' +
+  'track transfer turn type verify wake wrap cook drink breathe stretch finish file sync shower brush floss lay plug charge ' +
+  'reconcile onboard audit process triage invoice budget prioritize finalize review proofread rehearse restock declutter '+
+  'begin name close ask rest touch put write let finish set make start pause choose need want feel tried used made sent put').split(' '));
+const G_ADJ = new Set(('new old big small short long quick slow easy hard heavy light final first last next late early weekly daily monthly quarterly annual ' +
+  'urgent important clean dirty full empty ready missing overdue extra main key simple whole entire current past future signed unsigned legal ' +
+  'related good bad great best better high low different other few many much fresh warm cold hot large little minor major quiet loud safe clear ' +
+  'ugly right wrong tough rough kind happy calm busy free local public private personal official financial medical total single double ' +
+  'favorite meaningful tiny huge bright dark early later quick sure open lazy brave proud whole perfect').split(' '));
+function gIsVerb(w){
+  if (G_VERB.has(w)) return true;
+  const stems = [w.replace(/ies$/, 'y'), w.replace(/es$/, ''), w.replace(/s$/, ''), w.replace(/ed$/, ''), w.replace(/ed$/, 'e'), w.replace(/d$/, ''),
+    w.replace(/ing$/, ''), w.replace(/ing$/, 'e'), w.replace(/(.)\1ing$/, '$1'), w.replace(/(.)\1ed$/, '$1')];
+  return stems.some(x => x !== w && x.length > 1 && G_VERB.has(x));
+}
+function gIsAdj(w){
+  if (G_ADJ.has(w)) return true;
+  return w.length > 5 && /(ful|ous|ive|less|able|ible)$/.test(w) && !/(ative|tive)$/.test(w) || /^\d+(st|nd|rd|th)$/.test(w);
+}
+// Tag the words of one phrase: v = verb, a = adjective, n = noun, f = function word, x = number/other
+function gTag(words){
+  const tags = [];
+  words.forEach((raw, i) => tags.push(gTag1(raw, i, words, tags[i - 1])));
+  return tags;
+}
+function gTag1(raw, i, words, prevTag){
+  {
+    const w = raw.toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9-]/g, '');
+    if (!w || /^\d/.test(w) && !/(st|nd|rd|th)$/.test(w)) return 'x';
+    if (G_STOP.has(w)) return 'f';
+    const prev = i ? words[i - 1].toLowerCase().replace(/[^a-z]/g, '') : '';
+    if (gIsAdj(w) && !(i === 0 && gIsVerb(w))) return 'a';
+    const afterNoun = prevTag === 'n' || prevTag === 'a';
+    if (gIsVerb(w) && !afterNoun && (i === 0 || !['the', 'a', 'an', 'my', 'your', 'our', 'their', 'this', 'that'].includes(prev)) && (!/ing$/.test(w) || i === 0)) return 'v';
+    if (/ly$/.test(w) && w.length > 4) return 'f';
+    return w.length >= 3 || /^[A-Z]/.test(raw) ? 'n' : 'f';
+  }
+}
+// Turn plain text into styled HTML. mode: 'key' marks the first verb and the noun right after it in each phrase;
+// 'full' marks every verb, noun and adjective. Function words can be dimmed for variable weight.
+function gramHTML(text, mode, dim){
+  if (mode === 'plain' || !text) return esc(text);
+  return String(text).split(/([.!?;:,()—–\n]+\s*|\s+-\s+)/).map((part, k) => {
+    if (k % 2) return esc(part);
+    const toks = part.split(/(\s+)/), words = toks.filter((_, j) => !(j % 2)), tags = gTag(words);
+    let verbDone = false, inNoun = false, nounDone = false, wi = 0;
+    const out = toks.map((tok, j) => {
+      if (j % 2 || !tok) return j % 2 ? (/^ $/.test(tok) ? ' ' : esc(tok)) : '';
+      const tag = tags[wi++]; let cls = '';
+      if (mode === 'full') cls = tag === 'v' ? 'gv' : tag === 'n' ? 'gn' : tag === 'a' ? 'ga' : '';
+      else {
+        if (inNoun && tag !== 'n' && tag !== 'x'){ inNoun = false; nounDone = true; }
+        if (tag === 'v' && !verbDone && !nounDone && !inNoun){ cls = 'gv'; verbDone = true; }
+        else if ((tag === 'n' || (tag === 'x' && inNoun)) && !nounDone && (verbDone || wi === 1 || inNoun)){ cls = 'gn'; inNoun = true; }
+        else if ((tag === 'n' || tag === 'x') && !nounDone && !inNoun && tags[wi] === 'n' && verbDone){ cls = 'gn'; inNoun = true; }
+        else if (tag === 'a' && !nounDone) cls = 'ga';
+      }
+      if (!cls && dim && tag === 'f') cls = 'gf';
+      return [tok, cls];
+    });
+    // key mode: in a group of nouns ("Q4 service agreement") underline only the main (last) noun
+    if (mode !== 'full') out.forEach((o, j) => { if (Array.isArray(o) && o[1] === 'gn'){ const nx = out.slice(j + 1).find(x => Array.isArray(x) && x[0]); if (nx && nx[1] === 'gn' && out[j + 1] === ' ') o[1] = ''; } });
+    return out.map(o => Array.isArray(o) ? (o[1] ? `<span class="${o[1]}">${esc(o[0])}</span>` : esc(o[0])) : o).join('');
+  }).join('');
+}
+const GRAM_SEL = '.card .title, .card .next label > span:last-child, #nowPanel h3, #nowPanel .steps .t, #nowPanel > .sub, .sheet h2.ttitle, .steps .t, .paper .ptext, .story p, .lede, .sheet .quote, .tplcard p, .freader .fword';
+function applyGram(root){
+  const st = S && S.settings; if (!st) return;
+  const mode = st.textStyle || 'key', dim = st.textWeight !== false;
+  (root || document).querySelectorAll(GRAM_SEL).forEach(el => {
+    if (el.dataset.g === mode + dim || el.closest('input,textarea,button,select')) return;
+    // only restyle plain text nodes; keep any inline markup (bold labels, links, chips) as it is
+    [...el.childNodes].forEach(node => {
+      if (node.nodeType === 3 && node.textContent.trim()){
+        const span = document.createElement('span'); span.className = 'gtext'; span.innerHTML = gramHTML(node.textContent, mode, dim); node.replaceWith(span);
+      } else if (node.nodeType === 1 && node.classList.contains('gtext')){
+        node.innerHTML = gramHTML(node.textContent, mode, dim);
+      }
+    });
+    el.dataset.g = mode + dim;
+  });
+}
+let gramQueued = false;
+new MutationObserver(() => { if (gramQueued) return; gramQueued = true; requestAnimationFrame(() => { gramQueued = false; applyGram(); }); })
+  .observe(document.body, {childList:true, subtree:true});
+
+/* Focus reader: one short phrase at a time in the same spot, so the eyes don't have to travel
+   (Moussaoui et al. 2025: comprehension rose for readers with ADHD when eye movements were minimized). */
+function phraseChunks(text){
+  const out = [];
+  String(text).split(/(?<=[.!?;:,—])\s+|\n+/).forEach(seg => { const w = seg.trim().split(/\s+/).filter(Boolean); for (let i = 0; i < w.length; i += 3) out.push(w.slice(i, i + 3).join(' ')); });
+  return out.filter(Boolean);
+}
+let freader = null;
+function openFocusReader(text, title){
+  const chunks = phraseChunks(text); if (!chunks.length) return;
+  freader = {chunks, i:0, playing:true, wpm:S.settings.readWpm || 220, timer:null};
+  openSheet(`<h2 class="ttitle">${esc(title || 'Focus read')}</h2><p class="note">One phrase at a time, in one spot, so your eyes can stay still. Tap the text to pause.</p>
+    <div class="freader" data-act="frtoggle"><div><div class="fword" id="frWord"></div><div class="fprog"><i id="frProg"></i></div></div></div>
+    <div class="actions" style="margin-top:12px"><button class="btn small" data-act="frprev">‹ Back</button><button class="btn small primary" data-act="frtoggle" id="frPlay">Pause</button><button class="btn small" data-act="frnext">Next ›</button>
+      <div class="spacer"></div><div class="seg" role="group" aria-label="Speed">${[[160, 'Slow'], [220, 'Medium'], [300, 'Fast']].map(([v, l]) => `<button data-act="frspeed" data-v="${v}" aria-pressed="${freader.wpm === v}">${l}</button>`).join('')}</div></div>
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'freader');
+  frShow(); frSchedule();
+}
+function frShow(){
+  const w = $('#frWord'); if (!w || !freader) return;
+  w.textContent = freader.chunks[freader.i]; w.removeAttribute('data-g'); applyGram(w.parentElement);
+  $('#frProg').style.width = Math.round(100 * (freader.i + 1) / freader.chunks.length) + '%';
+  $('#frPlay').textContent = freader.playing ? 'Pause' : freader.i >= freader.chunks.length - 1 ? 'Read again' : 'Play';
+}
+function frSchedule(){
+  clearTimeout(freader && freader.timer); if (!freader || !freader.playing) return;
+  const words = freader.chunks[freader.i].split(' ').length, pause = /[.!?]$/.test(freader.chunks[freader.i]) ? 350 : /[,;:—]$/.test(freader.chunks[freader.i]) ? 150 : 0;
+  freader.timer = setTimeout(() => { if (!$('#frWord')) { freader = null; return; }
+    if (freader.i < freader.chunks.length - 1){ freader.i++; frShow(); frSchedule(); } else { freader.playing = false; frShow(); } }, words * 60000 / freader.wpm + pause);
+}
+
 /* ---------- Later pocket ---------- */
-const LATER_FIRST = 240; // minutes until the first reminder; each snooze halves the wait
-const LATER_MIN_SNOOZE = 30; // once the wait would drop below this, it can't be snoozed again
-function laterWait(n){ return LATER_FIRST / Math.pow(2, n.snoozes); }
-function canSnooze(n){ return laterWait({snoozes: n.snoozes + 1}) >= LATER_MIN_SNOOZE; }
+const LATER_TIMERS = [[5, '5 min'], [15, '15 min'], [30, '30 min'], [60, '1 hr'], [120, '2 hr'], [240, '4 hr'], [480, '8 hr']];
+const LATER_MIN_SNOOZE = 5; // once the next wait would be under 5 minutes, there is no snooze: decide
+function laterWait(n){ return (n.first || 240) / Math.pow(2, n.snoozes); }
+function canSnooze(n){ return laterWait({first:n.first, snoozes: n.snoozes + 1}) >= LATER_MIN_SNOOZE; }
+function maxSnoozes(first){ let k = 0; while ((first || 240) / Math.pow(2, k + 1) >= LATER_MIN_SNOOZE) k++; return k; }
+function wrinkleLvl(n){ if (n.status === 'open' && !canSnooze(n)) return 4; const k = maxSnoozes(n.first); return k ? Math.min(3, Math.ceil(3 * n.snoozes / k)) : 0; }
+const waitTxt = m => m < 60 ? Math.round(m) + ' min' : fmtDur(m);
+function ladderTxt(first){ const out = []; for (let k = 0; k <= maxSnoozes(first); k++) out.push(waitTxt(first / Math.pow(2, k))); return out; }
 function captureContext(){
   const ctx = {day:S.day, min:Math.round(S.now), where: page ? (page.crumbs[page.crumbs.length - 1][0]) : 'Board'};
   const t = byId(S.currentId);
@@ -1454,7 +1606,10 @@ function laterDue(){
   const tagNow = laterTagNow();
   return (S.later || []).find(n => n.status === 'open' && (n.dueDay < S.day || (n.dueDay === S.day && n.dueMin <= S.now)) && (n.tag === 'any' || n.tag === tagNow));
 }
+function updLadder(){ const el = $('#ltLadder'); if (!el) return; const l = ladderTxt(S._ltFirst);
+  el.innerHTML = 'Reminders come after <b>' + l.join('</b>, then <b>') + '</b>' + (l.length > 1 ? ' (each snooze halves the wait)' : '') + '. After that, no snooze: make it a task, add it to a task, or toss it. Only during ' + (S._ltTag === 'any' ? 'your day' : S._ltTag + ' hours') + '.'; }
 function openLaterCapture(){
+  S._ltFirst = S.settings.laterFirst || 60;
   const c = captureContext(), defTag = c.ctx || laterTagNow();
   openSheet(`<h2>Later pocket</h2><p class="note">Jot it down and get back to what you were doing. Cueue saves the moment with it to jog your memory.</p>
     <div class="field"><label for="ltText">The thought</label><textarea id="ltText" rows="3" placeholder="e.g. Ask Priya if Riverside's March hours are also missing"></textarea></div>
@@ -1462,32 +1617,36 @@ function openLaterCapture(){
     <div class="field"><label for="ltMedia">What's playing? (optional)</label><input id="ltMedia" placeholder="A song, video or podcast, or paste a link">
       <p class="hint" style="margin:4px 0 0">In the real app, Android can fill this in automatically with your permission, and a browser extension can on a computer. iPhone only allows reading Apple Music's current song, so for other apps you'd type or paste it.</p></div>
     <div class="field"><label>Remind me during</label><div class="seg" role="group" aria-label="Remind me during">${[['work', 'Work hours'], ['home', 'Home hours'], ['any', 'Any time']].map(([k, l]) => `<button data-act="lttag" data-v="${k}" aria-pressed="${defTag === k}">${l}</button>`).join('')}</div>
-      <p class="hint" style="margin:4px 0 0">First reminder in about ${fmtDur(LATER_FIRST)} of ${defTag === 'any' ? 'your day' : defTag === 'work' ? 'work hours' : 'home hours'}. Each snooze halves the wait, until you decide to keep it or toss it.</p></div>
+      </div>
+    <div class="field"><label>First reminder in</label><div class="timerchips" role="group" aria-label="First reminder in">${LATER_TIMERS.map(([v, l]) => `<button class="chipbtn" data-act="ltfirst" data-v="${v}" aria-pressed="${v === S._ltFirst}">${l}</button>`).join('')}
+      <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px">or <input id="ltCustom" type="number" min="5" max="1440" placeholder="min" style="width:76px"> min</label></div>
+      <div class="ladder" id="ltLadder"></div></div>
     <div class="actions"><button class="btn primary" data-act="ltsave">Save to pocket</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'later');
   S._ltTag = defTag; S._ltCtx = c;
+  setTimeout(() => { updLadder(); const cu = $('#ltCustom'); if (cu) cu.addEventListener('input', () => { const v = +cu.value; if (v >= 5){ S._ltFirst = v; document.querySelectorAll('[data-act="ltfirst"]').forEach(b => b.setAttribute('aria-pressed', 'false')); updLadder(); } }); }, 0);
   setTimeout(() => $('#ltText') && $('#ltText').focus(), 50);
 }
 function paperHTML(n, opts){
   opts = opts || {};
-  const lvl = n.status === 'open' ? Math.min(4, n.snoozes + (opts.forced ? 1 : 0)) : n.snoozes;
-  const wr = [0, 1, 2].map(k => `<i class="${k < n.snoozes ? 'on' : ''}"></i>`).join('');
+  const lvl = wrinkleLvl(n);
+  const wr = Array.from({length: maxSnoozes(n.first)}, (_, k) => `<i class="${k < n.snoozes ? 'on' : ''}"></i>`).join('');
   const due = dueWhen(n.dueDay, n.dueMin, 0);
   return `<div class="paper w${lvl}" data-paper="${n.id}">
     <div class="ptext">${esc(n.text)}</div>
     <div class="pctx">${ctxChips(n.ctx, n.media).map(x => `<span>${esc(x)}</span>`).join('')}<span>${n.tag === 'any' ? 'Any time' : n.tag === 'work' ? 'Work hours' : 'Home hours'}</span></div>
     <div class="pmeta"><span class="wrinkle" title="Snoozes used">${wr}</span> ${n.status === 'open' ? (canSnooze(n) ? 'Next reminder ' + DAYS[due.d % 7] + ' ' + fmt(due.m) : 'No snoozes left. Keep it or toss it') : n.status === 'task' ? 'Made into a task' : n.status === 'attached' ? 'Added to "' + esc(n.attachedTo || '') + '"' : 'Tossed'}</div>
     ${opts.actions !== false && n.status === 'open' ? `<div class="actions" style="margin-top:10px">
-      ${canSnooze(n) ? `<button class="btn small" data-act="lsnooze" data-id="${n.id}">Snooze ${fmtDur(laterWait({snoozes: n.snoozes + 1}))}</button>` : ''}
+      ${canSnooze(n) ? `<button class="btn small" data-act="lsnooze" data-id="${n.id}">Snooze ${waitTxt(laterWait({first:n.first, snoozes: n.snoozes + 1}))}</button>` : ''}
       <button class="btn small primary" data-act="ltask" data-id="${n.id}">Make it a task</button><button class="btn small" data-act="lattach" data-id="${n.id}">Add to a task</button>
       <button class="btn small ghost" data-act="ltoss" data-id="${n.id}" style="color:var(--hot)">Toss it</button></div>` : ''}</div>`;
 }
 function showLaterPop(n){
   n.shown = true;
-  $('#laterPop').innerHTML = `<div class="laterpop" role="dialog" aria-label="Later pocket reminder"><div class="paper w${Math.min(4, n.snoozes + (canSnooze(n) ? 0 : 1))}" data-paper="${n.id}">
+  $('#laterPop').innerHTML = `<div class="laterpop" role="dialog" aria-label="Later pocket reminder"><div class="paper w${wrinkleLvl(n)}" data-paper="${n.id}">
     <div class="ptitle">From your Later pocket${canSnooze(n) ? '' : ' · decide now'}</div>
     <div class="ptext">${esc(n.text)}</div>
     <div class="pctx">${ctxChips(n.ctx, n.media).map(x => `<span>${esc(x)}</span>`).join('')}</div>
-    <div class="actions">${canSnooze(n) ? `<button class="btn small" data-act="lsnooze" data-id="${n.id}">Snooze ${fmtDur(laterWait({snoozes: n.snoozes + 1}))}</button>` : ''}
+    <div class="actions">${canSnooze(n) ? `<button class="btn small" data-act="lsnooze" data-id="${n.id}">Snooze ${waitTxt(laterWait({first:n.first, snoozes: n.snoozes + 1}))}</button>` : ''}
       <button class="btn small primary" data-act="ltask" data-id="${n.id}">Make it a task</button><button class="btn small" data-act="lattach" data-id="${n.id}">Add to a task</button>
       <button class="btn small ghost" data-act="ltoss" data-id="${n.id}" style="color:var(--hot)">Toss it</button></div></div></div>`;
   cue(canSnooze(n) ? 1 : 2);
@@ -1496,7 +1655,7 @@ function closeLaterPop(){ $('#laterPop').innerHTML = ''; }
 function openLater(){
   const f = S.laterFilter || 'open', list = (S.later || []).filter(n => f === 'open' ? n.status === 'open' : n.status !== 'open').slice().reverse();
   openPage('later', [['Board', 'board'], ['Later pocket', 'later']], `<h1>Later pocket</h1>
-    <p class="lede">Thoughts you parked so you could keep going. Each one comes back on its own. Every snooze wrinkles it a little more and halves the wait, until you decide: keep it or toss it.</p>
+    <p class="lede">Thoughts you parked so you could keep going. Each one comes back after the time you picked. Every snooze crumples the paper a little more and halves the wait. Once the next wait would be under 5 minutes, there's no snooze: make it a task, add it to one, or toss it.</p>
     <div class="actions" style="margin:12px 0 16px"><button class="chipbtn" aria-pressed="${f === 'open'}" data-act="lfilter" data-v="open">In the pocket (${(S.later || []).filter(n => n.status === 'open').length})</button><button class="chipbtn" aria-pressed="${f === 'closed'}" data-act="lfilter" data-v="closed">Decided</button>
       <div class="spacer"></div>${f === 'open' && list.length ? '<button class="btn small" data-act="lnow">Remind me now (demo)</button>' : ''}</div>
     ${list.length ? `<div class="papers">${list.map(n => paperHTML(n)).join('')}</div>` : `<div class="empty2">${f === 'open' ? 'Nothing in your pocket. Tap the note icon at the top whenever a thought pops up.' : 'Nothing decided yet.'}</div>`}`,
@@ -1764,7 +1923,7 @@ function openTask(t){
   const hist = (t.history||[]).length ? `<div class="sec"><h4>Past completions</h4>${t.history.slice(-5).reverse().map(h => `<div class="kv"><span>${DAYS[h.day]}${h.note?' · '+esc(h.note):''}</span><span>${h.steps.filter(s=>s.done).length}/${h.steps.length} steps</span></div>`).join('')}</div>` : '';
   openSheet(`
     ${t.goalId ? `<button class="crumb" data-act="goals">${esc(goalPath(t.goalId))}</button>` : ''}
-    <h2>${esc(t.title)}</h2>
+    <h2 class="ttitle">${esc(t.title)}</h2>
     <div class="chips">${t.done?'<span class="chip okc">Completed</span>':''}${!isMine(t)?avatar(t.owner,true):''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
     ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
     ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
@@ -1778,7 +1937,7 @@ function openTask(t){
       <ul class="steps">${openSteps.map(([s,i]) => stepLI(t,s,i)).join('') || '<li class="note">All steps are done.</li>'}</ul>
       ${doneSteps.length ? `<details class="donesteps"><summary>Completed steps (${doneSteps.length}). Uncheck any to reopen.</summary><ul class="steps">${doneSteps.map(([s,i]) => stepLI(t,s,i)).join('')}</ul></details>` : ''}
       <div class="actions"><input id="newStep" class="inp" placeholder="Add a step" style="flex:1;min-width:0;width:auto"><button class="btn small" data-act="addstep">Add</button><button class="btn small ghost" data-act="aisteps">Suggest steps</button></div></div>
-    <div class="sec"><h4>Notes</h4><textarea id="notesInput" class="inp" rows="2">${esc(t.notes||'')}</textarea></div>
+    <div class="sec"><h4 style="display:flex;align-items:center;gap:8px">Notes${t.notes ? `<button class="btn small ghost" data-act="fread" data-id="${t.id}" style="margin-left:auto">Focus read</button>` : ''}</h4><textarea id="notesInput" class="inp" rows="2">${esc(t.notes||'')}</textarea></div>
     ${t.sourceText ? `<div class="sec"><h4>Source · ${t.source==='email'?'Email':'Text'}</h4><div class="quote">${esc(t.sourceText)}</div></div>` : ''}
     ${person || (t.contacts&&t.contacts.length) ? `<div class="sec"><h4>Contact log${person?' · '+esc(person.name)+', '+esc(person.org):''}</h4>${(t.contacts||[]).map(c => `<div class="kv"><span>${esc(c.how)} · ${esc(c.who)}</span><span>${esc(c.when)}</span></div>`).join('') || '<p class="note">No contacts yet. Checking a Contact step logs one.</p>'}</div>` : ''}
     <div class="sec"><h4>Attachments</h4><input type="file" id="attachInput" multiple><p class="note" id="attachList">${(t.files||[]).map(esc).join(', ') || 'No files yet.'}</p></div>
@@ -2728,6 +2887,7 @@ function saveAdd(){
   const el = document.querySelector(`.card[data-id="${t.id}"]`); if (el){ el.classList.add('pop'); el.scrollIntoView({block:'nearest', behavior:'smooth'}); }
   toast('Added: ' + title, (estIn ? '' : 'AI estimated ' + fmtDur(aiGuess) + ' and ') + 'Cueue re-planned ' + (t.day===S.day?'today':DAYS[t.day]) + '.');
 }
+function gPreview(){ const p = $('#gPreview'); if (p) p.innerHTML = gramHTML('Send the signed contract to Mara before the quick Friday review.', S.settings.textStyle || 'key', S.settings.textWeight !== false); }
 function openSettings(){
   const st = S.settings, hh = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
   const cb = (id, on, text) => `<label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="${id}" ${on?'checked':''}> ${text}</label>`;
@@ -2737,6 +2897,11 @@ function openSettings(){
       <p class="note" style="margin:4px 0 0">Auto shows the week when your screen is wide or sideways, and today when it's upright.</p></div>
     ${cb('sTab', st.tabbar !== false, 'Show the tab bar at the bottom on phones')}
     ${cb('sLb', st.leaderboard, 'Include my team on the leaderboard')}</div>
+  <div class="sec"><h4>Reading</h4>
+    <div class="field"><label>Word styling</label><div class="seg" role="group" aria-label="Word styling">${[['plain', 'Plain'], ['key', 'Key words'], ['full', 'Every word']].map(([k, l]) => `<button data-act="tstyle" data-v="${k}" aria-pressed="${(st.textStyle || 'key') === k}">${l}</button>`).join('')}</div>
+      <p class="note" style="margin:4px 0 6px">Verbs heavy bold, nouns underlined, describing words in italics. "Key words" marks just the action and what it's done to, which research suggests helps more than marking everything.</p>
+      <div class="gpreview" id="gPreview"><span class="gtextp">Send the signed contract to Mara before the quick Friday review.</span></div></div>
+    ${cb('sWeight', st.textWeight !== false, 'Variable weight: small linking words (the, to, of) are lighter so the important words stand out')}</div>
   <div class="sec"><h4>Day flow</h4>
     ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
     ${cb('sLock', st.breakLock, 'Break lock: pause check-offs until I take a due break')}</div>
@@ -2761,7 +2926,8 @@ function openSettings(){
   bind('#sAuto', el => st.autoNext = el.checked); bind('#sLock', el => st.breakLock = el.checked); bind('#sEdge', el => st.edge = el.checked);
   bind('#sSound', el => st.sound = el.checked); bind('#sHap', el => st.haptics = el.checked); bind('#sReduce', el => st.reduce = el.checked);
   bind('#sPies', el => st.pies = el.checked); bind('#sTimes', el => st.times = el.checked); bind('#sPrep', el => st.prepAll = el.checked);
-  bind('#sTab', el => { st.tabbar = el.checked; updateTabs(); }); bind('#sLb', el => st.leaderboard = el.checked);
+  bind('#sTab', el => { st.tabbar = el.checked; updateTabs(); }); bind('#sWeight', el => { st.textWeight = el.checked; gPreview(); });
+  gPreview(); bind('#sLb', el => st.leaderboard = el.checked);
 }
 
 /* ---------- events ---------- */
@@ -2846,16 +3012,23 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
-    case 'lttag': S._ltTag = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); return;
+    case 'tstyle': S.settings.textStyle = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); gPreview(); save(); applyGram(); return;
+    case 'fread': { const t = byId(el.dataset.id); openFocusReader(t.notes, t.title); return; }
+    case 'frtoggle': if (!freader) return; if (!freader.playing && freader.i >= freader.chunks.length - 1) freader.i = 0; freader.playing = !freader.playing; frShow(); frSchedule(); return;
+    case 'frnext': if (!freader) return; freader.i = Math.min(freader.chunks.length - 1, freader.i + 1); frShow(); frSchedule(); return;
+    case 'frprev': if (!freader) return; freader.i = Math.max(0, freader.i - 1); frShow(); frSchedule(); return;
+    case 'frspeed': if (!freader) return; freader.wpm = S.settings.readWpm = +el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); frSchedule(); return;
+    case 'lttag': S._ltTag = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); updLadder(); return;
+    case 'ltfirst': S._ltFirst = +el.dataset.v; el.parentElement.querySelectorAll('[data-act="ltfirst"]').forEach(b => b.setAttribute('aria-pressed', b === el)); if ($('#ltCustom')) $('#ltCustom').value = ''; updLadder(); return;
     case 'ltsave': { const text = $('#ltText').value.trim(); if (!text){ $('#ltText').focus(); return; }
-      const due = dueWhen(S.day, S.now, LATER_FIRST);
-      S.later.push({id:newId('lt'), text, tag:S._ltTag || 'any', media:$('#ltMedia').value.trim(), ctx:S._ltCtx || captureContext(), snoozes:0, dueDay:due.d, dueMin:due.m, status:'open'});
-      closeSheet(); updateLaterBadge(); save(); toast('In your pocket', 'Back to what you were doing. It will remind you ' + (S._ltTag === 'any' ? 'later' : 'during ' + S._ltTag + ' hours') + '.'); break; }
+      const first = S._ltFirst || 60, due = dueWhen(S.day, S.now, first); S.settings.laterFirst = first;
+      S.later.push({id:newId('lt'), text, tag:S._ltTag || 'any', first, media:$('#ltMedia').value.trim(), ctx:S._ltCtx || captureContext(), snoozes:0, dueDay:due.d, dueMin:due.m, status:'open'});
+      closeSheet(); updateLaterBadge(); save(); toast('In your pocket', 'Back to what you were doing. First reminder in ' + waitTxt(first) + (S._ltTag === 'any' ? '' : ' of ' + S._ltTag + ' hours') + '.'); break; }
     case 'later': openLater(); break;
     case 'lfilter': S.laterFilter = el.dataset.v; openLater(); break;
     case 'lnow': { const n = (S.later || []).find(x => x.status === 'open'); if (n){ n.dueDay = S.day; n.dueMin = S.now; n.tag = 'any'; closeLaterPop(); showLaterPop(n); } break; }
     case 'lsnooze': { const n = S.later.find(x => x.id === el.dataset.id); if (!canSnooze(n)) return; n.snoozes++; const w = laterWait(n), due = dueWhen(S.day, S.now, w); n.dueDay = due.d; n.dueMin = due.m;
-      closeLaterPop(); save(); toast(canSnooze(n) ? 'Snoozed ' + fmtDur(w) : 'Last snooze: ' + fmtDur(w), canSnooze(n) ? 'Next time the wait is half as long.' : 'Next time you\'ll decide: keep it or toss it.'); if (page && page.kind === 'later') openLater(); break; }
+      closeLaterPop(); save(); toast(canSnooze(n) ? 'Snoozed ' + waitTxt(w) : 'Last snooze: ' + waitTxt(w), canSnooze(n) ? 'Next time the wait is half as long.' : 'Next time you\'ll decide: keep it or toss it.'); if (page && page.kind === 'later') openLater(); break; }
     case 'ltask': { const n = S.later.find(x => x.id === el.dataset.id); closeLaterPop(); S.pendingLater = n.id; openAdd(null); $('#fTitle').value = n.text; if (n.ctx.ctx) $('#fCtx').value = n.ctx.ctx; else if (n.tag !== 'any') $('#fCtx').value = n.tag; break; }
     case 'lattach': { const n = S.later.find(x => x.id === el.dataset.id); closeLaterPop();
       const list = S.tasks.filter(t => isMine(t) && !t.done).sort((a, b) => (a.id === n.ctx.taskId ? -1 : b.id === n.ctx.taskId ? 1 : (a.day ?? 9) - (b.day ?? 9)));
