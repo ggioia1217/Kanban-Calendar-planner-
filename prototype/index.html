@@ -634,8 +634,27 @@ html[data-weight="1"] .gw{font-weight:600}
 .blocknote .row{margin-top:8px}
 .msgprev{border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 10px 10px 0;padding:10px 12px;font-size:13.5px;white-space:pre-line}
 .who{display:flex;flex-direction:column;gap:4px}
-.who label{display:flex;gap:8px;align-items:center;font-size:14px}
+.who label{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink);font-weight:500;line-height:1.35}
+.who input[type=checkbox]{width:20px;height:20px;flex:none;margin:0;padding:0}
+.who label > span{min-width:0;overflow-wrap:anywhere}
 .who small{color:var(--muted)}
+
+/* Task details: read view */
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);margin:2px 0 10px}
+.tmeta b{color:var(--ink);font-weight:600}
+.tmeta .ctx{font-weight:600}
+.tsec{margin-top:14px}
+.tsec > h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tnotes{white-space:pre-line;font-size:14.5px;line-height:1.45}
+.tline1{display:flex;gap:8px;align-items:center;font-size:14px;padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.tline1 span{flex:1;min-width:0}
+.tmore{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.tmore summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--muted)}
+.tmore[open] summary{margin-bottom:6px}
+.tacts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tacts .grow{flex:1}
+.editbar{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.editbar h2{margin:0;flex:1}
 
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
@@ -1645,8 +1664,8 @@ function openRoadblock(t){
     <div class="field"><label>How long might it hold things up?</label><div class="timerchips">${BLOCK_DELAYS.map(([k, l]) => `<button class="chipbtn" data-act="blkdelay" data-v="${k}" aria-pressed="${k === '1d'}">${l}</button>`).join('')}</div></div>
     <div class="field"><label for="blkHelp">What would help? (optional)</label><input id="blkHelp" placeholder="e.g. Can someone else at Riverside sign?"></div>
     <div class="field"><label>Tell</label><div class="who">
-      ${people.length ? people.map(x => `<label><input type="checkbox" class="blkWho" value="${esc(x.name)}" checked> ${esc(x.name)} <small>· ${esc(x.why)}</small></label>`).join('') : '<p class="note" style="margin:0">Nobody else is part of this task\'s goal or flow. Pick anyone who should know:</p>'}
-      ${others.slice(0, people.length ? 3 : 5).map(p => `<label><input type="checkbox" class="blkWho" value="${esc(p.name)}" ${!people.length && p.id === 'p-morgan' ? 'checked' : ''}> ${esc(p.name)} <small>· ${esc(p.title)}</small></label>`).join('')}</div></div>
+      ${people.length ? people.map(x => `<label><input type="checkbox" class="blkWho" value="${esc(x.name)}" checked><span>${esc(x.name)} <small>· ${esc(x.why)}</small></span></label>`).join('') : '<p class="note" style="margin:0">Nobody else is part of this task\'s goal or flow. Pick anyone who should know:</p>'}
+      ${others.slice(0, people.length ? 3 : 5).map(p => `<label><input type="checkbox" class="blkWho" value="${esc(p.name)}" ${!people.length && p.id === 'p-morgan' ? 'checked' : ''}><span>${esc(p.name)} <small>· ${esc(p.title)}</small></span></label>`).join('')}</div></div>
     <div class="field"><label>They'll see</label><div class="msgprev" id="blkPrev"></div></div>
     <div class="actions"><button class="btn primary" data-act="blksend">Send update</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'roadblock');
   const upd = () => { const p = $('#blkPrev'); if (p) p.textContent = blockMsg(t, {cat:S._blk.cat, delay:S._blk.delay, text:$('#blkText').value.trim(), help:$('#blkHelp').value.trim()}); };
@@ -1828,7 +1847,7 @@ function openShareStory(i){
   const st = S.mantraStories[i];
   openSheet(`<h2>Share this moment?</h2><p class="note">It stays private unless you pick someone below. You can change this any time.</p>
     <div class="story" style="margin:10px 0"><div class="note">"${esc(mantraText(st.id))}"</div><p style="margin:4px 0 0">${esc(st.text)}</p></div>
-    <div class="field"><label>Share with</label>${['A friend', 'Family', 'Coworkers'].map(w => `<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" class="shareTo" value="${w}" ${st.sharedWith.includes(w) ? 'checked' : ''}> ${w}</label>`).join('')}</div>
+    <div class="field"><label>Share with</label>${['A friend', 'Family', 'Coworkers'].map(w => `<label style="display:flex;gap:8px;align-items:center;margin:4px 0;color:var(--ink)"><input type="checkbox" class="shareTo" value="${w}" ${st.sharedWith.includes(w) ? 'checked' : ''} style="width:20px;height:20px;flex:none;margin:0"> ${w}</label>`).join('')}</div>
     <div class="actions"><button class="btn primary" data-act="msharesave" data-i="${i}">Save</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'share');
 }
 
@@ -1998,7 +2017,7 @@ function updateTabs(){
 
 /* ---------- sheets ---------- */
 function openSheet(html, kind, taskId, wide){ const r = $('#sheetRoot'), again = r.dataset.kind && r.dataset.kind === kind; r.innerHTML = `<div class="scrim" data-close="1"><div class="sheet ${wide?'wide':''} ${again?'still':''}" role="dialog" aria-modal="true">${html}</div></div>`; r.dataset.kind = kind || ''; r.dataset.task = taskId || ''; }
-function closeSheet(quiet){ const r = $('#sheetRoot'), had = r.innerHTML !== ''; r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; if (had && !quiet && page && page.refresh && page.kind !== 'builder') page.refresh(); }
+function closeSheet(quiet){ S.editTask = null; const r = $('#sheetRoot'), had = r.innerHTML !== ''; r.innerHTML = ''; r.dataset.kind = ''; r.dataset.task = ''; if (had && !quiet && page && page.refresh && page.kind !== 'builder') page.refresh(); }
 function relatedTasks(e){
   const words = (e.title + ' ' + e.desc + ' ' + e.who.join(' ')).match(/\b[A-Z][a-z]{3,}\b/g) || [];
   const keys = [...new Set(words)].filter(w => !['Review','Bring','Questions','Check','Team','Client','Yesterday','Credentialing'].includes(w));
@@ -2011,8 +2030,81 @@ function openTask(t){
   const prev = t.completions ? `<div class="sec"><h4>Milestones</h4><div class="kv"><span>Completed</span><span>${t.completions} times</span></div><div class="bar"><i style="width:${Math.round(100*t.completions/m)}%"></i></div><p class="note">${m - t.completions} more to your ${m} badge.</p></div>` : '';
   const stuck = (t.rolled||0) >= 3 && !t.done ? `<div class="sec"><div class="quote"><b>This has moved ${t.rolled} times.</b> That's normal. Want to make it easier?<div class="actions"><button class="btn small" data-act="breakdown">Break it down</button><button class="btn small" data-act="delegate">Hand it off</button><button class="btn small" data-act="resched">Pick a day</button><button class="btn small ghost" data-act="drop">Drop it</button></div></div></div>` : '';
   const hist = (t.history||[]).length ? `<div class="sec"><h4>Past completions</h4>${t.history.slice(-5).reverse().map(h => `<div class="kv"><span>${DAYS[h.day]}${h.note?' · '+esc(h.note):''}</span><span>${h.steps.filter(s=>s.done).length}/${h.steps.length} steps</span></div>`).join('')}</div>` : '';
+  if (S.editTask === t.id) return openTaskEdit(t);
+  const g = t.goalId && goalById(t.goalId), meta = [];
+  meta.push(`<span class="ctx ${t.ctx}">${t.ctx === 'work' ? 'Work' : 'Home'}</span>`);
+  meta.push('<b>' + DIFF[t.diff] + '</b>'); meta.push('about <b>' + fmtDur(estOf(t)) + '</b>');
+  if (t.prio >= 3) meta.push('<b>' + PRIO[t.prio] + ' priority</b>');
+  if (t.cadence) meta.push(esc(t.cadence.label));
+  if (!isMine(t)) meta.push('Owned by ' + esc(roleOf(t.owner).name));
+  const bg = [];
+  if (t.completions) bg.push(`<div class="kv"><span>Completed</span><span>${t.completions} times · next badge at ${m}</span></div>`);
+  (t.history || []).slice(-5).reverse().forEach(h => bg.push(`<div class="kv"><span>${DAYS[h.day]}${h.note ? ' · ' + esc(h.note) : ''}</span><span>${h.steps.filter(x => x.done).length}/${h.steps.length} steps</span></div>`));
+  if (t.contacts && t.contacts.length) bg.push(`<p class="note" style="margin:8px 0 2px">Contact log</p>` + t.contacts.map(c => `<div class="kv"><span>${esc(c.how)} · ${esc(c.who)}</span><span>${esc(c.when)}</span></div>`).join(''));
+  if (t.sourceText) bg.push(`<p class="note" style="margin:8px 0 2px">From ${t.source === 'email' ? 'an email' : 'a text'}</p><div class="quote">${esc(t.sourceText)}</div>`);
+  if (t.evidence) bg.push(`<p class="note" style="margin:8px 0 0">Why this routine works: a new daily habit took about 66 days on average to feel automatic, and missing a day didn't undo progress (Lally et al., 2010). Aerobic exercise improved attention in children with ADHD across 8 trials (Cerrillo-Urbina et al., 2015). <a href="https://pubmed.ncbi.nlm.nih.gov/25988743/" target="_blank" rel="noopener">Read the study</a></p>`);
   openSheet(`
     ${t.goalId ? `<button class="crumb" data-act="goals">${esc(goalPath(t.goalId))}</button>` : ''}
+    <h2 class="ttitle">${esc(t.title)}</h2>
+    <div class="tmeta">${meta.join('<span aria-hidden="true">·</span>')}${dueChip(t)}${t.done ? '<span class="chip okc">Completed</span>' : ''}</div>
+    ${t.roadblock ? `<div style="margin-bottom:10px">${blockNoteHTML(t)}</div>` : ''}
+    ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
+    ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
+    <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}${t.proof?' · <i>proof required</i>':''}</div>
+    ${stuck}
+    <div class="tsec"><h4>Steps · ${stepsDone(t)} of ${t.steps.length}</h4>
+      <ul class="steps">${openSteps.map(([s,i]) => stepLI(t,s,i)).join('') || '<li class="note">All steps are done.</li>'}</ul>
+      ${doneSteps.length ? `<details class="donesteps"><summary>${doneSteps.length} done. Uncheck any to reopen.</summary><ul class="steps">${doneSteps.map(([s,i]) => stepLI(t,s,i)).join('')}</ul></details>` : ''}</div>
+    ${t.notes ? `<div class="tsec"><h4 style="display:flex;align-items:center">Notes<button class="btn small ghost" data-act="fread" data-id="${t.id}" style="margin-left:auto">Focus read</button></h4><div class="tnotes">${esc(t.notes)}</div></div>` : ''}
+    ${person ? `<div class="tsec"><h4>Contact</h4><div class="tline1"><span><b>${esc(person.name)}</b>, ${esc(person.org)}${t.contacts && t.contacts.length ? ' · last ' + esc(t.contacts[0].how.toLowerCase()) + ' ' + esc(t.contacts[0].when) : ''}</span><button class="btn small ghost" data-act="crm">Open in CRM</button></div></div>` : ''}
+    ${(t.files || []).length ? `<div class="tsec"><h4>Files</h4><div class="tline1"><span>${t.files.map(esc).join(', ')}</span></div></div>` : ''}
+    ${bg.length ? `<details class="tmore"><summary>History &amp; background</summary>${bg.join('')}</details>` : ''}
+    <div class="tacts">
+      ${t.done ? `<button class="btn primary" data-act="reopen">Reopen task</button>` : !isMine(t) ? `<button class="btn" data-act="othersdone" data-task="${t.id}">Mark done as ${esc(roleOf(t.owner).name)} (demo)</button>` :
+        `${S.currentId===t.id ? `<button class="btn" data-act="stop">Stop working on it</button>` : `<button class="btn primary" data-act="start">Start now</button>`}
+         <button class="btn ${nextStep(t)?'':'ok'}" data-finish="${t.id}">Complete</button>`}
+      <div class="grow"></div>
+      <button class="btn" data-act="tedit">Edit</button>
+    </div>
+    ${t.done || !isMine(t) ? '' : `<div class="tacts" style="margin-top:8px">
+      ${t.status==='waiting' ? `<button class="btn small" data-act="unblock">Unblock</button>` : `<button class="btn small" data-act="wait">Waiting on someone</button>`}
+      ${t.roadblock ? '' : `<button class="btn small" data-act="blkopen" data-task="${t.id}" style="color:var(--hot)">Report a roadblock</button>`}
+      <div class="grow"></div><button class="btn small ghost" data-close="1">Close</button></div>`}`, 'task', t.id);
+}
+function openTaskEdit(t){
+  const sel = (id, arr, v) => `<select id="${id}">${arr.map((l, i) => !l ? '' : `<option value="${i}" ${i === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  openSheet(`
+    <div class="editbar"><h2>Edit task</h2><button class="btn primary" data-act="tdone">Done</button></div>
+    <div class="field"><label for="eTitle">Task</label><input id="eTitle" value="${esc(t.title)}"></div>
+    <div class="field"><label for="eDone">Done when</label><input id="eDone" value="${esc(t.doneWhen || '')}"></div>
+    <div class="grid2">
+      <div class="field"><label>Time estimate ${t.est==null?`· AI, learned from ${t.aiRuns||1} run${(t.aiRuns||1)>1?'s':''}`:'· set by you'}</label>${estInputs('dEst', estOf(t))}</div>
+      <div class="field"><label for="goalSel">Goal</label><select id="goalSel">${goalOptions(t.goalId)}</select></div>
+      <div class="field"><label for="eDiff">Difficulty</label>${sel('eDiff', DIFF, t.diff)}</div>
+      <div class="field"><label for="ePrio">Priority</label>${sel('ePrio', PRIO, t.prio)}</div>
+      <div class="field"><label for="eCtx">Area</label><select id="eCtx"><option value="work" ${t.ctx==='work'?'selected':''}>Work</option><option value="home" ${t.ctx==='home'?'selected':''}>Home</option></select></div>
+      <div class="field"><label for="eProof">Proof when done</label><select id="eProof"><option value="0" ${!t.proof?'selected':''}>Not required</option><option value="1" ${t.proof?'selected':''}>Required</option></select></div>
+    </div>
+    <div class="sec"><h4>Steps</h4>
+      <ul class="steps">${t.steps.map((s, i) => `<li style="display:flex;gap:8px;align-items:center"><span style="flex:1;min-width:0">${esc(s.t)}${s.done ? ' <span class="note">· done</span>' : ''}</span><button class="btn small ghost" data-act="tdelstep" data-i="${i}" aria-label="Remove step: ${esc(s.t)}">Remove</button></li>`).join('')}</ul>
+      <div class="actions"><input id="newStep" class="inp" placeholder="Add a step" style="flex:1;min-width:0;width:auto"><button class="btn small" data-act="addstep">Add</button><button class="btn small ghost" data-act="aisteps">Suggest steps</button></div></div>
+    <div class="sec"><h4>Notes</h4><textarea id="notesInput" class="inp" rows="3">${esc(t.notes||'')}</textarea></div>
+    <div class="sec"><h4>Files</h4><input type="file" id="attachInput" multiple><p class="note" id="attachList">${(t.files||[]).map(esc).join(', ') || 'No files yet.'}</p></div>
+    <div class="actions"><button class="btn primary" data-act="tdone">Done</button><div class="spacer"></div>${isMine(t) && !t.done ? '<button class="btn ghost" data-act="drop" style="color:var(--hot)">Delete task</button>' : ''}</div>`, 'task', t.id);
+  const upd = () => { const v = readEst('dEst'); if (v){ t.est = v; t.span = spanFor(v); t.warned1 = t.warned2 = false; toast('Estimate updated: ' + fmtDur(v), 'Re-planned today.'); render(); } };
+  $('#dEstN').addEventListener('change', upd); $('#dEstU').addEventListener('change', upd);
+  $('#goalSel').addEventListener('change', ev => { t.goalId = ev.target.value || null; render(); });
+  $('#eTitle').addEventListener('input', ev => { if (ev.target.value.trim()) t.title = ev.target.value.trim(); });
+  $('#eDone').addEventListener('input', ev => { t.doneWhen = ev.target.value; });
+  $('#eDiff').addEventListener('change', ev => { t.diff = +ev.target.value; render(); });
+  $('#ePrio').addEventListener('change', ev => { t.prio = +ev.target.value; render(); });
+  $('#eCtx').addEventListener('change', ev => { t.ctx = ev.target.value; render(); });
+  $('#eProof').addEventListener('change', ev => { t.proof = ev.target.value === '1'; });
+  $('#notesInput').addEventListener('input', ev => { t.notes = ev.target.value; save(); });
+  $('#attachInput').addEventListener('change', ev => { t.files = (t.files||[]).concat([...ev.target.files].map(f => f.name)); $('#attachList').textContent = t.files.join(', '); save(); });
+}
+function _unusedOldTaskSheet(t, m, person, openSteps, doneSteps, prev, hist, stuck){
+  openSheet(`
     <h2 class="ttitle">${esc(t.title)}</h2>
     <div class="chips">${t.done?'<span class="chip okc">Completed</span>':''}${!isMine(t)?avatar(t.owner,true):''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
     ${t.roadblock ? `<div style="margin-bottom:10px">${blockNoteHTML(t)}</div>` : ''}
@@ -2042,11 +2134,6 @@ function openTask(t){
          <button class="btn ${nextStep(t)?'':'ok'}" data-finish="${t.id}">Complete</button>`}
       <div class="spacer"></div><button class="btn ghost" data-close="1">Close</button>
     </div>`, 'task', t.id);
-  const upd = () => { const v = readEst('dEst'); if (v){ t.est = v; t.span = spanFor(v); t.warned1 = t.warned2 = false; toast('Estimate updated: ' + fmtDur(v), 'Re-planned today.'); render(); } };
-  $('#dEstN').addEventListener('change', upd); $('#dEstU').addEventListener('change', upd);
-  $('#goalSel').addEventListener('change', ev => { t.goalId = ev.target.value || null; openTask(t); render(); });
-  $('#notesInput').addEventListener('input', ev => { t.notes = ev.target.value; save(); });
-  $('#attachInput').addEventListener('change', ev => { t.files = (t.files||[]).concat([...ev.target.files].map(f => f.name)); $('#attachList').textContent = t.files.join(', '); save(); });
 }
 function openComplete(t){
   if (locked()){ lockedToast(); return; }
@@ -3105,6 +3192,9 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'tedit': { const t = byId($('#sheetRoot').dataset.task); S.editTask = t.id; openTask(t); return; }
+    case 'tdone': { const t = byId($('#sheetRoot').dataset.task); S.editTask = null; save(); render(); openTask(t); toast('Saved', '"' + t.title + '"'); return; }
+    case 'tdelstep': { const t = byId($('#sheetRoot').dataset.task); t.steps.splice(+el.dataset.i, 1); save(); render(); openTask(t); return; }
     case 'nowdone': S.nowDoneOpen = !S.nowDoneOpen; render(); return;
     case 'undostep': { const t = byId(el.dataset.task); uncheckStep(t, +el.dataset.i); save(); return; }
     case 'reopentask': reopenTask(byId(el.dataset.task)); save(); return;
