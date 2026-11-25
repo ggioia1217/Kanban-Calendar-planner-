@@ -10,5 +10,6 @@ progress.
 3. [Roadmap, tech stack & App Store path](docs/03-roadmap-and-publishing.md)
 4. [Decision log & open questions](docs/04-decision-log.md)
 5. [Market, integration & research notes](docs/05-market-and-research-notes.md)
+6. [ADHD research update: newest and overlooked findings](docs/06-adhd-research-update.md)
 
 Status: Phase 0 — clickable prototype in [`prototype/index.html`](prototype/index.html).
