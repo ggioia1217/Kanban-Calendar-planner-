@@ -10,7 +10,7 @@
 :root{
   --bg:#ECEFF5; --surface:#FFFFFF; --surface-2:#F4F6FA; --ink:#172033; --muted:#5D667A; --line:#D8DDE7;
   --accent:#3B55F0; --accent-soft:#E3E8FE; --accent-ink:#FFFFFF;
-  --work:#0F8B8D; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A; --rest:#1E9E6A; --violet:#8A4FD8;
+  --work:#0F8B8D; --home:#D9702A; --ok:#169A63; --warn:#D99A0B; --hot:#E0434A; --rest:#1E9E6A; --violet:#8A4FD8; --paper:#FFFBEE; --paper-ink:#2B2A22; --crease:rgba(60,45,0,.09);
   --event-bg:#E2E6EE; --event-ink:#4A5366; --pie-track:#E6E9F0; --scrim:rgba(15,20,32,.45);
   --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --font-body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -20,12 +20,12 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
-  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F; --violet:#B38BFF;
+  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F; --violet:#B38BFF; --paper:#2F2D25; --paper-ink:#F1EBD8; --crease:rgba(255,245,210,.08);
   --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E121A; --surface:#171C27; --surface-2:#1D2331; --ink:#E7EBF3; --muted:#9AA3B5; --line:#2A3142;
   --accent:#8193FF; --accent-soft:#252C4A; --accent-ink:#0E121A;
-  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F; --violet:#B38BFF;
+  --work:#3CC6C4; --home:#F0954F; --ok:#3CCB8A; --warn:#F2C04B; --hot:#FF6B70; --rest:#46D08F; --violet:#B38BFF; --paper:#2F2D25; --paper-ink:#F1EBD8; --crease:rgba(255,245,210,.08);
   --event-bg:#222838; --event-ink:#B3BBCB; --pie-track:#2B3245; --scrim:rgba(0,0,0,.6); color-scheme:dark}
 
 html,body{height:100%}
@@ -76,7 +76,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding-bloc
 .colbody{flex:1;min-height:0;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
 .colbody > *{flex-shrink:0}
 .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px}
-.dayprog{margin-top:auto;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 11px;text-align:left;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.dayprog{margin-top:8px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 11px;text-align:left;display:flex;flex-direction:column;gap:6px;font-size:13px}
 .dayprog .row{display:flex;justify-content:space-between;color:var(--muted)}
 .dayprog .row b{color:var(--ink)}
 
@@ -557,6 +557,49 @@ a{color:var(--accent)}
 }
 @media (max-height:520px){ .diffkey{display:none} .bcanvas .seg button{padding:5px 8px} }
 
+/* Later pocket: paper scraps that crumple with each snooze */
+.paper{position:relative;background:var(--paper);color:var(--paper-ink);border-radius:3px;padding:14px 16px 12px;box-shadow:0 2px 6px rgba(0,0,0,.14),0 0 0 1px rgba(0,0,0,.04);transform:rotate(var(--rot,0deg));transition:transform .3s}
+.paper .ptext{font-size:16px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.paper .pctx{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.paper .pctx span{font-size:11.5px;padding:2px 7px;border-radius:999px;background:color-mix(in srgb,var(--paper-ink) 8%,transparent)}
+.paper .pmeta{font-size:12px;opacity:.7;margin-top:6px}
+.paper.w1{--rot:-1.2deg;background-image:linear-gradient(118deg,transparent 47%,var(--crease) 49%,transparent 52%)}
+.paper.w2{--rot:1.6deg;background-image:linear-gradient(118deg,transparent 47%,var(--crease) 49%,transparent 52%),linear-gradient(32deg,transparent 58%,var(--crease) 60%,transparent 63%),linear-gradient(170deg,transparent 30%,var(--crease) 32%,transparent 35%)}
+.paper.w3{--rot:-2.4deg;background-image:linear-gradient(118deg,transparent 47%,var(--crease) 49%,transparent 52%),linear-gradient(32deg,transparent 58%,var(--crease) 60%,transparent 63%),linear-gradient(170deg,transparent 30%,var(--crease) 32%,transparent 35%),linear-gradient(75deg,transparent 20%,var(--crease) 22%,transparent 25%),linear-gradient(140deg,transparent 70%,var(--crease) 72%,transparent 75%);
+  clip-path:polygon(0 2%,8% 0,22% 3%,40% 0,61% 2%,80% 0,100% 3%,98% 30%,100% 55%,97% 80%,100% 100%,75% 97%,52% 100%,30% 97%,10% 100%,0 96%,2% 70%,0 45%,3% 20%)}
+.paper.w4{--rot:3deg;filter:saturate(.8);background-image:linear-gradient(118deg,transparent 47%,var(--crease) 49%,transparent 52%),linear-gradient(32deg,transparent 58%,var(--crease) 60%,transparent 63%),linear-gradient(170deg,transparent 30%,var(--crease) 32%,transparent 35%),linear-gradient(75deg,transparent 20%,var(--crease) 22%,transparent 25%),linear-gradient(140deg,transparent 70%,var(--crease) 72%,transparent 75%),linear-gradient(10deg,transparent 45%,var(--crease) 47%,transparent 50%),linear-gradient(100deg,transparent 82%,var(--crease) 84%,transparent 87%);
+  clip-path:polygon(2% 4%,10% 0,20% 5%,33% 1%,45% 6%,60% 0,72% 5%,86% 1%,100% 6%,96% 22%,100% 38%,95% 55%,100% 72%,96% 88%,100% 100%,84% 95%,70% 100%,55% 94%,40% 100%,26% 95%,12% 100%,0 94%,4% 78%,0 62%,5% 46%,0 30%,4% 15%)}
+.paper.tossed{animation:crumple .55s ease-in forwards}
+@keyframes crumple{to{transform:scale(.15) rotate(70deg) translateY(120px);opacity:0}}
+.papers{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.laterpop{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--tabh,0px) + 70px + env(safe-area-inset-bottom,0px));width:min(360px,calc(100vw - 32px));z-index:58;animation:up .3s ease}
+.laterpop .actions{margin-top:10px}
+.laterpop .paper{--rot:-.8deg}
+.paper.w3,.paper.w4{padding:18px 22px 16px}
+.laterpop .ptitle{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+.wrinkle{display:inline-flex;gap:3px;vertical-align:middle}
+.wrinkle i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--paper-ink) 18%,transparent)}
+.wrinkle i.on{background:var(--warn)}
+/* Light day */
+.lightbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.lightbtn.on{background:color-mix(in srgb,var(--rest) 16%,var(--surface));border-color:var(--rest);color:var(--rest)}
+.col.lightday{background:color-mix(in srgb,var(--rest) 5%,var(--surface-2))}
+.lightnote{border-radius:12px;padding:10px 12px;background:color-mix(in srgb,var(--rest) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--rest) 40%,var(--line));font-size:13.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* Mantras */
+.mantra{border-radius:14px;padding:10px 12px;border:1px dashed color-mix(in srgb,var(--violet) 50%,var(--line));background:color-mix(in srgb,var(--violet) 6%,var(--surface));display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;cursor:pointer}
+.mantra .ml{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+.mantra b{font-family:var(--font-display);font-size:17px;line-height:1.2;grid-column:1}
+.mantra > :last-child{grid-row:1/3;grid-column:2}
+.mweek{display:flex;gap:6px;flex-wrap:wrap}
+.mweek span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;border:1.5px solid var(--line);color:var(--muted)}
+.mweek span.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.mweek span.today{box-shadow:0 0 0 3px color-mix(in srgb,var(--violet) 30%,transparent)}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) 120px 34px;gap:10px;align-items:center;font-size:14px;padding:4px 0}
+.mrow .bar i{background:var(--violet)}
+.mrow.cur b{color:var(--violet)}
+.bigquote{font-family:var(--font-display);font-size:30px;line-height:1.15;letter-spacing:-.01em;margin:6px 0 10px;text-wrap:balance}
+.story{border-left:3px solid var(--violet);background:var(--surface);border-radius:0 12px 12px 0;padding:10px 12px}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -575,6 +618,7 @@ a{color:var(--accent)}
       <button data-focus="all">All</button><button data-focus="work">Work</button><button data-focus="home">Home</button>
     </div>
     <div class="spacer"></div>
+    <button class="iconbtn" id="laterBtn" aria-label="Later pocket" title="Later pocket: jot a thought"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12l4 4v12H4z"/><path d="M8 10h8M8 14h6"/></svg><i class="badge" id="laterBadge" hidden></i></button>
     <button class="iconbtn" id="bellBtn" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><i class="badge" id="bellBadge" hidden></i></button>
     <div class="newwrap"><button class="btn primary" id="newBtn" aria-haspopup="menu" aria-expanded="false">+ New ▾</button>
       <div class="newmenu" id="newMenu" role="menu" hidden></div></div>
@@ -600,6 +644,7 @@ a{color:var(--accent)}
 <div id="pageRoot"></div>
 <div id="sheetRoot"></div>
 <div id="drawerRoot"></div>
+<div id="laterPop"></div>
 
 <script>
 (() => {
@@ -782,6 +827,10 @@ function seed(){
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
     notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'effort',
+    later:[], light:{}, mantraUsed:{}, mantraStories:[
+      {week:'Week of Nov 9', id:'m2', text:'I put the folders back in the cabinet as soon as I finished the audit instead of stacking them. My desk stayed clear all week.', sharedWith:[]},
+      {week:'Week of Oct 26', id:'m4', text:'Told myself just five minutes on the payroll exceptions. Ended up finishing the whole report.', sharedWith:['Family']}],
+    mantraHist:[{id:'m14',used:3},{id:'m15',used:5},{id:'m16',used:2},{id:'m17',used:4},{id:'m18',used:6},{id:'m19',used:3},{id:'m20',used:5},{id:'m21',used:4},{id:'m22',used:2},{id:'m2',used:6},{id:'m3',used:4},{id:'m4',used:7}],
     kudos:[{to:'p-you', from:'Morgan Blake', text:'The Riverside agreement went out early and the client noticed. Great work.', when:'Mon', forWhat:'Draft Q4 service agreement'},
       {to:'p-you', from:'Priya Shah (Billing)', text:'Thanks for chasing the Acme hours. We billed them the same day.', when:'Last week', forWhat:'Follow up: Acme vendor record update'},
       {to:'p-riley', from:'Priya Shah (Billing)', text:'Saved the day on the Riverside timesheet fix.', when:'Mon', forWhat:'Follow up: Riverside timesheets'}],
@@ -863,10 +912,10 @@ function seed(){
          {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'}]
   };
 }
-const STORE = 'cueue-proto-v8';
+const STORE = 'cueue-proto-v9';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
-if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos) S = seed();
+if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -935,6 +984,7 @@ function level(t, dayIdx){
   if (t.cadence && t.missed) l = Math.max(l, Math.min(4, 1 + t.missed));
   if (S.currentId === t.id){ const e = estOf(t); if (t.spent >= 2*e) l = 4; else if (t.spent >= e) l = Math.max(l,3); else if (t.spent >= .8*e) l = Math.max(l,2); }
   if (dayIdx !== S.day) l = Math.min(l, 1);
+  if (S.light && S.light[dayIdx]) l = Math.min(l, 1); // light days: no shaking, just a soft glow
   return l;
 }
 function stateOf(t, lvl){ if (t.status === 'waiting') return 'wait'; if (lvl >= 3) return 'late'; if (lvl === 2) return 'due'; return ''; }
@@ -968,7 +1018,7 @@ function schedule(day){
   let t = isToday ? Math.max(DAY_START, Math.ceil(S.now/5)*5) : DAY_START;
   const pool = S.tasks.filter(x => x.day === day && isMine(x) && !x.done && x.status !== 'waiting')
     .map(x => ({task:x, rem:Math.max(5, estOf(x) - (x.spent||0))}));
-  const blocks = []; let sinceBreak = isToday ? S.workSince : 0, breakN = 0;
+  const blocks = []; let sinceBreak = isToday ? S.workSince : 0, breakN = 0; const lite = S.light && S.light[day], brkEvery = lite ? Math.min(60, st.breakEvery) : st.breakEvery, buf = lite ? Math.max(10, st.buffer) : st.buffer;
   const curIdx = pool.findIndex(p => p.task.id === S.currentId);
   if (isToday && S.brk){ t += Math.max(1, S.brk.min - S.brk.spent); }
   if (isToday && curIdx > -1){
@@ -983,7 +1033,7 @@ function schedule(day){
     const nextEv = fixed.find(f => f.start > t);
     const gapEnd = nextEv ? nextEv.start : DAY_END, gap = gapEnd - t;
     if (gap < 10){ t = nextEv ? nextEv.end : DAY_END; continue; }
-    if (sinceBreak >= st.breakEvery && gap >= 20){
+    if (sinceBreak >= brkEvery && gap >= 20){
       const b = BREAKS[[0,4,3,2][breakN++ % 4]];
       blocks.push({kind:'break', start:t, dur:b.min, b}); t += b.min; sinceBreak = 0; continue;
     }
@@ -997,7 +1047,7 @@ function schedule(day){
     const chunk = dur < p.rem || p.chunks;
     blocks.push({kind:'task', task:p.task, start:t, dur, chunk: chunk ? (p.chunks = (p.chunks||0)+1) : 0});
     p.rem -= dur; if (p.rem <= 0) pool.splice(pool.indexOf(p),1);
-    t += dur + st.buffer; sinceBreak += dur;
+    t += dur + buf; sinceBreak += dur;
   }
   const items = blocks.concat(fixed).sort((a,b) => a.start - b.start);
   return {items, overflow: pool.map(p => p.task)};
@@ -1076,6 +1126,7 @@ function topPanel(){
       <div class="bar thin"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
       <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
+        <button class="btn small" data-act="ltnew">Jot for later</button>
         <button class="btn small" data-open="${t.id}">Details</button>
         <button class="btn small ghost" data-act="switch">Switch task</button></div></div>`;
   }
@@ -1103,7 +1154,12 @@ function columnHTML(day, single){
   if (past){ body = '<div class="empty">Day wrapped up.</div>'; count = doneTasks + ' done'; }
   else {
     const {items, overflow} = schedule(day);
-    if (isToday) body += topPanel();
+    if (isToday){
+      const [mid, mtext] = thisMantra();
+      body += `<div class="mantra" data-act="mantras" role="button" tabindex="0"><span class="ml">This week's mantra</span><b>"${esc(mtext)}"</b>${S.mantraUsed[day] ? '<span class="chip okc">Used today</span>' : '<button class="btn small" data-act="mused">I used it</button>'}</div>`;
+      if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>Light day.</b> Only what's essential today${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
+      body += topPanel();
+    } else if (S.light[day]) body += `<div class="lightnote"><span><b>Light day planned.</b> Only essentials will be scheduled.</span></div>`;
     body += items.map(it => {
       if (it.kind === 'task') return (isToday && it.task.id === S.currentId) ? '' : cardHTML(it.task, it.start, day, it.chunk);
       if (it.kind === 'break') return `<button class="brkcard" data-act="brkpick">${ICON.leaf}<div><b>Break · ${it.b.label} · ${it.b.min} min</b><span>${S.settings.times?'~'+fmt(it.start)+' · ':''}${S.settings.breakLock?'Locks check-offs until taken':'Tap to start'}</span></div></button>`;
@@ -1119,12 +1175,14 @@ function columnHTML(day, single){
     const n = S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length;
     count = n + (n === 1 ? ' task' : ' tasks');
   }
+  if (isToday) body += '<button class="btn small" data-act="nightly" style="align-self:flex-start;margin-top:auto">Close out my day</button>';
   if (isToday || past){
     const left = past ? 0 : S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length, total = doneTasks + left;
     body += `<button class="dayprog" data-donelist="${day}"><div class="row"><span><b>${doneTasks}</b> tasks · <b>${doneSteps}</b> steps${doneOther ? ` · <b>${doneOther}</b> other` : ''}</span><span>View done ›</span></div><div class="bar"><i style="width:${total?Math.round(100*doneTasks/total):0}%"></i></div></button>`;
   }
   const nav = single ? `<div class="nav"><button class="iconbtn" data-nav="-1" aria-label="Previous day">${ICON.left}</button><button class="iconbtn" data-nav="1" aria-label="Next day">${ICON.right}</button></div>` : '';
-  return `<section class="col ${isToday?'today':''} ${past?'past':''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span></div><div class="colbody">${body}</div></section>`;
+  const lightBtn = past ? '' : `<button class="lightbtn ${S.light[day] ? 'on' : ''}" data-act="lighttoggle" data-day="${day}" title="${S.light[day] ? 'Undo the light day' : 'Make this a lighter day: only essentials, longer breaks, softer reminders'}">${S.light[day] ? 'Light day' : 'Lighten'}</button>`;
+  return `<section class="col ${isToday?'today':''} ${past?'past':''} ${S.light[day] ? 'lightday' : ''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span>${lightBtn}</div><div class="colbody">${body}</div></section>`;
 }
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('inview', e.isIntersecting)), {threshold:.15}) : null;
 function render(){
@@ -1136,7 +1194,7 @@ function render(){
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === S.view));
   document.querySelectorAll('[data-speed]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.speed === S.speed));
   $('#playBtn').textContent = S.running ? 'Pause' : 'Play';
-  $('#endDayBtn').disabled = S.day >= 6;
+  updateLaterBadge();
   const week = isWeek(), board = $('#board');
   const scrollPos = [...board.querySelectorAll('.colbody')].map(c => c.scrollTop);
   board.classList.toggle('single', !week);
@@ -1187,6 +1245,7 @@ function tick(){
       }
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
+    if (!$('#laterPop').innerHTML && !$('#sheetRoot').innerHTML){ const n = laterDue(); if (n) showLaterPop(n); }
     live();
   }
   requestAnimationFrame(tick);
@@ -1281,7 +1340,7 @@ function nextStages(t){
 function completeTask(t, note, files, handoffTask, handoffStage){
   t.completions = (t.completions||0) + 1;
   t.resolution = note; t.proofFiles = files;
-  S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task'});
+  S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task', at: S.now});
   if (S.currentId === t.id){
     if (t.est == null && t.spent){ t.aiEst = Math.round((t.aiEst*(t.aiRuns||1) + t.spent) / ((t.aiRuns||1)+1)); t.aiRuns = (t.aiRuns||1)+1; }
     S.currentId = null; S.paused = false;
@@ -1357,9 +1416,171 @@ function endDay(){
     t.day = today + 1; t.rolled = (t.rolled||0) + 1; moved++;
     if (t.cadence) t.missed = (t.missed||0) + 1;
   });
+  closeLaterPop();
   Object.assign(S, {day:today+1, viewDay:today+1, now:8*60+45, currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0});
   toast('Good morning, ' + DAYS[S.day] + '!', moved ? moved + ' unfinished task' + (moved>1?'s':'') + ' rolled over. Missed routines got more urgent.' : 'Fresh start.');
   render();
+}
+
+/* ---------- Later pocket ---------- */
+const LATER_FIRST = 240; // minutes until the first reminder; each snooze halves the wait
+const LATER_MIN_SNOOZE = 30; // once the wait would drop below this, it can't be snoozed again
+function laterWait(n){ return LATER_FIRST / Math.pow(2, n.snoozes); }
+function canSnooze(n){ return laterWait({snoozes: n.snoozes + 1}) >= LATER_MIN_SNOOZE; }
+function captureContext(){
+  const ctx = {day:S.day, min:Math.round(S.now), where: page ? (page.crumbs[page.crumbs.length - 1][0]) : 'Board'};
+  const t = byId(S.currentId);
+  if (t){ const ns = nextStep(t); ctx.task = t.title; ctx.taskId = t.id; ctx.ctx = t.ctx;
+    ctx.state = (t.spent || 0) < 5 ? 'just started' : 'in progress, ' + fmtDur(t.spent) + ' in';
+    ctx.step = ns ? 'step ' + (stepsDone(t) + 1) + ' of ' + t.steps.length + ': ' + ns.t : 'all steps done'; }
+  const done = [...S.log].reverse().find(l => l.day === S.day && l.kind === 'task' && l.at != null && S.now - l.at <= 45);
+  if (done){ ctx.justDone = done.title; ctx.justDoneAgo = Math.max(1, Math.round(S.now - done.at)); }
+  if (S.brk) ctx.onBreak = (BREAKS.find(b => b.k === S.brk.k) || {}).label;
+  return ctx;
+}
+function ctxChips(c, media){
+  const out = [DAYS[c.day] + ' ' + fmt(c.min)];
+  if (c.task) out.push('While on "' + c.task + '" (' + c.state + ')');
+  if (c.step) out.push('At ' + c.step);
+  if (c.justDone) out.push('Just finished "' + c.justDone + '" ' + c.justDoneAgo + ' min before');
+  if (c.onBreak) out.push('On a ' + c.onBreak.toLowerCase() + ' break');
+  if (c.where && c.where !== 'Board') out.push('In ' + c.where);
+  if (media) out.push('♪ ' + media);
+  return out;
+}
+function dueWhen(fromDay, fromMin, wait){ let d = fromDay, m = fromMin + wait; while (m >= DAY_END){ m = DAY_START + (m - DAY_END); d++; } return {d, m}; }
+function laterTagNow(){ return S.now >= S.settings.workStart && S.now < S.settings.workEnd ? 'work' : 'home'; }
+function laterDue(){
+  const tagNow = laterTagNow();
+  return (S.later || []).find(n => n.status === 'open' && (n.dueDay < S.day || (n.dueDay === S.day && n.dueMin <= S.now)) && (n.tag === 'any' || n.tag === tagNow));
+}
+function openLaterCapture(){
+  const c = captureContext(), defTag = c.ctx || laterTagNow();
+  openSheet(`<h2>Later pocket</h2><p class="note">Jot it down and get back to what you were doing. Cueue saves the moment with it to jog your memory.</p>
+    <div class="field"><label for="ltText">The thought</label><textarea id="ltText" rows="3" placeholder="e.g. Ask Priya if Riverside's March hours are also missing"></textarea></div>
+    <div class="field"><label>Saved with it</label><div class="chips" style="margin:0">${ctxChips(c).map(x => `<span class="chip">${esc(x)}</span>`).join('')}</div></div>
+    <div class="field"><label for="ltMedia">What's playing? (optional)</label><input id="ltMedia" placeholder="A song, video or podcast, or paste a link">
+      <p class="hint" style="margin:4px 0 0">In the real app, Android can fill this in automatically with your permission, and a browser extension can on a computer. iPhone only allows reading Apple Music's current song, so for other apps you'd type or paste it.</p></div>
+    <div class="field"><label>Remind me during</label><div class="seg" role="group" aria-label="Remind me during">${[['work', 'Work hours'], ['home', 'Home hours'], ['any', 'Any time']].map(([k, l]) => `<button data-act="lttag" data-v="${k}" aria-pressed="${defTag === k}">${l}</button>`).join('')}</div>
+      <p class="hint" style="margin:4px 0 0">First reminder in about ${fmtDur(LATER_FIRST)} of ${defTag === 'any' ? 'your day' : defTag === 'work' ? 'work hours' : 'home hours'}. Each snooze halves the wait, until you decide to keep it or toss it.</p></div>
+    <div class="actions"><button class="btn primary" data-act="ltsave">Save to pocket</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'later');
+  S._ltTag = defTag; S._ltCtx = c;
+  setTimeout(() => $('#ltText') && $('#ltText').focus(), 50);
+}
+function paperHTML(n, opts){
+  opts = opts || {};
+  const lvl = n.status === 'open' ? Math.min(4, n.snoozes + (opts.forced ? 1 : 0)) : n.snoozes;
+  const wr = [0, 1, 2].map(k => `<i class="${k < n.snoozes ? 'on' : ''}"></i>`).join('');
+  const due = dueWhen(n.dueDay, n.dueMin, 0);
+  return `<div class="paper w${lvl}" data-paper="${n.id}">
+    <div class="ptext">${esc(n.text)}</div>
+    <div class="pctx">${ctxChips(n.ctx, n.media).map(x => `<span>${esc(x)}</span>`).join('')}<span>${n.tag === 'any' ? 'Any time' : n.tag === 'work' ? 'Work hours' : 'Home hours'}</span></div>
+    <div class="pmeta"><span class="wrinkle" title="Snoozes used">${wr}</span> ${n.status === 'open' ? (canSnooze(n) ? 'Next reminder ' + DAYS[due.d % 7] + ' ' + fmt(due.m) : 'No snoozes left. Keep it or toss it') : n.status === 'task' ? 'Made into a task' : n.status === 'attached' ? 'Added to "' + esc(n.attachedTo || '') + '"' : 'Tossed'}</div>
+    ${opts.actions !== false && n.status === 'open' ? `<div class="actions" style="margin-top:10px">
+      ${canSnooze(n) ? `<button class="btn small" data-act="lsnooze" data-id="${n.id}">Snooze ${fmtDur(laterWait({snoozes: n.snoozes + 1}))}</button>` : ''}
+      <button class="btn small primary" data-act="ltask" data-id="${n.id}">Make it a task</button><button class="btn small" data-act="lattach" data-id="${n.id}">Add to a task</button>
+      <button class="btn small ghost" data-act="ltoss" data-id="${n.id}" style="color:var(--hot)">Toss it</button></div>` : ''}</div>`;
+}
+function showLaterPop(n){
+  n.shown = true;
+  $('#laterPop').innerHTML = `<div class="laterpop" role="dialog" aria-label="Later pocket reminder"><div class="paper w${Math.min(4, n.snoozes + (canSnooze(n) ? 0 : 1))}" data-paper="${n.id}">
+    <div class="ptitle">From your Later pocket${canSnooze(n) ? '' : ' · decide now'}</div>
+    <div class="ptext">${esc(n.text)}</div>
+    <div class="pctx">${ctxChips(n.ctx, n.media).map(x => `<span>${esc(x)}</span>`).join('')}</div>
+    <div class="actions">${canSnooze(n) ? `<button class="btn small" data-act="lsnooze" data-id="${n.id}">Snooze ${fmtDur(laterWait({snoozes: n.snoozes + 1}))}</button>` : ''}
+      <button class="btn small primary" data-act="ltask" data-id="${n.id}">Make it a task</button><button class="btn small" data-act="lattach" data-id="${n.id}">Add to a task</button>
+      <button class="btn small ghost" data-act="ltoss" data-id="${n.id}" style="color:var(--hot)">Toss it</button></div></div></div>`;
+  cue(canSnooze(n) ? 1 : 2);
+}
+function closeLaterPop(){ $('#laterPop').innerHTML = ''; }
+function openLater(){
+  const f = S.laterFilter || 'open', list = (S.later || []).filter(n => f === 'open' ? n.status === 'open' : n.status !== 'open').slice().reverse();
+  openPage('later', [['Board', 'board'], ['Later pocket', 'later']], `<h1>Later pocket</h1>
+    <p class="lede">Thoughts you parked so you could keep going. Each one comes back on its own. Every snooze wrinkles it a little more and halves the wait, until you decide: keep it or toss it.</p>
+    <div class="actions" style="margin:12px 0 16px"><button class="chipbtn" aria-pressed="${f === 'open'}" data-act="lfilter" data-v="open">In the pocket (${(S.later || []).filter(n => n.status === 'open').length})</button><button class="chipbtn" aria-pressed="${f === 'closed'}" data-act="lfilter" data-v="closed">Decided</button>
+      <div class="spacer"></div>${f === 'open' && list.length ? '<button class="btn small" data-act="lnow">Remind me now (demo)</button>' : ''}</div>
+    ${list.length ? `<div class="papers">${list.map(n => paperHTML(n)).join('')}</div>` : `<div class="empty2">${f === 'open' ? 'Nothing in your pocket. Tap the note icon at the top whenever a thought pops up.' : 'Nothing decided yet.'}</div>`}`,
+    {right:'<button class="btn small primary" data-act="ltnew">+ Jot a thought</button>', refresh: openLater});
+}
+function updateLaterBadge(){ const b = $('#laterBadge'); if (!b) return; const n = (S.later || []).filter(x => x.status === 'open').length; b.hidden = !n; b.textContent = n; }
+
+/* ---------- Light days ---------- */
+function lightenDay(day){
+  let moved = 0, target = day + 1; while (target <= 6 && S.light[target]) target++;
+  S.tasks.forEach(t => { if (t.day !== day || t.done || !isMine(t) || t.status === 'waiting' || t.id === S.currentId) return;
+    const essential = (t.due != null && t.due <= day) || t.prio >= 4;
+    if (!essential && target <= 6){ t.lightFrom = day; t.day = target; moved++; } });
+  S.light[day] = {moved, target};
+  return {moved, target};
+}
+function unlightenDay(day){ S.tasks.forEach(t => { if (t.lightFrom === day && !t.done){ t.day = day; delete t.lightFrom; } }); delete S.light[day]; }
+
+/* ---------- Weekly mantras ---------- */
+const MANTRAS = [
+  ['m1', 'One day, or Day One?'], ['m2', "Don't put it down. Put it away."], ['m3', 'Start ugly.'], ['m4', 'Just the first five minutes.'],
+  ['m5', 'Future me will thank me.'], ['m6', 'Touch it once.'], ['m7', 'Small steps still move me.'], ['m8', 'Progress, not perfection.'],
+  ['m9', 'If it takes two minutes, do it now.'], ['m10', 'Name the next step.'], ['m11', 'Begin before I feel ready.'], ['m12', 'Close the loop.'],
+  ['m13', 'One thing at a time.'], ['m14', 'Set it up for tomorrow.'], ['m15', 'Ask for help early.'], ['m16', 'Rest is part of the work.'],
+  ['m17', 'Put it where I will see it.'], ['m18', 'Good enough is good enough.'], ['m19', 'Write it down, let it go.'], ['m20', 'Finish before I start something new.'],
+  ['m21', 'Every check counts.'], ['m22', 'Make the right thing the easy thing.'], ['m23', 'Pause, breathe, choose.'], ['m24', 'Done beats perfect.'],
+  ['m25', 'Make it smaller.'], ['m26', 'Today counts.']];
+const MANTRA_MILESTONES = [10, 25, 50, 100, 250, 500];
+const mantraText = id => (MANTRAS.find(m => m[0] === id) || ['', ''])[1];
+const thisMantra = () => MANTRAS[0]; // in the app this rotates every Monday
+function mantraWeekUses(){ return Object.keys(S.mantraUsed).filter(d => S.mantraUsed[d]).length; }
+function mantraLifetime(){ return S.mantraHist.reduce((a, h) => a + h.used, 0) + mantraWeekUses(); }
+function mantraTotals(){ const t = {}; S.mantraHist.forEach(h => t[h.id] = (t[h.id] || 0) + h.used); t[thisMantra()[0]] = (t[thisMantra()[0]] || 0) + mantraWeekUses(); return t; }
+function useMantra(day){
+  if (S.mantraUsed[day]) return;
+  S.mantraUsed[day] = true;
+  const life = mantraLifetime(), m = MANTRA_MILESTONES.find(x => x === life);
+  confetti(innerWidth / 2, innerHeight / 3, m ? 160 : 50, m ? 9 : 6); chime(!!m);
+  toast(m ? 'Mantra milestone: ' + m + ' days!' : 'Mantra used', 'This week: ' + mantraWeekUses() + ' of 7 days · ' + life + ' lifetime');
+}
+function openNightly(){
+  const [mid, mtext] = thisMantra(), used = !!S.mantraUsed[S.day], weekEnd = S.day === 6;
+  const left = S.tasks.filter(t => t.day === S.day && !t.done && isMine(t)).length;
+  openSheet(`<h2>Close out ${S.day === 6 ? 'the week' : 'your day'}</h2>
+    <p class="note">${left ? left + ' unfinished task' + (left > 1 ? 's' : '') + ' will move to tomorrow, no penalty.' : 'Everything planned today is done.'}</p>
+    <div class="sec"><h4>This week's mantra</h4><div class="bigquote">"${esc(mtext)}"</div>
+      ${used ? '<p class="note">You already marked it used today. Nice.</p>' : `<p class="note">Did you use it today?</p><div class="actions" style="margin-top:6px"><button class="btn primary" data-act="nyes">Yes, I used it</button><button class="btn" data-act="nno">Not today</button></div>`}
+      <div class="field" style="margin-top:12px"><label for="nNote">A moment it helped (optional, only you see this)</label><input id="nNote" placeholder="e.g. Put the files away right after the meeting"></div></div>
+    ${weekEnd ? `<div class="sec"><h4>End of the week</h4><p class="note">Was there a meaningful time this week when "${esc(mtext)}" made a difference? It's saved privately. You choose if it's ever shared.</p>
+      <textarea id="nStory" rows="3" class="inp" placeholder="What happened, and how did it help?"></textarea></div>` : ''}
+    <div class="actions"><button class="btn ${S.day >= 6 ? 'primary' : 'ok'}" data-act="nfinish">${S.day >= 6 ? 'Save' : 'Close the day'}</button><button class="btn ghost" data-close="1">Not yet</button></div>`, 'nightly');
+}
+function openMantras(){
+  const [mid, mtext] = thisMantra(), totals = mantraTotals(), life = mantraLifetime(), next = MANTRA_MILESTONES.find(x => x > life);
+  const fav = Object.entries(totals).sort((a, b) => b[1] - a[1])[0];
+  openPage('mantras', [['Board', 'board'], ['Mantras', 'mantras']], `<h1>Mantras</h1>
+    <p class="lede">One short saying each week to practice until it becomes a habit. Mark it when you use it; it rotates every Monday through 26 mantras.</p>
+    <div class="grid-cards" style="margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div class="box"><span class="scope" style="color:var(--violet)">This week</span><div class="bigquote">"${esc(mtext)}"</div>
+        <div class="mweek">${DAYS.map((d, i) => `<span class="${S.mantraUsed[i] ? 'on' : ''} ${i === S.day ? 'today' : ''}" title="${d}">${d[0]}</span>`).join('')}</div>
+        <div class="actions">${S.mantraUsed[S.day] ? '<span class="chip okc">Used today</span>' : '<button class="btn primary" data-act="mused">I used it today</button>'}</div></div>
+      <div class="box"><h3>Lifetime</h3><div class="stats" style="margin-top:10px"><div class="stat"><b>${life}</b><span>Days used</span></div><div class="stat"><b>${Object.keys(totals).length}</b><span>Mantras practiced</span></div></div>
+        <p class="note" style="margin-top:10px">${next ? (next - life) + ' more to your ' + next + ' milestone.' : ''} Favorite so far: <b>"${esc(mantraText(fav[0]))}"</b></p>
+        <div class="actions"><button class="btn small" data-act="myear">See your year in mantras</button></div></div>
+    </div>
+    <div class="sec"><h4>Your moments (private)</h4><p class="note">Stories you saved at the end of a week. Only you can see them unless you share one.</p>
+      <div class="list">${S.mantraStories.map((st, i) => `<div class="story"><div class="note">${esc(st.week)} · "${esc(mantraText(st.id))}"${st.sharedWith.length ? ' · shared with ' + esc(st.sharedWith.join(', ')) : ' · private'}</div><p style="margin:4px 0 6px">${esc(st.text)}</p><button class="btn small" data-act="mshare" data-i="${i}">Share…</button></div>`).join('') || '<div class="empty2">Your first story appears after this week ends.</div>'}</div></div>
+    <div class="sec"><h4>All 26 mantras</h4>${MANTRAS.map(([id, t]) => `<div class="mrow ${id === mid ? 'cur' : ''}"><b style="font-weight:${id === mid ? 700 : 500}">${esc(t)}</b><span class="bar thin"><i style="width:${Math.min(100, (totals[id] || 0) * 12)}%"></i></span><span class="note" style="text-align:right">${totals[id] || 0}</span></div>`).join('')}</div>`,
+    {refresh: openMantras});
+}
+function openMantraYear(){
+  const totals = Object.entries(mantraTotals()).sort((a, b) => b[1] - a[1]), max = Math.max(1, ...totals.map(t => t[1]));
+  openSheet(`<h2>Your year in mantras</h2><p class="note">Just for you. Sample data for the weeks before this one.</p>
+    <div class="stats" style="margin:12px 0"><div class="stat"><b>${mantraLifetime()}</b><span>Days you used one</span></div><div class="stat"><b>${totals.length}</b><span>Mantras practiced</span></div><div class="stat"><b>${S.mantraStories.length}</b><span>Moments saved</span></div></div>
+    <div class="sec"><h4>Most used</h4>${totals.slice(0, 8).map(([id, n], i) => `<div class="mrow ${i === 0 ? 'cur' : ''}"><b style="font-weight:${i === 0 ? 700 : 500}">${i === 0 ? 'Favorite: ' : ''}${esc(mantraText(id))}</b><span class="bar"><i style="width:${Math.round(100 * n / max)}%"></i></span><span class="note" style="text-align:right">${n}</span></div>`).join('')}</div>
+    <div class="sec"><h4>Moments you saved</h4><div class="list">${S.mantraStories.map(st => `<div class="story"><div class="note">"${esc(mantraText(st.id))}"</div><p style="margin:4px 0 0">${esc(st.text)}</p></div>`).join('')}</div></div>
+    <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Close</button></div>`, 'myear');
+}
+function openShareStory(i){
+  const st = S.mantraStories[i];
+  openSheet(`<h2>Share this moment?</h2><p class="note">It stays private unless you pick someone below. You can change this any time.</p>
+    <div class="story" style="margin:10px 0"><div class="note">"${esc(mantraText(st.id))}"</div><p style="margin:4px 0 0">${esc(st.text)}</p></div>
+    <div class="field"><label>Share with</label>${['A friend', 'Family', 'Coworkers'].map(w => `<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" class="shareTo" value="${w}" ${st.sharedWith.includes(w) ? 'checked' : ''}> ${w}</label>`).join('')}</div>
+    <div class="actions"><button class="btn primary" data-act="msharesave" data-i="${i}">Save</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'share');
 }
 
 /* templates -> goals */
@@ -1495,6 +1716,8 @@ function openDrawer(){
     ${mi('org', 'org', 'Org chart & permissions')}
     ${LV[S.viewAs] >= 1 ? mi('crm', 'link', 'CRM connection') : ''}
     <div class="mgroup">Me</div>
+    ${mi('later', 'tmpl', 'Later pocket', (S.later || []).filter(n => n.status === 'open').length ? `<span class="cnt">${(S.later || []).filter(n => n.status === 'open').length}</span>` : '')}
+    ${mi('mantras', 'idea', 'Mantras')}
     ${mi('achievements', 'star', 'Achievements')}
     ${mi('insights', 'chart', 'Insights')}
     ${mi('profile', 'user', 'Profile & my day')}
@@ -1508,7 +1731,7 @@ function openNewMenu(){
   const m = $('#newMenu'), item = (act, icon, label, sub) => `<button role="menuitem" data-act="${act}">${ICON[icon]}<b>${label}</b><span>${sub}</span></button>`;
   m.innerHTML = item('newtask', 'plus', 'Task', 'One-off or routine, with steps') + item('newgoal', 'target', 'Goal', 'Days, weeks or months, broken into routines')
     + item('newflow', 'flow', canCreateFlows() ? 'Flow' : 'Suggest a flow', canCreateFlows() ? 'A process across people or family' : 'Build it, your manager reviews it') + item('templates', 'idea', 'From a template', 'Home, family and work ideas');
-  m.innerHTML += item('otherwork', 'chart', 'Other work', 'Log work that isn\'t a task so it still counts');
+  m.innerHTML += item('ltnew', 'tmpl', 'Jot a thought', 'Into your Later pocket, with the moment saved') + item('otherwork', 'chart', 'Other work', 'Log work that isn\'t a task so it still counts');
   m.style.left = '0px'; m.hidden = false; $('#newBtn').setAttribute('aria-expanded', 'true');
   const r = m.getBoundingClientRect(); if (r.right > innerWidth - 8) m.style.left = (-(r.right - innerWidth + 8)) + 'px';
   m.querySelector('button').focus();
@@ -2500,6 +2723,7 @@ function saveAdd(){
     prio:+$('#fPrio').value, due: type==='due' ? first : null, cadence: type==='due' ? null : cadMap[type], day: type==='due' ? S.day : first, goalId: $('#fGoal').value || null,
     source: tmpl ? 'template' : 'manual', doneWhen: $('#fDone').value.trim() || aiDone(title), proof: $('#fProof').checked, split: $('#fSplit').checked || est >= 240, steps, notes:''};
   if (type === 'due' && first > S.day && diff < 3 && t.prio < 3) t.day = first;
+  if (S.pendingLater){ const n = (S.later || []).find(x => x.id === S.pendingLater); if (n){ n.status = 'task'; t.notes = 'From your Later pocket: ' + ctxChips(n.ctx, n.media).join(' · '); } S.pendingLater = null; }
   S.tasks.push(t); closeSheet(); render();
   const el = document.querySelector(`.card[data-id="${t.id}"]`); if (el){ el.classList.add('pop'); el.scrollIntoView({block:'nearest', behavior:'smooth'}); }
   toast('Added: ' + title, (estIn ? '' : 'AI estimated ' + fmtDur(aiGuess) + ' and ') + 'Cueue re-planned ' + (t.day===S.day?'today':DAYS[t.day]) + '.');
@@ -2621,6 +2845,44 @@ document.addEventListener('click', ev => {
     case 'help': closeDrawer(); toast('Help & feedback', 'In the real app this opens guides and a feedback form.'); break;
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
+    case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'lttag': S._ltTag = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); return;
+    case 'ltsave': { const text = $('#ltText').value.trim(); if (!text){ $('#ltText').focus(); return; }
+      const due = dueWhen(S.day, S.now, LATER_FIRST);
+      S.later.push({id:newId('lt'), text, tag:S._ltTag || 'any', media:$('#ltMedia').value.trim(), ctx:S._ltCtx || captureContext(), snoozes:0, dueDay:due.d, dueMin:due.m, status:'open'});
+      closeSheet(); updateLaterBadge(); save(); toast('In your pocket', 'Back to what you were doing. It will remind you ' + (S._ltTag === 'any' ? 'later' : 'during ' + S._ltTag + ' hours') + '.'); break; }
+    case 'later': openLater(); break;
+    case 'lfilter': S.laterFilter = el.dataset.v; openLater(); break;
+    case 'lnow': { const n = (S.later || []).find(x => x.status === 'open'); if (n){ n.dueDay = S.day; n.dueMin = S.now; n.tag = 'any'; closeLaterPop(); showLaterPop(n); } break; }
+    case 'lsnooze': { const n = S.later.find(x => x.id === el.dataset.id); if (!canSnooze(n)) return; n.snoozes++; const w = laterWait(n), due = dueWhen(S.day, S.now, w); n.dueDay = due.d; n.dueMin = due.m;
+      closeLaterPop(); save(); toast(canSnooze(n) ? 'Snoozed ' + fmtDur(w) : 'Last snooze: ' + fmtDur(w), canSnooze(n) ? 'Next time the wait is half as long.' : 'Next time you\'ll decide: keep it or toss it.'); if (page && page.kind === 'later') openLater(); break; }
+    case 'ltask': { const n = S.later.find(x => x.id === el.dataset.id); closeLaterPop(); S.pendingLater = n.id; openAdd(null); $('#fTitle').value = n.text; if (n.ctx.ctx) $('#fCtx').value = n.ctx.ctx; else if (n.tag !== 'any') $('#fCtx').value = n.tag; break; }
+    case 'lattach': { const n = S.later.find(x => x.id === el.dataset.id); closeLaterPop();
+      const list = S.tasks.filter(t => isMine(t) && !t.done).sort((a, b) => (a.id === n.ctx.taskId ? -1 : b.id === n.ctx.taskId ? 1 : (a.day ?? 9) - (b.day ?? 9)));
+      openSheet(`<h2>Add to a task</h2><p class="note">"${esc(n.text)}"</p><div class="list" style="gap:6px;margin-top:10px">${list.slice(0, 12).map(t => `<div class="trow" style="grid-template-columns:1fr auto auto"><span class="tt">${esc(t.title)}${t.id === n.ctx.taskId ? '<small>You were working on this when you wrote it</small>' : ''}</span><button class="btn small" data-act="lattachto" data-id="${n.id}" data-task="${t.id}" data-as="note">As a note</button><button class="btn small" data-act="lattachto" data-id="${n.id}" data-task="${t.id}" data-as="step">As a step</button></div>`).join('')}</div>
+        <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Cancel</button></div>`, 'lattach'); break; }
+    case 'lattachto': { const n = S.later.find(x => x.id === el.dataset.id), t = byId(el.dataset.task);
+      if (el.dataset.as === 'step') t.steps.push({t:n.text}); else t.notes = (t.notes ? t.notes + '\n' : '') + 'Later note: ' + n.text + ' (' + ctxChips(n.ctx, n.media).join(' · ') + ')';
+      n.status = 'attached'; n.attachedTo = t.title; closeSheet(); render(); save(); toast('Added to "' + t.title + '"', el.dataset.as === 'step' ? 'It\'s a new step.' : 'It\'s in the task notes.'); if (page && page.kind === 'later') openLater(); break; }
+    case 'ltoss': { const n = S.later.find(x => x.id === el.dataset.id); document.querySelectorAll(`[data-paper="${n.id}"]`).forEach(x => x.classList.add('tossed'));
+      setTimeout(() => { n.status = 'tossed'; closeLaterPop(); save(); updateLaterBadge(); if (page && page.kind === 'later') openLater(); }, 520); toast('Tossed', 'One less thing to carry.'); break; }
+    case 'lighttoggle': { const d = +el.dataset.day;
+      if (S.light[d]){ unlightenDay(d); toast('Back to a regular day', 'Moved tasks came back.'); }
+      else { const r = lightenDay(d); toast(d === S.day ? 'Light day' : 'Light day planned for ' + DAYS[d], (r.moved ? r.moved + ' task' + (r.moved > 1 ? 's' : '') + ' moved to ' + DAYS[r.target] + '. ' : '') + 'Only essentials, longer breaks, softer reminders.'); }
+      render(); break; }
+    case 'mused': useMantra(S.day); render(); if (page && page.kind === 'mantras') openMantras(); break;
+    case 'mantras': openMantras(); break;
+    case 'myear': openMantraYear(); break;
+    case 'mshare': openShareStory(+el.dataset.i); break;
+    case 'msharesave': { const st = S.mantraStories[+el.dataset.i]; st.sharedWith = [...document.querySelectorAll('.shareTo:checked')].map(x => x.value); closeSheet(); save();
+      toast(st.sharedWith.length ? 'Shared with ' + st.sharedWith.join(', ') : 'Kept private', 'Everything else stays private.'); if (page && page.kind === 'mantras') openMantras(); break; }
+    case 'nightly': openNightly(); break;
+    case 'nyes': useMantra(S.day); openNightly(); break;
+    case 'nno': toast('No problem', 'Tomorrow is another chance to try it.'); el.parentElement.innerHTML = '<span class="note">Marked: not today.</span>'; return;
+    case 'nfinish': { const note = $('#nNote') && $('#nNote').value.trim(), story = $('#nStory') && $('#nStory').value.trim();
+      if (note) S.mantraStories.unshift({week:'This week · ' + DAYS[S.day], id:thisMantra()[0], text:note, sharedWith:[]});
+      if (story) S.mantraStories.unshift({week:'This week', id:thisMantra()[0], text:story, sharedWith:[]});
+      closeSheet(); if (S.day < 6) endDay(); else { save(); toast('Week saved', story ? 'Your story is saved privately in Mantras.' : 'See you next week.'); } break; }
     case 'otherwork': closeNewMenu(); openOtherWork(); break;
     case 'saveother': { const w = $('#owWhat').value.trim(); if (!w){ $('#owWhat').focus(); return; } const mins = readEst('owT') || 30, d = +$('#owDiff').value;
       S.log.push({title:w, day:S.day, kind:'other', mins, pts: d * Math.max(1, Math.round(mins / 30))}); closeSheet(); render();
@@ -2701,6 +2963,7 @@ document.addEventListener('keydown', ev => {
 });
 $('#menuBtn').onclick = openDrawer;
 $('#bellBtn').onclick = openInbox;
+$('#laterBtn').onclick = openLaterCapture;
 $('#newBtn').onclick = ev => { ev.stopPropagation(); const m = $('#newMenu'); if (m.hidden) openNewMenu(); else closeNewMenu(); };
 $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned today so "Get ahead" appears
   S.tasks.filter(t => t.day === S.day && isMine(t) && !t.done && t.status !== 'waiting').forEach(t => {
@@ -2713,7 +2976,7 @@ $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned tod
   closeSheet(); render(); toast('Today cleared (demo)', 'Now try "Get ahead" at the top of Today.');
 };
 $('#playBtn').onclick = () => { S.running = !S.running; render(); };
-$('#endDayBtn').onclick = endDay;
+$('#endDayBtn').onclick = openNightly;
 $('#resetBtn').onclick = () => { S = seed(); S.templates.forEach(ensureStageIds); initRuntime(); render.scrolled = false; closeSheet(true); closeDrawer(); if (page) closePage(); render(); toast('Demo reset'); };
 let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { render(); if (page && page.kind === 'builder') renderBuilder(); else if (page && page.kind === 'flowview') drawFlow(); }, 150); });
 
