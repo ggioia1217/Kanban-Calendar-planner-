@@ -25,7 +25,7 @@
 | D20 | Urgency cue = **edge light**: a glow travels each visible card's top edge left to right, brightest at the center, fading at the right; faster, thicker and redder as urgency rises (plus the periodic shake) |
 | D21 | Card color = what it needs from you: Now (indigo), Due today (amber), Late (red), Break (green), Waiting (grey dashed); a dot still shows Work/Home |
 | D22 | Breaks are timed items with options (water, bathroom, meditation, yoga, walk, social, reward); optional **break lock** pauses check-offs until a due break is taken |
-| D23 | Heavy task completion triggers a reward break; working past the break interval triggers a break |
+| D23 | Breaks are suggested only after real effort: after **90 minutes of work** since the last break (adjustable in Profile), or a **reward break after a long task** (60+ minutes actually spent on it). Finishing a short task, even a heavy one, never triggers a break |
 | D24 | Completed steps collapse behind a progress bar; completed items are viewable from the day's progress bar; steps can be unchecked and tasks reopened |
 | D25 | Current task gets an expanded Now card (goal path, pie, done-when, next steps, notes, pause/break/switch) |
 | D26 | "Start my day" mode: first task starts its timer; finishing a task auto-starts the next (toggle) |

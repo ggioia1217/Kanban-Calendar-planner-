@@ -1377,7 +1377,9 @@ function nextStages(t){
   const g = goalById(t.goalId); if (!g || !g.parent) return [];
   return goalKids(g.parent).filter(x => (x.after || []).includes(g.id));
 }
+const LONG_TASK = 60; // minutes on one task that earn a reward break
 function completeTask(t, note, files, handoffTask, handoffStage){
+  const worked = t.spent || 0; // minutes actually spent on this task, before routines reset it
   t.completions = (t.completions||0) + 1;
   t.resolution = note; t.proofFiles = files;
   S.log.push({title: t.title, day: S.day, taskId: t.id, kind:'task', at: S.now});
@@ -1405,8 +1407,9 @@ function completeTask(t, note, files, handoffTask, handoffStage){
     else toast(m ? 'Milestone: ' + m + '!' : 'Task complete!', 'Resolution saved' + (files && files.length ? ' with ' + files.length + ' proof file' + (files.length>1?'s':'') : '') + '.');
     announceFreed(unblockAfter(t), 700);
   }
-  if (t.diff === 3) S.breakDue = {reason:'You finished a heavy task. Take a reward break.', reward:true};
-  else if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for a while'};
+  // Suggest a break only after real effort: a long stretch on this task (60+ min), or 90 min of work since the last break
+  if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for ' + fmtDur(S.workSince) + '. Time for a break.'};
+  else if (worked >= LONG_TASK) S.breakDue = {reason:'You just finished a long task (' + fmtDur(worked) + '). Take a reward break.', reward:true};
   closeSheet(); render();
   if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId && (firstUp() || !ahead)) setTimeout(startNext, 900);
 }
