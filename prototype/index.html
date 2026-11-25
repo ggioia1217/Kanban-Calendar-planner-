@@ -656,6 +656,23 @@ html[data-weight="1"] .gw{font-weight:600}
 .editbar{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .editbar h2{margin:0;flex:1}
 
+/* Roadblock: who we're waiting on */
+.blkfor{display:flex;gap:8px;align-items:center;font-size:13.5px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--accent) 8%,var(--surface));margin:4px 0 6px}
+.blkfor b{min-width:0;overflow-wrap:anywhere}
+.cpick{display:flex;flex-direction:column;gap:4px;max-height:230px;overflow-y:auto;margin-top:6px;padding:2px}
+.cpick label{display:flex;gap:10px;align-items:center;padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font-size:14px;font-weight:500}
+.cpick label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.cpick input[type=radio]{width:18px;height:18px;flex:none;margin:0;padding:0}
+.cpick .cn{flex:1;min-width:0;overflow-wrap:anywhere}
+.cpick small{color:var(--muted);display:block;font-size:12px}
+.ckind{flex:none;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.ckind.k-Coworker{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.ckind.k-Candidate{color:var(--violet);border-color:color-mix(in srgb,var(--violet) 40%,var(--line))}
+.ckind.k-Vendor{color:var(--home);border-color:color-mix(in srgb,var(--home) 40%,var(--line))}
+.ckind.k-Client{color:var(--work);border-color:color-mix(in srgb,var(--work) 40%,var(--line))}
+.blkwho{display:flex;flex-direction:column;gap:3px;margin-top:6px;font-size:13px}
+.blkwho span b{color:var(--ink)}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -1185,7 +1202,7 @@ function topPanel(){
       <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
         <button class="btn small" data-act="ltnew">Jot for later</button>
-        ${t.roadblock ? '' : `<button class="btn small" data-act="blkopen" data-task="${t.id}">Roadblock</button>`}
+        ${t.roadblock ? '' : `<button class="btn small" data-act="blkopen" data-task="${t.id}" style="color:var(--hot)">Roadblock</button>`}
         <button class="btn small" data-open="${t.id}">Details</button>
         <button class="btn small ghost" data-act="switch">Switch task</button></div></div>`;
   }
@@ -1650,33 +1667,86 @@ function workflowPeople(t){
   return [...out.values()].sort((a, b) => (a.why === 'Waits on your stage' ? -1 : 0) - (b.why === 'Waits on your stage' ? -1 : 0));
 }
 function delayedBy(t){ return S.tasks.filter(x => !x.done && x.id !== t.id && (x.waitStages || []).includes(t.goalId)).map(x => x.title); }
+function blockContacts(t){
+  // everyone a roadblock could be waiting on: the task's own contact, coworkers, and CRM candidates, vendors and clients
+  const out = [], seen = new Set(), add = c => { const k = c.name.toLowerCase(); if (seen.has(k)) return; seen.add(k); out.push(c); };
+  const tp = t.person && S.people[t.person];
+  if (tp) add({key:'pp:' + t.person, name:tp.name, sub:tp.org, org:tp.org, kind:'Contact', why:'This task\'s contact'});
+  workflowPeople(t).forEach(x => add({key:'wf:' + x.name, name:x.name.split(' (')[0], sub:x.why + (x.name.includes('(') ? ' · ' + x.name.split('(')[1].replace(')', '') : ''), kind:'Coworker'}));
+  (S.crm || []).forEach(r => add({key:'crm:' + r.name, name:r.name, sub:'Owner: ' + r.owner, kind:r.type}));
+  Object.entries(S.people || {}).forEach(([k, pp]) => add({key:'pp:' + k, name:pp.name, sub:pp.org, org:pp.org, kind:'Contact'}));
+  (S.org || []).filter(x => !x.me).forEach(x => add({key:'org:' + x.id, name:x.name, sub:x.title, kind:'Coworker'}));
+  return out;
+}
+const REACH = [['none', 'Not yet'], ['call', 'Called'], ['email', 'Emailed'], ['text', 'Texted'], ['vm', 'Left a message'], ['person', 'Talked in person']];
+const reachLabel = k => (REACH.find(r => r[0] === k) || ['', ''])[1];
 function blockMsg(t, d){
   const cat = (BLOCK_CATS.find(c => c[0] === d.cat) || ['', 'Something else'])[1], delay = (BLOCK_DELAYS.find(c => c[0] === d.delay) || ['', 'Not sure yet'])[1];
-  const later = delayedBy(t);
-  return `Roadblock on "${t.title}"\nWhy: ${cat}${d.text ? ': ' + d.text : ''}\nExpected delay: ${delay}` + (later.length ? '\nThis may delay: ' + later.join(', ') : '') + (d.help ? '\nWhat would help: ' + d.help : '');
+  const later = delayedBy(t), att = d.attempts || [];
+  return `Roadblock on "${t.title}"\nWhy: ${cat}${d.text ? ': ' + d.text : ''}` + (d.who ? `\nWaiting on: ${d.who.name} (${d.who.kind === 'Other' ? 'outside contact' : d.who.kind.toLowerCase()}${d.who.org ? ', ' + d.who.org : ''})` : '')
+    + (d.who ? '\nContacted: ' + (att.length ? att.map(a => reachLabel(a.how) + ' ' + a.when).join(', ') : 'not yet') : '')
+    + `\nExpected delay: ${delay}` + (later.length ? '\nThis may delay: ' + later.join(', ') : '') + (d.help ? '\nWhat would help: ' + d.help : '');
 }
 function openRoadblock(t){
   const people = workflowPeople(t), others = S.org.filter(p => !p.me && !people.some(x => x.name === p.name));
-  S._blk = {task:t.id, cat:'person', delay:'1d'};
-  openSheet(`<h2>Report a roadblock</h2><p class="note">For "${esc(t.title)}". Everyone you pick gets an update right away, so nobody is left guessing why it's late.</p>
-    <div class="field"><label>What kind of roadblock?</label><div class="timerchips">${BLOCK_CATS.map(([k, l]) => `<button class="chipbtn" data-act="blkcat" data-v="${k}" aria-pressed="${k === 'person'}">${l}</button>`).join('')}</div></div>
-    <div class="field"><label for="blkText">What happened?</label><textarea id="blkText" rows="2" placeholder="e.g. Mara is out until Thursday and she has to sign first"></textarea></div>
-    <div class="field"><label>How long might it hold things up?</label><div class="timerchips">${BLOCK_DELAYS.map(([k, l]) => `<button class="chipbtn" data-act="blkdelay" data-v="${k}" aria-pressed="${k === '1d'}">${l}</button>`).join('')}</div></div>
-    <div class="field"><label for="blkHelp">What would help? (optional)</label><input id="blkHelp" placeholder="e.g. Can someone else at Riverside sign?"></div>
+  const prev = t.roadblock || {}, contacts = blockContacts(t);
+  S._blk = {task:t.id, cat:prev.cat || 'person', delay:prev.delay || '1d', who:prev.who || null, reach:'none', follow:'none', attempts:(prev.attempts || []).slice()};
+  if (!S._blk.who && contacts[0] && contacts[0].why) S._blk.who = contacts[0];
+  const isCur = S.currentId === t.id;
+  openSheet(`<h2>${prev.cat ? 'Update roadblock' : 'Report a roadblock'}</h2>
+    <div class="blkfor">${isCur ? '<span class="chip" style="color:var(--accent)">Current task</span>' : ''}<b>${esc(t.title)}</b></div>
+    <p class="note" style="margin:0 0 6px">Everyone you pick gets an update right away, so nobody is left guessing why it's late.</p>
+    <div class="field"><label>What kind of roadblock?</label><div class="timerchips">${BLOCK_CATS.map(([k, l]) => `<button class="chipbtn" data-act="blkcat" data-v="${k}" aria-pressed="${k === S._blk.cat}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label for="blkText">What happened?</label><textarea id="blkText" rows="2" placeholder="e.g. Waiting on the signed form before payroll can be set up">${esc(prev.text || '')}</textarea></div>
+    <div class="field"><label for="blkSearch">Who are you waiting on?</label>
+      <input id="blkSearch" placeholder="Search coworkers, candidates, vendors, clients" autocomplete="off">
+      <div class="cpick" id="blkPick" role="radiogroup" aria-label="Who are you waiting on"></div>
+      <input id="blkOther" placeholder="Someone else? Type a name (and company)" style="margin-top:6px" value="${S._blk.who && S._blk.who.kind === 'Other' ? esc(S._blk.who.name) : ''}"></div>
+    <div class="field"><label>Have you reached out?</label><div class="timerchips">${REACH.map(([k, l]) => `<button class="chipbtn" data-act="blkreach" data-v="${k}" aria-pressed="${k === 'none'}">${l}</button>`).join('')}</div>
+      ${S._blk.attempts.length ? `<p class="note" style="margin:6px 0 0">Already logged: ${S._blk.attempts.map(a => esc(reachLabel(a.how) + ' ' + a.when)).join(', ')}</p>` : ''}</div>
+    <div class="field"><label>Remind me to follow up</label><div class="timerchips">${[['none', 'No reminder'], ['60', 'In 1 hr'], ['180', 'In 3 hr'], ['480', 'Tomorrow']].map(([k, l]) => `<button class="chipbtn" data-act="blkfollow" data-v="${k}" aria-pressed="${k === 'none'}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label>How long might it hold things up?</label><div class="timerchips">${BLOCK_DELAYS.map(([k, l]) => `<button class="chipbtn" data-act="blkdelay" data-v="${k}" aria-pressed="${k === S._blk.delay}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label for="blkHelp">What would help? (optional)</label><input id="blkHelp" placeholder="e.g. Can someone else sign?" value="${esc(prev.help || '')}"></div>
     <div class="field"><label>Tell</label><div class="who">
-      ${people.length ? people.map(x => `<label><input type="checkbox" class="blkWho" value="${esc(x.name)}" checked><span>${esc(x.name)} <small>· ${esc(x.why)}</small></span></label>`).join('') : '<p class="note" style="margin:0">Nobody else is part of this task\'s goal or flow. Pick anyone who should know:</p>'}
-      ${others.slice(0, people.length ? 3 : 5).map(p => `<label><input type="checkbox" class="blkWho" value="${esc(p.name)}" ${!people.length && p.id === 'p-morgan' ? 'checked' : ''}><span>${esc(p.name)} <small>· ${esc(p.title)}</small></span></label>`).join('')}</div></div>
+      ${people.length ? people.map(x => `<label><input type="checkbox" class="blkWho" value="${esc(x.name)}" ${!prev.sentTo || prev.sentTo.includes(x.name) ? 'checked' : ''}><span>${esc(x.name)} <small>· ${esc(x.why)}</small></span></label>`).join('') : '<p class="note" style="margin:0">Nobody else is part of this task\'s goal or flow. Pick anyone who should know:</p>'}
+      ${others.slice(0, people.length ? 3 : 5).map(p => `<label><input type="checkbox" class="blkWho" value="${esc(p.name)}" ${(prev.sentTo || []).includes(p.name) || (!people.length && !prev.sentTo && p.id === 'p-morgan') ? 'checked' : ''}><span>${esc(p.name)} <small>· ${esc(p.title)}</small></span></label>`).join('')}</div></div>
     <div class="field"><label>They'll see</label><div class="msgprev" id="blkPrev"></div></div>
-    <div class="actions"><button class="btn primary" data-act="blksend">Send update</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'roadblock');
-  const upd = () => { const p = $('#blkPrev'); if (p) p.textContent = blockMsg(t, {cat:S._blk.cat, delay:S._blk.delay, text:$('#blkText').value.trim(), help:$('#blkHelp').value.trim()}); };
-  S._blkUpd = upd; upd(); $('#blkText').addEventListener('input', upd); $('#blkHelp').addEventListener('input', upd);
+    <div class="actions"><button class="btn primary" data-act="blksend">${prev.cat ? 'Send update' : 'Send roadblock'}</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'roadblock');
+  const draw = () => {
+    const q = ($('#blkSearch').value || '').trim().toLowerCase();
+    const list = contacts.filter(c => !q || (c.name + ' ' + c.sub + ' ' + c.kind).toLowerCase().includes(q)).slice(0, q ? 20 : 7);
+    $('#blkPick').innerHTML = list.map(c => `<label><input type="radio" name="blkc" value="${esc(c.key)}" ${S._blk.who && S._blk.who.key === c.key ? 'checked' : ''}><span class="cn">${esc(c.name)}<small>${esc(c.why || c.sub || '')}</small></span><span class="ckind k-${esc(c.kind)}">${esc(c.kind)}</span></label>`).join('')
+      || '<p class="note" style="margin:4px 0">No match. Type the name below.</p>';
+    $('#blkPick').querySelectorAll('input').forEach(r => r.addEventListener('change', () => { S._blk.who = contacts.find(c => c.key === r.value); $('#blkOther').value = ''; upd(); }));
+  };
+  const upd = () => { const p = $('#blkPrev'); if (p) p.textContent = blockMsg(t, blkDraft()); };
+  S._blkUpd = upd; draw(); upd();
+  $('#blkSearch').addEventListener('input', draw);
+  $('#blkOther').addEventListener('input', ev => { const v = ev.target.value.trim(); if (v){ const org = (v.match(/[,(]\s*([^)]*)/) || [, ''])[1]; S._blk.who = {key:'other', name:v.split(/[,(]/)[0].trim(), sub:org, org, kind:'Other'}; $('#blkPick').querySelectorAll('input').forEach(r => r.checked = false); } upd(); });
+  $('#blkText').addEventListener('input', upd); $('#blkHelp').addEventListener('input', upd);
+}
+function blkDraft(){
+  const b = S._blk, att = b.attempts.slice();
+  if (b.reach !== 'none') att.push({how:b.reach, when:DAYS[S.day] + ' ' + fmt(S.now)});
+  return {cat:b.cat, delay:b.delay, who:b.who, attempts:att, text:($('#blkText') || {}).value ? $('#blkText').value.trim() : '', help:($('#blkHelp') || {}).value ? $('#blkHelp').value.trim() : ''};
 }
 function blockNoteHTML(t){
   const b = t.roadblock; if (!b) return '';
-  const cat = (BLOCK_CATS.find(c => c[0] === b.cat) || ['', ''])[1], delay = (BLOCK_DELAYS.find(c => c[0] === b.delay) || ['', ''])[1];
+  const cat = (BLOCK_CATS.find(c => c[0] === b.cat) || ['', ''])[1], delay = (BLOCK_DELAYS.find(c => c[0] === b.delay) || ['', ''])[1], att = b.attempts || [];
+  const crm = b.who && (S.crm || []).some(r => r.name === b.who.name);
   return `<div class="blocknote"><b>Roadblock:</b> ${esc(cat)}${b.text ? ': ' + esc(b.text) : ''}. Expected delay: ${esc(delay.toLowerCase())}.
+    ${b.who ? `<div class="blkwho"><span>Waiting on <b>${esc(b.who.name)}</b>${b.who.sub ? ' · ' + esc(b.who.sub) : ''} <span class="ckind k-${esc(b.who.kind)}">${esc(b.who.kind)}</span></span>
+      <span>${att.length ? 'Contacted: ' + att.map(a => esc(reachLabel(a.how) + ' ' + a.when)).join(', ') : '<b style="color:var(--warn)">Not contacted yet</b>'}${b.followAt ? ' · follow-up reminder set' : ''}</span></div>` : ''}
     <div class="note" style="margin-top:4px">${b.sentTo.length ? 'Sent to ' + esc(b.sentTo.join(', ')) + ' · ' : ''}${esc(b.when)}</div>
-    <div class="row"><button class="btn small ok" data-act="blkclear" data-task="${t.id}">It's cleared</button><button class="btn small ghost" data-act="blkedit" data-task="${t.id}">Update</button></div></div>`;
+    <div class="row">${b.who ? `<button class="btn small" data-act="blklog" data-task="${t.id}">Log contact</button>` : ''}${crm ? '<button class="btn small ghost" data-act="crm">Open in CRM</button>' : ''}<button class="btn small ok" data-act="blkclear" data-task="${t.id}">It's cleared</button><button class="btn small ghost" data-act="blkedit" data-task="${t.id}">Update</button></div></div>`;
+}
+function openBlockLog(t){
+  const b = t.roadblock;
+  openSheet(`<h2>Log contact</h2><p class="note">With ${esc(b.who.name)} about "${esc(t.title)}"</p>
+    <div class="field"><label>How?</label><div class="timerchips">${REACH.filter(r => r[0] !== 'none').map(([k, l], i) => `<button class="chipbtn" data-act="blkreach" data-v="${k}" aria-pressed="${i === 0}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label for="blkLogNote">What came of it? (optional)</label><input id="blkLogNote" placeholder="e.g. She'll sign Thursday morning"></div>
+    <div class="actions"><button class="btn primary" data-act="blklogsave" data-task="${t.id}">Save</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'blklog');
+  S._blk = {task:t.id, reach:'call'};
 }
 
 /* ---------- Later pocket ---------- */
@@ -2102,38 +2172,6 @@ function openTaskEdit(t){
   $('#eProof').addEventListener('change', ev => { t.proof = ev.target.value === '1'; });
   $('#notesInput').addEventListener('input', ev => { t.notes = ev.target.value; save(); });
   $('#attachInput').addEventListener('change', ev => { t.files = (t.files||[]).concat([...ev.target.files].map(f => f.name)); $('#attachList').textContent = t.files.join(', '); save(); });
-}
-function _unusedOldTaskSheet(t, m, person, openSteps, doneSteps, prev, hist, stuck){
-  openSheet(`
-    <h2 class="ttitle">${esc(t.title)}</h2>
-    <div class="chips">${t.done?'<span class="chip okc">Completed</span>':''}${!isMine(t)?avatar(t.owner,true):''}<span class="chip"><span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span></span><span class="chip">${DIFF[t.diff]}</span><span class="chip">${SPANS[t.span][0]}</span><span class="chip">${PRIO[t.prio]} priority</span>${dueChip(t)}${t.cadence?`<span class="chip">${ICON.repeat.replace('<svg','<svg width="12" height="12"')} ${esc(t.cadence.label)}</span>`:''}</div>
-    ${t.roadblock ? `<div style="margin-bottom:10px">${blockNoteHTML(t)}</div>` : ''}
-    ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
-    ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
-    <div class="grid2">
-      <div class="field"><label>Time estimate ${t.est==null?`· AI, learned from ${t.aiRuns||1} run${(t.aiRuns||1)>1?'s':''}`:'· set by you'}</label>${estInputs('dEst', estOf(t))}</div>
-      <div class="field"><label for="goalSel">Goal</label><select id="goalSel">${goalOptions(t.goalId)}</select></div>
-    </div>
-    <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}${t.proof?' · <i>proof required</i>':''}</div>
-    <div class="sec"><h4>Steps</h4>
-      <div class="bar" style="margin-bottom:8px"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
-      <ul class="steps">${openSteps.map(([s,i]) => stepLI(t,s,i)).join('') || '<li class="note">All steps are done.</li>'}</ul>
-      ${doneSteps.length ? `<details class="donesteps"><summary>Completed steps (${doneSteps.length}). Uncheck any to reopen.</summary><ul class="steps">${doneSteps.map(([s,i]) => stepLI(t,s,i)).join('')}</ul></details>` : ''}
-      <div class="actions"><input id="newStep" class="inp" placeholder="Add a step" style="flex:1;min-width:0;width:auto"><button class="btn small" data-act="addstep">Add</button><button class="btn small ghost" data-act="aisteps">Suggest steps</button></div></div>
-    <div class="sec"><h4 style="display:flex;align-items:center;gap:8px">Notes${t.notes ? `<button class="btn small ghost" data-act="fread" data-id="${t.id}" style="margin-left:auto">Focus read</button>` : ''}</h4><textarea id="notesInput" class="inp" rows="2">${esc(t.notes||'')}</textarea></div>
-    ${t.sourceText ? `<div class="sec"><h4>Source · ${t.source==='email'?'Email':'Text'}</h4><div class="quote">${esc(t.sourceText)}</div></div>` : ''}
-    ${person || (t.contacts&&t.contacts.length) ? `<div class="sec"><h4>Contact log${person?' · '+esc(person.name)+', '+esc(person.org):''}</h4>${(t.contacts||[]).map(c => `<div class="kv"><span>${esc(c.how)} · ${esc(c.who)}</span><span>${esc(c.when)}</span></div>`).join('') || '<p class="note">No contacts yet. Checking a Contact step logs one.</p>'}</div>` : ''}
-    <div class="sec"><h4>Attachments</h4><input type="file" id="attachInput" multiple><p class="note" id="attachList">${(t.files||[]).map(esc).join(', ') || 'No files yet.'}</p></div>
-    ${t.evidence ? `<div class="sec"><h4>Why this routine works</h4><p class="note">In a study of 96 adults, a new daily habit took about 66 days on average to feel automatic, and missing a single day didn't undo progress (Lally et al., 2010, <i>European Journal of Social Psychology</i>). A meta-analysis of 8 trials found aerobic exercise improved attention in children with ADHD (Cerrillo-Urbina et al., 2015). <a href="https://pubmed.ncbi.nlm.nih.gov/25988743/" target="_blank" rel="noopener">Read the study</a></p></div>` : ''}
-    ${prev}${hist}${stuck}
-    <div class="actions">
-      ${t.done ? `<button class="btn primary" data-act="reopen">Reopen task</button>` : !isMine(t) ? `<button class="btn" data-act="othersdone" data-task="${t.id}">Mark done as ${esc(roleOf(t.owner).name)} (demo)</button>` :
-        `${S.currentId===t.id ? `<button class="btn" data-act="stop">Stop working on it</button>` : `<button class="btn primary" data-act="start">Start now</button>`}
-         ${t.status==='waiting' ? `<button class="btn" data-act="unblock">Unblock</button>` : `<button class="btn" data-act="wait">Waiting on someone</button>`}
-         ${t.roadblock ? '' : `<button class="btn" data-act="blkopen" data-task="${t.id}" style="color:var(--hot)">Report a roadblock</button>`}
-         <button class="btn ${nextStep(t)?'':'ok'}" data-finish="${t.id}">Complete</button>`}
-      <div class="spacer"></div><button class="btn ghost" data-close="1">Close</button>
-    </div>`, 'task', t.id);
 }
 function openComplete(t){
   if (locked()){ lockedToast(); return; }
@@ -3200,16 +3238,27 @@ document.addEventListener('click', ev => {
     case 'reopentask': reopenTask(byId(el.dataset.task)); save(); return;
     case 'blkopen': case 'blkedit': openRoadblock(byId(el.dataset.task)); return;
     case 'blkcat': case 'blkdelay': S._blk[a === 'blkcat' ? 'cat' : 'delay'] = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); S._blkUpd && S._blkUpd(); return;
-    case 'blksend': { const t = byId(S._blk.task), d = {cat:S._blk.cat, delay:S._blk.delay, text:$('#blkText').value.trim(), help:$('#blkHelp').value.trim()};
+    case 'blkreach': S._blk.reach = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); S._blkUpd && S._blkUpd(); return;
+    case 'blkfollow': S._blk.follow = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); return;
+    case 'blksend': { const t = byId(S._blk.task), d = blkDraft(), follow = S._blk.follow;
       const sentTo = [...document.querySelectorAll('.blkWho:checked')].map(x => x.value), when = DAYS[S.day] + ' ' + fmt(S.now);
-      t.roadblock = {...d, sentTo, when};
+      t.roadblock = {...d, sentTo, when, followAt:(t.roadblock && t.roadblock.followAt) || null};
+      if (d.who && S._blk.reach !== 'none'){ t.contacts = t.contacts || []; t.contacts.unshift({who:d.who.name, how:reachLabel(S._blk.reach) + ' (roadblock)', when}); }
+      if (d.who && follow !== 'none'){ const first = +follow, due = dueWhen(S.day, S.now, first);
+        S.later.push({id:newId('lt'), text:'Follow up with ' + d.who.name + ' about "' + t.title + '"', tag:t.ctx || 'any', first, media:'', ctx:captureContext(), snoozes:0, dueDay:due.d, dueMin:due.m, status:'open'});
+        t.roadblock.followAt = due; updateLaterBadge(); }
       const g = t.goalId && goalById(t.goalId), root = g && rootOf(g), cat = (BLOCK_CATS.find(c => c[0] === d.cat) || ['', ''])[1];
-      if (root){ root.updates = root.updates || []; root.updates.unshift({who:'You', when, text:'"' + t.title + '": ' + cat + (d.text ? '. ' + d.text : '')}); }
-      note('You reported a roadblock on "' + t.title + '"', sentTo.length ? 'Sent to ' + sentTo.join(', ') + '.' : 'Saved on the task.', 'ask', {task:t.id});
+      if (root){ root.updates = root.updates || []; root.updates.unshift({who:'You', when, text:'"' + t.title + '": ' + cat + (d.who ? ', waiting on ' + d.who.name : '') + (d.text ? '. ' + d.text : '')}); }
+      note('You reported a roadblock on "' + t.title + '"', (d.who ? 'Waiting on ' + d.who.name + '. ' : '') + (sentTo.length ? 'Sent to ' + sentTo.join(', ') + '.' : 'Saved on the task.'), 'ask', {task:t.id});
       closeSheet(); render(); save();
-      toast(sentTo.length ? 'Update sent to ' + sentTo.length + (sentTo.length > 1 ? ' people' : ' person') : 'Roadblock saved', sentTo.length ? sentTo.join(', ') : 'Nobody else was picked.');
+      toast(sentTo.length ? 'Update sent to ' + sentTo.length + (sentTo.length > 1 ? ' people' : ' person') : 'Roadblock saved', (d.who ? 'Waiting on ' + d.who.name + (follow !== 'none' ? ' · follow-up reminder set' : '') : sentTo.join(', ')));
       if (sentTo.length){ const who = sentTo[0].split(' (')[0]; setTimeout(() => { note(who + ' replied about "' + t.title + '"', 'Thanks for the heads-up. I\'ll plan around it.', 'reply', {task:t.id}); toast(who + ' replied', 'Thanks for the heads-up. I\'ll plan around it.'); }, 2600); }
       break; }
+    case 'blklog': openBlockLog(byId(el.dataset.task)); return;
+    case 'blklogsave': { const t = byId(el.dataset.task), b = t.roadblock, when = DAYS[S.day] + ' ' + fmt(S.now), n = $('#blkLogNote').value.trim();
+      b.attempts = (b.attempts || []).concat([{how:S._blk.reach, when}]);
+      t.contacts = t.contacts || []; t.contacts.unshift({who:b.who.name, how:reachLabel(S._blk.reach) + (n ? ': ' + n : ''), when});
+      closeSheet(); render(); save(); toast('Contact logged', reachLabel(S._blk.reach) + ' ' + b.who.name + (n ? ' · ' + n : '')); break; }
     case 'blkclear': { const t = byId(el.dataset.task), b = t.roadblock, when = DAYS[S.day] + ' ' + fmt(S.now);
       const g = t.goalId && goalById(t.goalId), root = g && rootOf(g);
       if (root){ root.updates = root.updates || []; root.updates.unshift({who:'You', when, clear:true, text:'"' + t.title + '" is moving again.'}); }
