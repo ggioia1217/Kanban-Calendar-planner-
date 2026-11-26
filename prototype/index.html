@@ -930,6 +930,36 @@ html[data-weight="1"] .gw{font-weight:600}
 .shieldbox .tprog{width:100%;height:8px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden}
 .shieldbox .tprog i{display:block;height:100%;background:#8FA2FF;border-radius:999px}
 
+/* ---------- Focus sounds ---------- */
+.soundchip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700;border:1px solid color-mix(in srgb,var(--violet) 40%,var(--line));color:var(--violet);background:color-mix(in srgb,var(--violet) 7%,var(--surface));cursor:pointer;margin-right:6px}
+.soundchip.off{color:var(--muted);border-color:var(--line);background:var(--surface)}
+.soundchip .eq{display:inline-flex;gap:2px;align-items:flex-end;height:11px}
+.soundchip .eq i{width:2px;background:currentColor;border-radius:1px;height:4px}
+.soundchip:not(.off) .eq i{animation:eq 1.1s ease-in-out infinite}
+.soundchip .eq i:nth-child(2){animation-delay:.2s}.soundchip .eq i:nth-child(3){animation-delay:.45s}
+@keyframes eq{50%{height:11px}}
+@media (prefers-reduced-motion: reduce){.soundchip .eq i{animation:none!important}}
+/* ---------- Guided movement ---------- */
+.movewrap{position:fixed;inset:0;z-index:96;display:flex;overflow-y:auto;padding:max(20px,env(safe-area-inset-top,0px)) 20px max(20px,env(safe-area-inset-bottom,0px));background:linear-gradient(160deg,#0F3B2E,#0B2A22);color:#fff;text-align:center}
+.movebox{max-width:420px;width:100%;margin:auto;display:flex;flex-direction:column;gap:14px;align-items:center}
+.movebox .lab{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.movebox h2{margin:0;font-size:30px;line-height:1.1}
+.movebox p{margin:0;font-size:16px;opacity:.85}
+.movering{--p:0;position:relative;width:180px;height:180px;border-radius:50%;background:conic-gradient(#7FE0B3 calc(var(--p)*360deg),rgba(255,255,255,.14) 0)}
+.movering::after{content:"";position:absolute;inset:12px;border-radius:50%;background:#0F3B2E}
+.movering b{position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-size:48px;font-variant-numeric:tabular-nums}
+.movering .fig{position:absolute;inset:0;z-index:1;display:grid;place-items:center;opacity:.18}
+.movering .fig svg{width:96px;height:96px;animation:bob 1.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion: reduce){.movering .fig svg{animation:none}}
+.movedots{display:flex;gap:6px}
+.movedots i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.22)}
+.movedots i.on{background:#7FE0B3}
+.movebox .row3{display:flex;gap:8px;width:100%}
+.movebox .row3 button{flex:1;border:0;border-radius:999px;padding:12px;font:inherit;font-weight:800;cursor:pointer;min-height:46px;background:rgba(255,255,255,.16);color:#fff}
+.movebox .row3 button.main{background:#fff;color:#0B2A22}
+.movebox .nextm{font-size:14px;opacity:.75}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -983,6 +1013,7 @@ html[data-weight="1"] .gw{font-weight:600}
 <div id="obRoot"></div>
 <div id="whenRoot"></div>
 <div id="shieldRoot"></div>
+<div id="moveRoot"></div>
 
 <script>
 (() => {
@@ -998,7 +1029,7 @@ const DAY_START = 8*60, DAY_END = 21*60;
 const BREAKS = [
   // Three kinds of break. Water and bathroom are yours any time; Cueue never asks about or tracks them.
   {k:'mind', label:'Mind', min:5, sub:'Rest your brain', ideas:['Close your eyes and take ten slow breaths.', 'Look out a window at something far away.', 'Try a short guided meditation.', 'Sit quietly with no screen for a few minutes.'], link:'https://www.youtube.com/results?search_query=5+minute+guided+meditation'},
-  {k:'body', label:'Body', min:10, sub:'Nourish and move', ideas:['Refill your water and have a snack.', 'Stand up and stretch your neck, shoulders and back.', 'Take a short walk, even just down the hall.', 'Shake out your hands and roll your shoulders.']},
+  {k:'body', label:'Body', min:10, sub:'Move and refuel', ideas:['Refill your water and have a snack.', 'Stand up and stretch your neck, shoulders and back.', 'Take a short walk, even just down the hall.', 'Shake out your hands and roll your shoulders.']},
   {k:'soul', label:'Soul', min:10, sub:'Connect and recharge', ideas:['Step outside and notice something green.', 'Text or chat with someone you like.', 'Play one song you love, all the way through.', 'Write down one good thing from today.', 'Spend a few minutes with your pet.']},
   {k:'apps', label:'App time', min:15, sub:'Earned, no shield', ideas:['Your earned 15 minutes. The shield is off, so enjoy it guilt-free.']}
 ];
@@ -1159,7 +1190,7 @@ function seed(){
   return {
     day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
     currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
-    settings:{shield:{mode:'auto', strict:'gentle', pause:15, apps:['Instagram', 'TikTok', 'YouTube', 'News', 'Games']}, meds:true, medOn:45, medDur:240, textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
+    settings:{fsound:{kind:'brown', vol:.5, auto:false}, shield:{mode:'auto', strict:'gentle', pause:15, apps:['Instagram', 'TikTok', 'YouTube', 'News', 'Games']}, meds:true, medOn:45, medDur:240, textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       tabbar:true, leaderboard:true, medTime:'',
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
@@ -1258,7 +1289,7 @@ const STORE = 'cueue-proto-v10';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
 if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later || !S.rewards) S = seed();
-S.shieldStats = S.shieldStats || {bounced:0, opened:0}; S.appBank = S.appBank || {min:0, log:[]}; S.checkin = S.checkin || {};
+S.shieldStats = S.shieldStats || {bounced:0, opened:0}; S.settings.fsound = S.settings.fsound || {kind:'brown', vol:.5, auto:false}; S.appBank = S.appBank || {min:0, log:[]}; S.checkin = S.checkin || {};
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -1447,7 +1478,7 @@ function topPanel(){
     const b = brkOf(S.brk.k), p = Math.min(1, S.brk.spent / S.brk.min), ready = S.brk.spent >= S.brk.min;
     return `<div class="panel restp" id="brkPanel" style="${edgeDelay()}"><div class="ph"><span class="tag">On a break</span></div>
       <div class="main"><span class="pie big rest" id="brkPie" style="--p:${p.toFixed(3)}"></span><div style="min-width:0"><h3>${b.label} break</h3>
-      <div class="brkidea">${esc(b.ideas[(S.brk.idea || 0) % b.ideas.length])}</div>${b.ideas.length > 1 ? '<button class="plannudge" data-act="brkidea" style="grid-column:auto">Another idea</button>' : ''}${b.link?`<div class="sub"><a href="${b.link}" target="_blank" rel="noopener">Find a ${b.min}-minute video</a></div>`:''}
+      <div class="brkidea">${esc(b.ideas[(S.brk.idea || 0) % b.ideas.length])}</div>${b.k === 'body' ? '<div class="row" style="margin-top:6px"><button class="btn small rest" data-act="movestart">Guided moves · 3 min</button></div>' : ''}${b.ideas.length > 1 ? '<button class="plannudge" data-act="brkidea" style="grid-column:auto">Another idea</button>' : ''}${b.link?`<div class="sub"><a href="${b.link}" target="_blank" rel="noopener">Find a ${b.min}-minute video</a></div>`:''}
       <div class="words" style="margin-top:6px">${ready ? 'Break complete. Welcome back.' : 'Enjoy it. The timer is running.'}</div></div></div>
       <div class="row"><button class="btn rest" data-act="endbrk" ${!ready && S.settings.breakLock ? 'disabled' : ''}>I'm back</button><button class="btn small" data-act="brkmore">+5 min</button></div>
       ${!ready && S.settings.breakLock ? '<div class="sub">Break lock is on, so "I\'m back" unlocks when the timer finishes.</div>' : ''}</div>`;
@@ -1463,7 +1494,7 @@ function topPanel(){
     const e = estOf(t), r = (t.spent||0)/e, open = t.steps.map((s,i) => [s,i]).filter(([s]) => !s.done);
     const lvl = level(t, S.day);
     return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel" style="${edgeDelay()}">
-      <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}<span style="margin-left:auto">${shieldChip()}</span></div>
+      <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}<span style="margin-left:auto">${soundChip()}${shieldChip()}</span></div>
       ${blockNoteHTML(t)}
       ${t.when ? `<div class="whensentence">${esc(whenSentence(t))}</div>` : ''}
       ${(t.rolled || 0) >= 1 && S.rewards.bundle ? `<div class="pairhint">You've put this off before. Pair it with ${esc(S.rewards.bundle)}.</div>` : ''}
@@ -1604,7 +1635,7 @@ function tick(){
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
     if (!$('#laterPop').innerHTML && !$('#sheetRoot').innerHTML){ const n = laterDue(); if (n) showLaterPop(n); }
-    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); checkinTriggers(S.now - dMin); roomTick(); drawLock();
+    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); checkinTriggers(S.now - dMin); roomTick(); drawLock(); syncSound();
     live();
   }
   requestAnimationFrame(tick);
@@ -2435,7 +2466,7 @@ function roomTick(){
 }
 function endRoom(full){
   const R = S.room, room = ROOMS.find(r => r.id === R.id), mins = Math.round(Math.min(R.len, S.now - R.start));
-  ambient(null); S.room = null; roomBeat = 0; S.rewards.jar += Math.round(mins / 10); S.rewards.focusMin = (S.rewards.focusMin || 0) + mins;
+  ambient(null); S.room = null; roomBeat = 0; setTimeout(syncSound, 50); S.rewards.jar += Math.round(mins / 10); S.rewards.focusMin = (S.rewards.focusMin || 0) + mins;
   if (mins >= 20) addSticker('roommate');
   if (page && page.kind === 'rooms') closePage();
   openSheet(`<h2>${full ? 'Session done' : 'You left the room'}</h2><p class="note">${mins} minutes of focus${room.count ? ' alongside ' + room.count + ' others' : ''}. ${mins >= 10 ? Math.round(mins / 10) + ' points went into your treat jar.' : ''}</p>
@@ -2444,18 +2475,85 @@ function endRoom(full){
   if (full){ confetti(innerWidth / 2, innerHeight / 3, 120, 8); chime(true); }
 }
 // soft background sound, made in the app: brown noise or rain
-let amb = null;
-function ambient(kind){
-  try { if (amb){ amb.forEach(n => { try { n.stop(); } catch(e) {} }); amb = null; } if (!kind) return;
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    const len = actx.sampleRate * 2, buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0); let last = 0;
-    for (let i = 0; i < len; i++){ const w = Math.random() * 2 - 1; last = kind === 'brown' ? (last + .02 * w) / 1.02 : w; d[i] = kind === 'brown' ? last * 3.2 : w * (Math.random() < .002 ? 1 : .35); }
+let amb = null, ambKind = null, ambGain = null;
+const SOUNDS = [['off', 'Off'], ['brown', 'Brown noise'], ['pink', 'Pink noise'], ['white', 'White noise'], ['rain', 'Rain']];
+function ambient(kind, vol){
+  try {
+    if (amb){ amb.forEach(n => { try { n.stop(); } catch(e) {} }); amb = null; } ambKind = kind || null; ambGain = null; if (!kind || kind === 'off') { ambKind = null; return; }
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume();
+    const len = actx.sampleRate * 3, buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+    let last = 0, b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < len; i++){
+      const w = Math.random() * 2 - 1;
+      if (kind === 'brown'){ last = (last + .02 * w) / 1.02; d[i] = last * 3.2; }
+      else if (kind === 'pink'){ b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852; b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * .5362) * .11; b6 = w * .115926; }
+      else if (kind === 'white') d[i] = w * .5;
+      else d[i] = w * (Math.random() < .002 ? 1 : .35); // rain: soft hiss with occasional drops
+    }
     const src = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
-    src.buffer = buf; src.loop = true; f.type = kind === 'brown' ? 'lowpass' : 'bandpass'; f.frequency.value = kind === 'brown' ? 500 : 1800; g.gain.value = kind === 'brown' ? .18 : .06;
+    src.buffer = buf; src.loop = true;
+    f.type = kind === 'brown' ? 'lowpass' : kind === 'rain' ? 'bandpass' : 'lowpass'; f.frequency.value = kind === 'brown' ? 500 : kind === 'rain' ? 1800 : kind === 'pink' ? 6000 : 9000;
+    const base = {brown:.22, pink:.16, white:.06, rain:.08}[kind] || .1, v = vol == null ? ((S.settings.fsound || {}).vol ?? .5) : vol;
+    g.gain.value = base * v * 2; ambGain = {g, base};
     src.connect(f).connect(g).connect(actx.destination); src.start(); amb = [src];
   } catch(e) {}
 }
+function setAmbVol(v){ if (ambGain) ambGain.g.gain.value = ambGain.base * v * 2; }
+// Focus sounds: play while a task is running (if set to automatic or turned on), stop on breaks and pauses.
+function soundWanted(){
+  const f = S.settings.fsound || {kind:'off'}; if (f.kind === 'off' || S.room) return null;
+  const working = !!(S.currentId && !S.paused && !S.brk);
+  return working && (f.auto || S.soundOn) ? f.kind : null;
+}
+function syncSound(){ if (S.room) return; const want = soundWanted(); if (want !== ambKind) ambient(want); }
+function soundChip(){
+  const f = S.settings.fsound || {kind:'off'}, on = !!soundWanted(), name = (SOUNDS.find(x => x[0] === f.kind) || ['', 'Sound'])[1];
+  return `<button class="soundchip ${on ? '' : 'off'}" data-act="soundtoggle" title="Focus sound"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>${f.kind === 'off' ? 'Sound off' : on ? name : name + ' (off)'}</button>`;
+}
 
+/* ---------- Guided movement (inside a Body break) ---------- */
+// Short bursts of movement are linked with better attention afterwards (acute exercise studies in doc 06).
+const MOVES = {
+  stand:[['March in place', 'Lift your knees and swing your arms.'], ['Shoulder rolls', 'Big slow circles, then the other way.'], ['Desk push-ups', 'Hands on the desk edge, slow and steady.'], ['Sit-to-stands', 'Stand up, sit down, slowly.'], ['Side stretch', 'Reach one arm over your head, then the other.'], ['Calf raises', 'Up on your toes, then slowly down.']],
+  seat:[['Seated march', 'Lift one knee, then the other.'], ['Shoulder rolls', 'Big slow circles, then the other way.'], ['Seated twist', 'Turn gently to each side.'], ['Arm reaches', 'Reach up high, then out in front.'], ['Ankle circles', 'Circle each foot both ways.'], ['Neck stretch', 'Ear toward shoulder, each side.']]};
+const MOVE_SEC = 30;
+const FIG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v7M12 9l-4 3M12 9l4 3M12 13l-3 7M12 13l3 7"/></svg>';
+let mv = null;
+function openMove(mode){
+  mv = {mode:mode || (S.settings.moveSeat ? 'seat' : 'stand'), i:0, left:MOVE_SEC, paused:false, timer:null};
+  drawMove(); mv.timer = setInterval(moveTick, 1000);
+}
+function drawMove(){
+  if (!mv) { $('#moveRoot').innerHTML = ''; return; }
+  const list = MOVES[mv.mode], m = list[mv.i], nx = list[mv.i + 1];
+  $('#moveRoot').innerHTML = `<div class="movewrap" role="dialog" aria-label="Guided movement"><div class="movebox">
+    <span class="lab">Move · ${mv.i + 1} of ${list.length}</span>
+    <h2>${esc(m[0])}</h2><p>${esc(m[1])}</p>
+    <div class="movering" style="--p:${(1 - mv.left / MOVE_SEC).toFixed(3)}"><b>${mv.left}</b></div>
+    <div class="movedots">${list.map((x, k) => `<i class="${k <= mv.i ? 'on' : ''}"></i>`).join('')}</div>
+    <span class="nextm">${nx ? 'Next: ' + esc(nx[0]) : 'Last one'}</span>
+    <div class="row3"><button data-act="mvpause">${mv.paused ? 'Resume' : 'Pause'}</button><button class="main" data-act="mvskip">${nx ? 'Next move' : 'Finish'}</button></div>
+    <div class="row3"><button data-act="mvmode">${mv.mode === 'stand' ? 'Seated version' : 'Standing version'}</button><button data-act="mvend">End</button></div>
+    <span class="nextm">Only do what feels comfortable.</span></div></div>`;
+}
+function moveTick(){
+  if (!mv || mv.paused) return;
+  mv.left--;
+  if (mv.left <= 0){ nextMove(); return; }
+  const r = $('#moveRoot .movering'); if (r){ r.style.setProperty('--p', (1 - mv.left / MOVE_SEC).toFixed(3)); r.querySelector('b').textContent = mv.left; }
+}
+function nextMove(){
+  if (!mv) return; mv.i++; mv.left = MOVE_SEC;
+  if (mv.i >= MOVES[mv.mode].length){ endMove(true); return; }
+  if (navigator.vibrate && S.settings.haptics) try { navigator.vibrate(40); } catch(e) {}
+  chime(false); drawMove();
+}
+function endMove(full){
+  if (mv) clearInterval(mv.timer); mv = null; $('#moveRoot').innerHTML = '';
+  if (full){ confetti(innerWidth / 2, innerHeight / 3, 90, 7); chime(true); toast('Movement done', 'Nice. Focus usually gets a lift for a while after moving.'); }
+}
+
+/* ---------- Layered rewards ---------- */
 /* ---------- Layered rewards ---------- */
 const STICKERS = [
   ['first', 'First task', 'Finish your first task', '#3B55F0', 'done'],
@@ -3980,6 +4078,12 @@ function openSettings(){
       <p class="note" style="margin:4px 0 6px">Verbs heavy bold, nouns underlined, describing words in italics. "Key words" marks just the action and what it's done to, which research suggests helps more than marking everything.</p>
       <div class="gpreview" id="gPreview"><span class="gtextp">Send the signed contract to Mara before the quick Friday review.</span></div></div>
     ${cb('sWeight', st.textWeight !== false, 'Variable weight: small linking words (the, to, of) are lighter so the important words stand out')}</div>
+  <div class="sec"><h4>Focus sounds</h4>
+    <p class="note" style="margin-top:0">Steady background noise helps some people with ADHD focus and bothers others. Try one for a few days and see.</p>
+    <div class="field"><label>Sound</label><div class="seg" role="group" aria-label="Focus sound">${SOUNDS.map(([k, l]) => `<button data-act="fskind" data-v="${k}" aria-pressed="${(st.fsound || {}).kind === k}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label for="fsVol">Volume</label><input id="fsVol" type="range" min="0.1" max="1" step="0.05" value="${(st.fsound || {}).vol ?? .5}"></div>
+    <label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="fsAuto" ${(st.fsound || {}).auto ? 'checked' : ''}> Play automatically while I work (stops on breaks)</label>
+    <button class="btn small" data-act="fstest">Preview 5 seconds</button></div>
   <div class="sec"><h4>Distraction shield</h4>
     <p class="note" style="margin-top:0">Blocks the apps you pick while you work, with a short pause screen if you try to open one. On iPhone this uses Apple's Screen Time permission: Cueue never sees which apps you use, only that a shield was shown.</p>
     <div class="field"><label>When</label><div class="seg" role="group" aria-label="When the shield is on">${[['auto', 'During tasks'], ['manual', 'When I turn it on'], ['off', 'Off']].map(([k, l]) => `<button data-act="shmode" data-v="${k}" aria-pressed="${shieldCfg().mode === k}">${l}</button>`).join('')}</div></div>
@@ -4012,7 +4116,9 @@ function openSettings(){
   bind('#sAuto', el => st.autoNext = el.checked); bind('#sLock', el => st.breakLock = el.checked); bind('#sEdge', el => st.edge = el.checked);
   bind('#sSound', el => st.sound = el.checked); bind('#sHap', el => st.haptics = el.checked); bind('#sReduce', el => st.reduce = el.checked);
   bind('#sPies', el => st.pies = el.checked); bind('#sTimes', el => st.times = el.checked); bind('#sPrep', el => st.prepAll = el.checked);
-  bind('#sTab', el => { st.tabbar = el.checked; updateTabs(); }); bind('#sWeight', el => { st.textWeight = el.checked; gPreview(); });
+  bind('#sTab', el => { st.tabbar = el.checked; updateTabs(); });
+  $('#fsVol').addEventListener('input', ev => { st.fsound.vol = +ev.target.value; setAmbVol(st.fsound.vol); save(); });
+  bind('#fsAuto', el => { st.fsound.auto = el.checked; syncSound(); }); bind('#sWeight', el => { st.textWeight = el.checked; gPreview(); });
   gPreview(); bind('#sLb', el => st.leaderboard = el.checked);
 }
 
@@ -4098,6 +4204,16 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'soundtoggle': { const f = S.settings.fsound; if (f.kind === 'off'){ openSettings(); return; }
+      if (soundWanted()){ S.soundOn = false; if (f.auto){ f.auto = false; } } else { S.soundOn = true; }
+      syncSound(); save(); render(); toast(soundWanted() ? (SOUNDS.find(x => x[0] === f.kind) || [, ''])[1] + ' on' : 'Sound off', soundWanted() ? 'It stops on breaks and when you pause.' : ''); return; }
+    case 'fskind': S.settings.fsound.kind = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); ambient(null); syncSound(); save(); render(); return;
+    case 'fstest': { const f = S.settings.fsound; if (f.kind === 'off') return toast('Pick a sound first', ''); ambient(f.kind); setTimeout(() => { ambient(null); syncSound(); }, 5000); return; }
+    case 'movestart': openMove(); return;
+    case 'mvpause': if (mv){ mv.paused = !mv.paused; drawMove(); } return;
+    case 'mvskip': nextMove(); return;
+    case 'mvmode': if (mv){ mv.mode = mv.mode === 'stand' ? 'seat' : 'stand'; S.settings.moveSeat = mv.mode === 'seat'; save(); drawMove(); } return;
+    case 'mvend': endMove(false); return;
     case 'brkidea': if (S.brk){ S.brk.idea = (S.brk.idea || 0) + 1; render(); } return;
     case 'breakthrough': { if (appBank() < BANK_GOAL) return; $('#shieldRoot').innerHTML = ''; if (page) closePage(); startBreak('apps'); confetti(innerWidth / 2, innerHeight / 3, 80, 7); chime(true);
       toast('15 minutes of app time', 'The shield is off and your task is paused. Cueue brings you back when it\'s up.'); return; }
