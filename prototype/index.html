@@ -919,6 +919,14 @@ html[data-weight="1"] .gw{font-weight:600}
 
 @media (max-height:900px){.shieldbox .big{width:60px;height:60px;border-radius:18px}.shieldbox .big svg{width:30px;height:30px}.shieldbox h2{font-size:22px}.shieldbox p{font-size:15px}.breathe2{width:140px;height:140px}.breathe2 .orb{width:124px;height:124px}.shieldbox .sbtn{min-height:44px;padding:11px}}
 
+.shieldbox .applabel{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.7;display:flex;gap:6px;align-items:center}
+.shieldbox .applabel svg{width:14px;height:14px}
+.shieldbox .pitchsub{font-size:15.5px;opacity:.9}
+.shieldbox .nextstep{width:100%;border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.1);text-align:left;font-size:14.5px}
+.shieldbox .nextstep b{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+.shieldbox .tprog{width:100%;height:8px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden}
+.shieldbox .tprog i{display:block;height:100%;background:#8FA2FF;border-radius:999px}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -2264,12 +2272,15 @@ function shieldChip(){
 function openShield(app){
   const t = byId(S.currentId), c = shieldCfg(), left = t ? Math.max(0, Math.ceil(estOf(t) - (t.spent || 0))) : 0;
   S._shield = {app, wait:c.strict === 'gentle' ? 5 : -1};
+  const pitch = shieldPitch(t, app);
   $('#shieldRoot').innerHTML = `<div class="shieldwrap" role="alertdialog" aria-label="${esc(app)} is shielded"><div class="shieldbox">
-    <span class="big">${ICON.lock}</span><h2>${esc(app)} is shielded</h2>
-    <p>${t ? `You're on "${esc(t.title)}"${left ? ', about ' + left + ' min left' : ''}.` : 'Your focus time is on.'} The urge will pass in a moment.</p>
+    <span class="applabel">${ICON.lock} ${esc(app)} is shielded</span>
+    <h2>${esc(pitch.head)}</h2><p class="pitchsub">${esc(pitch.sub)}</p>
+    ${t ? `<div class="tprog" aria-label="${pitch.pct}% done"><i style="width:${pitch.pct}%"></i></div>` : ''}
+    ${pitch.next ? `<div class="nextstep"><b>${pitch.last ? 'Your last step' : 'Your next step is small'}</b>${esc(pitch.next)}</div>` : ''}
     <div class="breathe2"><span class="orb" id="shOrb"></span><span class="ring2" id="shRing"></span><b id="shPhase">Get ready<small>${c.pause || 15} seconds</small></b></div>
     <small id="shTip">Follow the circle. In through your nose, a little extra sip, then slowly out.</small>
-    <button class="sbtn main" data-act="shieldback">Back to my task</button>
+    <button class="sbtn main" data-act="shieldback">${esc(pitch.cta)}</button>
     <button class="sbtn alt" data-act="shieldjot">Jot it for later instead</button>
     ${bankMeterHTML()}
     ${appBank() >= BANK_GOAL ? `<button class="sbtn through" data-act="breakthrough">Break through: 15 min of app time</button>` : ''}
@@ -2358,6 +2369,26 @@ function bankBoxHTML(){
     <p class="note" style="margin:4px 0 8px">Earn: light task +2, medium +3, heavy +5, or bank a short break for its minutes. Up to 15 carries to tomorrow.</p>
     ${m >= BANK_GOAL ? '<button class="btn small ok" data-act="breakthrough">Use 15 min now</button>' : ''}
     ${S.appBank.log.slice(0, 4).map(l => `<div class="kv"><span>${esc(l.why)}</span><span>${l.min > 0 ? '+' : ''}${l.min} min</span></div>`).join('')}</div>`;
+}
+
+// Shield pitch: lead with the strongest true reason to go back, based on where the person is in the task.
+function shieldPitch(t, app){
+  if (!t) return {head:'Your focus time is on', sub:'The urge usually fades within a minute. Breathe with the circle.', cta:'Back to my task', pct:0, next:''};
+  const e = estOf(t), sp = t.spent || 0, left = Math.max(0, Math.ceil(e - sp)), done = stepsDone(t), total = t.steps.length, ns = nextStep(t);
+  const stepPct = total ? done / total : 0, timePct = Math.min(1, sp / e), pct = Math.round(100 * Math.max(stepPct, total ? 0 : timePct));
+  const earn = TASK_EARN[t.diff] || 3, bank = appBank(), dueToday = t.due != null && t.due <= S.day, ns2 = ns ? ns.t : '';
+  const cta = left > 0 && left <= 30 ? 'Back to it: ' + left + ' min to go' : ns ? 'Back to it: next step' : 'Back to it: finish up';
+  let head, sub;
+  if (total && done === total){ head = 'You\'re done. Just tap Complete.'; sub = 'Every step is checked. One tap and "' + t.title + '" is off your plate.'; }
+  else if (total && total - done === 1){ head = 'One step left.'; sub = 'Finish it and "' + t.title + '" is done.'; }
+  else if (bank < BANK_GOAL && bank + earn >= BANK_GOAL){ head = 'Finish this and ' + app + ' is yours for 15 minutes.'; sub = 'This task tops your app-time bank up to 15 minutes, guilt-free, no shield.'; }
+  else if (pct >= 60){ head = pct >= 80 || (left && left <= 15) ? 'You\'re ' + pct + '% there. So close.' : 'More than halfway there.'; sub = (total ? done + ' of ' + total + ' steps done' : fmtDur(sp) + ' in') + (left ? ', about ' + left + ' min left.' : '.'); }
+  else if (sp < 4){ head = 'You just started. That was the hardest part.'; sub = 'Starting is where most of the effort goes, and you already did it. Give it five more minutes.'; }
+  else if (sp >= 10){ head = Math.round(sp) + ' minutes in. Don\'t lose that momentum.'; sub = 'Switching away now means warming back up later. Keep it rolling.'; }
+  else { head = 'You\'re already rolling on this.'; sub = left ? 'About ' + left + ' min left on your estimate.' : 'Stay with it a little longer.'; }
+  if (dueToday && !/done/.test(head)) sub += ' It\'s due today, so finishing now takes it off your mind.';
+  else if (bank < BANK_GOAL && !/15 minutes/.test(head)) sub += ' Finishing adds ' + earn + ' min to your app time.';
+  return {head, sub, cta, pct, last:total - done === 1, next:total && done < total && total - done > 1 ? ns2 : (total - done === 1 ? ns2 : '')};
 }
 
 /* ---------- Focus rooms (body doubling) ---------- */

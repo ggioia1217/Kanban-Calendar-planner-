@@ -9,6 +9,7 @@ separate app later.
 | Family photo cleanup game | Separate app (or family routine) | Nov 2026 |
 | Battle mode: tasks as monsters | Cueue theme / reward layer | Nov 2026 |
 | Cork board and dry-erase styles with themed animations | Cueue styles (built once, then reverted to polish later) | Nov 2026 |
+| Coach and clinician summary | Cueue feature | Nov 2026 |
 
 ## Family photo cleanup game (possible separate app)
 **The problem:** phones fill up with screenshots and near-duplicate photos, and sorting them is
@@ -55,6 +56,28 @@ turn-based strategy fight. The work is the bad guy, and every bit of progress is
     moves.
   - The art, characters and world must be our own, not borrowed from an existing game.
   - Missed days don't heal the monster. Progress always stays.
+
+## Coach and clinician summary (Cueue feature)
+**The idea:** a one-page report the person chooses to share before an appointment with a doctor,
+therapist or ADHD coach, so "How have the last few weeks been?" has a real answer.
+
+- **For a clinician:**
+  - focus window vs. when meds were taken
+  - energy and sleep trends from check-ins
+  - function: tasks finished, how often things got pushed, how often the shield caught them
+  - the person's own notes
+- **For a coach:**
+  - routines that stuck or slipped
+  - patterns in pushed tasks
+  - when-then plans kept vs. skipped
+  - weekly review results and goal progress
+- **Sharing:**
+  - the person picks what's included
+  - a PDF or an expiring private link, never a live feed
+  - never shared with an employer
+  - describes patterns, never diagnoses or dose advice
+- **Start simple:** a "Share a summary" button that makes a PDF. Clinic partnerships later (which
+  bring HIPAA-type rules).
 
 ## Notes from Cueue features
 - **What's playing, auto-filled:** possible on Android (notification access) and desktop (browser
