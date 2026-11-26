@@ -136,7 +136,29 @@ people love, and an honest check of the evidence for and against the design so f
 5. Plan a **small study**: track 30-day retention and self-rated focus with early users; ideally
    partner with a university ADHD researcher.
 
+## Added: how long should the shield pause be?
+- **A 10-second delay works, and the way out matters most.** In a six-week study of the one sec app, a
+  10-second pause before social apps opened led people to close the app 36% of the time and cut
+  openings by 57%. A follow-up experiment found the strongest part was the option to back out, not
+  the message shown during the pause (Grüning et al., PNAS 2023). A larger real-world study of 1,039
+  users found these short frictions made app opening more intentional over time (Haliburton et al.,
+  CHI 2024).
+- **Exhale-focused breathing calms fastest.** Five minutes a day of "cyclic sighing" improved mood and
+  lowered breathing rate more than mindfulness meditation in a month-long randomized study (Balban
+  et al., 2023). Slow breathing (about 6 breaths a minute) raises heart-rate variability; single
+  sessions show mixed effects on craving.
+- **What Cueue does:** 15 seconds (two cyclic sighs) by default, adjustable to 10 or 30, with
+  "Back to my task" always available immediately.
+- **Medication timing:** no peer-reviewed studies were found on apps that track ADHD medication
+  timing. Existing apps use estimated curves. Cueue learns each person's focus window from their
+  own check-ins instead, and never claims to know drug levels.
+
 ## Sources
+- Grüning, Riedel & Lorenz-Spreen (2023), one sec, *PNAS*: https://pmc.ncbi.nlm.nih.gov/articles/PMC9974409
+- Haliburton et al. (2024), design frictions in the wild, CHI:
+  https://www.medien.ifi.lmu.de/pubdb/publications/pub/haliburton2024chi/haliburton2024chi.pdf
+- Balban et al. (2023), brief structured respiration, *Cell Reports Medicine*:
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC9873947
 - Baumel et al. (2019), mental-health app retention, *JMIR*: https://www.jmir.org/2019/9/e14567
 - Digital interventions for ADHD meta-analysis, 23 RCTs (2025), *BMC Psychiatry*:
   https://doaj.org/article/789ef3c13fd143468097858bb49f61e5

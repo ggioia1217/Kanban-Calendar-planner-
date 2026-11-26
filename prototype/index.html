@@ -879,6 +879,34 @@ html[data-weight="1"] .gw{font-weight:600}
 .shieldbox .sbtn:disabled{opacity:.45;cursor:default}
 .shieldbox small{opacity:.65;font-size:12.5px}
 
+/* ---------- Shield breathing guide ---------- */
+.breathe2{position:relative;width:170px;height:170px;display:grid;place-items:center}
+.breathe2 .orb{position:absolute;inset:0;margin:auto;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(160,190,255,.55),rgba(90,120,255,.25) 60%,rgba(90,120,255,.08));box-shadow:0 0 40px rgba(120,150,255,.35);transform:scale(.55);transition-property:transform;transition-timing-function:ease-in-out}
+.breathe2 .ring2{position:absolute;inset:0;border-radius:50%;background:conic-gradient(rgba(255,255,255,.85) calc(var(--p,0)*360deg),rgba(255,255,255,.14) 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px))}
+.breathe2 b{position:relative;z-index:1;font-size:16px;font-weight:700;text-align:center;line-height:1.25;max-width:120px}
+.breathe2 b small{display:block;font-size:12px;font-weight:500;opacity:.8;margin-top:2px}
+/* ---------- Energy and medication check-in ---------- */
+.ci{border-radius:14px;padding:12px;border:1px solid color-mix(in srgb,var(--ok) 40%,var(--line));background:color-mix(in srgb,var(--ok) 6%,var(--surface));display:flex;flex-direction:column;gap:9px}
+.ci .cih{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ci .cih b{font-size:15px}
+.ci .cih small{color:var(--muted);font-size:12px}
+.ci .q{font-size:13px;font-weight:700;color:var(--muted)}
+.ci .opts{display:flex;flex-wrap:wrap;gap:5px}
+.ci .opts button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;min-height:34px}
+.ci .opts button[aria-pressed=true]{border-color:var(--ok);background:var(--ok);color:#fff}
+.ci .lvl{display:flex;gap:4px}
+.ci .lvl button{flex:1;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 2px;font:inherit;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;min-height:40px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ci .lvl button i{display:block;width:6px;border-radius:3px;background:var(--ok)}
+.ci .lvl button[aria-pressed=true]{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--surface))}
+.ci.donec{flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px 10px;padding:8px 12px;font-size:13px}
+.ci.donec span{flex:1 1 200px}
+.ci .suggest{border-radius:10px;padding:8px 10px;background:var(--surface);border:1px dashed var(--line);font-size:13.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.edots{display:flex;gap:8px;margin:10px 0}
+.edots div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;color:var(--muted)}
+.edots .bar3{width:100%;height:60px;border-radius:8px;background:var(--surface-2);display:flex;align-items:flex-end;overflow:hidden}
+.edots .bar3 i{display:block;width:100%;background:var(--ok);border-radius:8px 8px 0 0}
+.edots .pill2{font-size:10.5px;font-weight:700;color:var(--violet)}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -1109,12 +1137,13 @@ function seed(){
   return {
     day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
     currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
-    settings:{shield:{mode:'auto', strict:'gentle', apps:['Instagram', 'TikTok', 'YouTube', 'News', 'Games']}, textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
+    settings:{shield:{mode:'auto', strict:'gentle', pause:15, apps:['Instagram', 'TikTok', 'YouTube', 'News', 'Games']}, meds:true, medOn:45, medDur:240, textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       tabbar:true, leaderboard:true, medTime:'',
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
     notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'effort',
     shieldStats:{bounced:2, opened:1},
+    checkin:{0:{energy:4, sleep:'good', meds:'taken', medAt:480, done:true, mid:3}},
     rewards:{lifetime:41, jar:9, pack:'classic', stickers:['first', 'appreciated'], surprises:[], lastSurprise:-999, cleared:1, bundle:'my favorite podcast', taken:[],
       treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'New book', cost:120}]},
     later:[], light:{}, mantraUsed:{}, mantraStories:[
@@ -1206,7 +1235,7 @@ const STORE = 'cueue-proto-v10';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
 if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later || !S.rewards) S = seed();
-S.shieldStats = S.shieldStats || {bounced:0, opened:0};
+S.shieldStats = S.shieldStats || {bounced:0, opened:0}; S.checkin = S.checkin || {};
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -1295,6 +1324,8 @@ function score(t, at){
   if (t.cadence && t.missed) s += 12 * t.missed;
   if (t.spent > 0 && t.id !== S.currentId) s += 25; // paused work stays near the top
   if (t.whenFired === S.day) s += 60; // its when-then moment came, so it goes next
+  const ck = S.checkin && S.checkin[S.day]; if (ck && ck.done && (ck.energy <= 2 || (ck.mid != null && ck.mid <= 2 && at >= 14 * 60))){ if (t.diff === 3) s -= 18; if (t.diff === 1) s += 10; }
+  const mw = ck && medWindow(ck); if (mw && at >= mw[1] && t.diff === 3) s -= 12; // after meds wear off, lighter work first
   const fresh = at >= st.freshStart && at < st.freshEnd;
   if (t.diff === 3) s += fresh ? 35 : -15;
   if (t.diff === 2 && fresh) s += 8;
@@ -1455,6 +1486,7 @@ function columnHTML(day, single){
     const {items, overflow} = schedule(day);
     if (isToday){
       const [mid, mtext] = thisMantra();
+      if (!(S.checkin[day] && S.checkin[day].skipped)) body += checkinHTML();
       if (has('mantras')) body += `<div class="mantra" data-act="mantras" role="button" tabindex="0"><span class="ml">This week's mantra</span><b>"${esc(mtext)}"</b>${S.mantraUsed[day] ? '<span class="chip okc">Used today</span>' : '<button class="btn small" data-act="mused">I used it</button>'}</div>`;
       if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>${S.light[day].reset ? 'Day reset.' : 'Light day.'}</b> ${S.light[day].reset ? 'Just your essentials now' : 'Only what\'s essential today'}${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
       body += weekTopHTML();
@@ -1549,7 +1581,7 @@ function tick(){
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
     if (!$('#laterPop').innerHTML && !$('#sheetRoot').innerHTML){ const n = laterDue(); if (n) showLaterPop(n); }
-    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); roomTick(); drawLock();
+    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); checkinTriggers(S.now - dMin); roomTick(); drawLock();
     live();
   }
   requestAnimationFrame(tick);
@@ -2021,6 +2053,7 @@ function seedFresh(){
     notes:[{id:'nt-w', icon:'star', text:'Welcome to Cueue', sub:'Start small. More features unlock as you use it.', when:'Now', read:false}]});
   f.rewards = {lifetime:0, jar:0, pack:'classic', stickers:[], surprises:[], lastSurprise:-999, cleared:0, bundle:'', taken:[],
     treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'Something I\'ve wanted', cost:120}]};
+  f.settings.meds = null; f.checkin = {};
   f.ob = {step:0, startDay:f.day, unlocked:[], area:'both', focus:'morning', things:[['', 'work'], ['', 'home'], ['', 'work']]};
   return f;
 }
@@ -2218,12 +2251,72 @@ function openShield(app){
   $('#shieldRoot').innerHTML = `<div class="shieldwrap" role="alertdialog" aria-label="${esc(app)} is shielded"><div class="shieldbox">
     <span class="big">${ICON.lock}</span><h2>${esc(app)} is shielded</h2>
     <p>${t ? `You're on "${esc(t.title)}"${left ? ', about ' + left + ' min left' : ''}.` : 'Your focus time is on.'} The urge will pass in a moment.</p>
-    <div class="breath" id="shBreath">${c.strict === 'gentle' ? 5 : ''}</div><small id="shTip">Breathe in… and out.</small>
+    <div class="breathe2"><span class="orb" id="shOrb"></span><span class="ring2" id="shRing"></span><b id="shPhase">Get ready<small>${c.pause || 15} seconds</small></b></div>
+    <small id="shTip">Follow the circle. In through your nose, a little extra sip, then slowly out.</small>
     <button class="sbtn main" data-act="shieldback">Back to my task</button>
     <button class="sbtn alt" data-act="shieldjot">Jot it for later instead</button>
     ${c.strict === 'gentle' ? `<button class="sbtn alt" data-act="shieldopen" id="shOpen" disabled>Open ${esc(app)} for 5 min</button>` : '<small>Firm shield: it opens at your next break.</small>'}
   </div></div>`;
-  if (c.strict === 'gentle'){ let n = 5; const tick2 = () => { const b = $('#shBreath'); if (!b) return; n--; if (n > 0){ b.textContent = n; setTimeout(tick2, 1000); } else { b.textContent = '✓'; $('#shTip').textContent = 'Still want it? That\'s okay too.'; $('#shOpen').disabled = false; } }; setTimeout(tick2, 1000); }
+  breatheGuide(c.pause || 15, () => { const tip = $('#shTip'); if (!tip) return; tip.textContent = c.strict === 'gentle' ? 'Still want it? That\'s okay too. Or head back, the urge usually fades.' : 'Nice. The urge usually fades if you give it a minute.'; const o = $('#shOpen'); if (o) o.disabled = false; });
+}
+
+// Breathing guide: exhale-focused "cyclic sighs" (in through the nose, a short extra sip, a long slow exhale).
+// 15 s = two sighs; 10 s = one slow 4-in / 6-out breath; 30 s = four sighs.
+function breathPlan(total){
+  if (total <= 10) return [['in', 4, 'Breathe in', 'through your nose'], ['out', 6, 'Slowly out', 'through your mouth']];
+  const sigh = [['in', 2, 'Breathe in', 'through your nose'], ['sip', 1, 'Sip in a little more', ''], ['out', 4.5, 'Long, slow exhale', 'let your shoulders drop']];
+  const n = Math.round(total / 7.5); let plan = []; for (let i = 0; i < n; i++) plan = plan.concat(sigh); return plan;
+}
+function breatheGuide(total, done){
+  const plan = breathPlan(total), sum = plan.reduce((a, x) => a + x[1], 0), t0 = performance.now(); let i = 0;
+  const orb = () => $('#shOrb'), ring = () => $('#shRing'), ph = () => $('#shPhase');
+  const step = () => {
+    if (!orb()) return;
+    if (i >= plan.length){ orb().style.transitionDuration = '1s'; orb().style.transform = 'scale(.7)'; ph().innerHTML = 'Done<small>How do you feel?</small>'; ring().style.setProperty('--p', 1); done && done(); return; }
+    const [kind, sec, label, sub] = plan[i++], reduce = !motionOK();
+    orb().style.transitionDuration = reduce ? '0s' : sec + 's';
+    orb().style.transform = kind === 'in' ? 'scale(.9)' : kind === 'sip' ? 'scale(1)' : 'scale(.55)';
+    ph().innerHTML = esc(label) + (sub ? `<small>${esc(sub)}</small>` : '');
+    if (navigator.vibrate && S.settings.haptics && kind !== 'out') try { navigator.vibrate(15); } catch(e) {}
+    setTimeout(step, sec * 1000);
+  };
+  const prog = () => { const r = ring(); if (!r) return; const p = Math.min(1, (performance.now() - t0) / 1000 / sum); r.style.setProperty('--p', p.toFixed(3)); if (p < 1) requestAnimationFrame(prog); };
+  setTimeout(() => { step(); requestAnimationFrame(prog); }, 400);
+}
+
+/* ---------- Energy and medication check-in ---------- */
+// Private: never shared with a team or manager. Taking meds sets today's focus window; low energy or rough sleep offers a lighter day.
+const ENERGY = ['', 'Low', 'Meh', 'Okay', 'Good', 'High'];
+const ci = () => S.checkin[S.day] || (S.checkin[S.day] = {});
+const hm = m => fmt(Math.round(m));
+function medWindow(c){ return c && c.meds === 'taken' && c.medAt != null ? [c.medAt + S.settings.medOn, c.medAt + S.settings.medDur] : null; }
+function checkinHTML(){
+  const c = ci(), st = S.settings;
+  if (c.done){
+    const w = medWindow(c);
+    return `<div class="ci donec"><span><b>Check-in:</b> energy ${ENERGY[c.energy] || '–'}${c.sleep ? ' · sleep ' + c.sleep : ''}${c.meds === 'taken' ? ' · meds ' + hm(c.medAt) : c.meds === 'skipped' ? ' · no meds today' : ''}${w ? ' · focus window ' + hm(w[0]) + '–' + hm(w[1]) : ''}</span><button class="btn small ghost" data-act="ciedit">Edit</button></div>
+      ${c.suggest ? `<div class="ci"><div class="suggest"><span style="flex:1 1 180px">${c.energy <= 2 ? 'Low energy' : 'Rough night'}. Want a lighter day? Only essentials, longer breaks.</span><button class="btn small" data-act="cilight">Lighten today</button><button class="btn small ghost" data-act="cikeep">Keep it as is</button></div></div>` : ''}`;
+  }
+  const opt = (k, v, l) => `<button data-act="ciset" data-k="${k}" data-v="${v}" aria-pressed="${String(c[k]) === String(v)}">${l}</button>`;
+  return `<div class="ci" role="group" aria-label="Morning check-in"><div class="cih"><b>Morning check-in</b><small>Private. Five seconds.</small><button class="btn small ghost" data-act="ciskip" style="margin-left:auto">Skip today</button></div>
+    <span class="q">Energy right now</span><div class="lvl">${[1, 2, 3, 4, 5].map(n => `<button data-act="ciset" data-k="energy" data-v="${n}" aria-pressed="${c.energy === n}"><i style="height:${4 + n * 4}px"></i>${ENERGY[n]}</button>`).join('')}</div>
+    <span class="q">Sleep last night</span><div class="opts">${opt('sleep', 'rough', 'Rough')}${opt('sleep', 'okay', 'Okay')}${opt('sleep', 'good', 'Good')}</div>
+    ${st.meds == null ? `<span class="q">Do you take ADHD medication? (only you see this)</span><div class="opts"><button data-act="cimeds" data-v="yes">Yes</button><button data-act="cimeds" data-v="no">No</button></div>`
+      : st.meds ? `<span class="q">Medication</span><div class="opts">${opt('medWhen', 'now', 'Took it now')}${opt('medWhen', '30', '30 min ago')}${opt('medWhen', '60', '1 hr ago')}${opt('meds', 'skipped', 'Not today')}</div>` : ''}
+    <div class="actions" style="margin:0"><button class="btn small primary" data-act="cidone" ${c.energy ? '' : 'disabled'}>Done</button></div></div>`;
+}
+function applyCheckin(){
+  const c = ci(), w = medWindow(c);
+  if (w){ S.settings.freshStart = Math.round(w[0]); S.settings.freshEnd = Math.round(w[1]); }
+  c.suggest = !S.light[S.day] && ((c.energy && c.energy <= 2) || c.sleep === 'rough');
+}
+function checkinTriggers(prev){
+  const c = S.checkin[S.day]; if (!c || !c.done) return;
+  const w = medWindow(c);
+  if (w && prev < w[1] - 15 && S.now >= w[1] - 15){ cue(1); toast('Meds may wear off around ' + hm(w[1]), 'Cueue lined up lighter tasks for after that.'); note('Focus window ends around ' + hm(w[1]), 'Lighter tasks are planned for later today.', 'bell', null); }
+  if (c.mid == null && prev < 14 * 60 && S.now >= 14 * 60 && !$('#whenRoot').innerHTML){
+    $('#whenRoot').innerHTML = `<div class="whenpop" role="dialog" aria-label="Afternoon check-in"><div class="lab">Quick check</div><p>How's your energy now?</p>
+      <div class="actions" style="margin:0">${[[2, 'Low'], [3, 'Okay'], [4, 'Good']].map(([v, l]) => `<button class="btn" data-act="cimid" data-v="${v}">${l}</button>`).join('')}</div></div>`; }
 }
 
 /* ---------- Focus rooms (body doubling) ---------- */
@@ -3667,6 +3760,11 @@ function openInsights(){
     <div class="grid-cards" style="margin-top:14px">
       <div class="box"><h3>Time estimates</h3><p class="note">Routines Cueue has learned from:</p>${est.map(e => `<div class="kv"><span>${esc(e[0])}</span><span>~${fmtDur(e[1])} · ${e[2]} runs</span></div>`).join('')}
         <p class="note" style="margin-top:8px">Heavy tasks tend to run about 20% longer than planned. Cueue now adds a small buffer to them.</p></div>
+      <div class="box"><h3>Energy and meds</h3><p class="note">From your check-ins. Only you see this.</p>
+        <div class="edots">${DAYS.map((d, i) => { const c = S.checkin[i]; return `<div><span class="bar3"><i style="height:${c && c.energy ? c.energy * 20 : 0}%"></i></span>${d}${c && c.meds === 'taken' ? '<span class="pill2">Meds</span>' : ''}</div>`; }).join('')}</div>
+        ${(() => { const days = Object.entries(S.checkin).filter(([, c]) => c.done), tasksOn = d => S.log.filter(l => l.day === +d && l.kind === 'task').length;
+          const on = days.filter(([, c]) => c.meds === 'taken'), off = days.filter(([, c]) => c.meds !== 'taken'), avg = a => a.length ? (a.reduce((x, [d]) => x + tasksOn(d), 0) / a.length).toFixed(1) : null;
+          return on.length && off.length ? `<p class="note">Tasks finished: ${avg(on)} a day with meds, ${avg(off)} without.</p>` : '<p class="note">After a few check-ins, Cueue shows how energy, sleep and meds line up with your days. A summary you can share with your clinician comes later.</p>'; })()}</div>
       <div class="box"><h3>Best focus hours</h3><div style="display:flex;gap:4px;align-items:flex-end;height:90px;margin:10px 0">${hours.map(h => `<div title="${h}:00" style="flex:1;border-radius:4px 4px 0 0;background:${fresh(h) ? 'var(--accent)' : 'var(--pie-track)'};height:${fresh(h) ? 80 + (h % 3) * 6 : 30 + (h % 4) * 8}%"></div>`).join('')}</div>
         <div class="kv" style="font-size:12px"><span>8 AM</span><span>6 PM</span></div><p class="note">Heavy tasks finish fastest between ${fmt(S.settings.freshStart)} and ${fmt(S.settings.freshEnd)}.</p></div>
       <div class="box"><h3>Where flows wait</h3>${Object.keys(stalls).length ? Object.entries(stalls).map(([r, n]) => `<div class="kv"><span>${avatar(r, true)}</span><span>${n} task${n > 1 ? 's' : ''} waiting</span></div>`).join('') : '<p class="note">Nothing is stuck right now.</p>'}
@@ -3683,6 +3781,9 @@ function openProfile(){
         <div class="field"><label for="pWs">Work starts</label><input type="time" id="pWs" value="${hh(st.workStart)}"></div><div class="field"><label for="pWe">Work ends</label><input type="time" id="pWe" value="${hh(st.workEnd)}"></div>
         <div class="field"><label for="pBuf">Buffer between tasks (min)</label><input type="number" id="pBuf" min="0" max="30" value="${st.buffer}"></div><div class="field"><label for="pBrk">Break every (min)</label><input type="number" id="pBrk" min="30" max="240" step="15" value="${st.breakEvery}"></div>
         <div class="field"><label for="pMed">Medication time (optional)</label><input type="time" id="pMed" value="${esc(st.medTime || '')}"></div></div>
+      <div class="grid2"><div class="field"><label for="pMedOn">Meds start working after (min)</label><input type="number" id="pMedOn" min="0" max="180" value="${st.medOn || 45}"></div>
+        <div class="field"><label for="pMedDur">Focus lasts about (hours)</label><input type="number" id="pMedDur" min="1" max="14" step=".5" value="${(st.medDur || 240) / 60}"></div></div>
+      <p class="note">Used with your morning check-in to set the day's focus window. Private: never shared with your team or manager. Cueue learns your real window from your check-ins over time.</p>
         <p class="note">If you add a medication time, Cueue can shift your fresh hours to match when it usually takes effect.</p></div>
       <div class="box"><h3>Reminders</h3><p class="note">How strongly Cueue gets your attention.</p>
         <div class="actions">${['Off', 'Gentle', 'Medium', 'Strong'].map((l, i) => `<button class="chipbtn" aria-pressed="${st.cue === i}" data-act="setcue" data-cue="${i}">${l}</button>`).join('')}</div>
@@ -3695,7 +3796,7 @@ function openProfile(){
   const toMin = v => { const [h, m] = v.split(':').map(Number); return h * 60 + m; };
   const bind = (id, fn) => $(id).addEventListener('change', ev => { fn(ev.target); save(); render(); });
   bind('#pFs', el => st.freshStart = toMin(el.value)); bind('#pFe', el => st.freshEnd = toMin(el.value)); bind('#pWs', el => st.workStart = toMin(el.value)); bind('#pWe', el => st.workEnd = toMin(el.value));
-  bind('#pBuf', el => st.buffer = Math.max(0, +el.value)); bind('#pBrk', el => st.breakEvery = Math.max(30, +el.value)); bind('#pMed', el => st.medTime = el.value);
+  bind('#pBuf', el => st.buffer = Math.max(0, +el.value)); bind('#pBrk', el => st.breakEvery = Math.max(30, +el.value)); bind('#pMed', el => st.medTime = el.value); bind('#pMedOn', el => st.medOn = Math.max(0, +el.value)); bind('#pMedDur', el => st.medDur = Math.max(60, +el.value * 60));
 }
 
 function openEvent(e){
@@ -3813,6 +3914,8 @@ function openSettings(){
     <p class="note" style="margin-top:0">Blocks the apps you pick while you work, with a short pause screen if you try to open one. On iPhone this uses Apple's Screen Time permission: Cueue never sees which apps you use, only that a shield was shown.</p>
     <div class="field"><label>When</label><div class="seg" role="group" aria-label="When the shield is on">${[['auto', 'During tasks'], ['manual', 'When I turn it on'], ['off', 'Off']].map(([k, l]) => `<button data-act="shmode" data-v="${k}" aria-pressed="${shieldCfg().mode === k}">${l}</button>`).join('')}</div></div>
     <div class="field"><label>How strict</label><div class="seg" role="group" aria-label="Strictness">${[['gentle', 'Gentle: pause, then allow 5 min'], ['firm', 'Firm: wait for a break']].map(([k, l]) => `<button data-act="shstrict" data-v="${k}" aria-pressed="${shieldCfg().strict === k}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label>Breathing pause</label><div class="seg" role="group" aria-label="Pause length">${[[10, '10 sec'], [15, '15 sec'], [30, '30 sec']].map(([v, l]) => `<button data-act="shpause" data-v="${v}" aria-pressed="${(shieldCfg().pause || 15) === v}">${l}</button>`).join('')}</div>
+      <p class="note" style="margin:4px 0 0">A 10-second pause before opening an app cut openings by more than half in a large study. "Back to my task" is always there right away.</p></div>
     <div class="field"><label>Shield these</label><div class="appchips">${SHIELD_APPS.map(a => `<button class="chipbtn" data-act="shapp" data-v="${a}" aria-pressed="${shieldCfg().apps.includes(a)}">${a}</button>`).join('')}</div></div></div>
   <div class="sec"><h4>Day flow</h4>
     ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
@@ -3924,6 +4027,20 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'shpause': shieldCfg().pause = +el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); save(); return;
+    case 'ciset': { const c = ci(), k = el.dataset.k, v = el.dataset.v;
+      if (k === 'energy') c.energy = +v; else if (k === 'medWhen'){ c.meds = 'taken'; c.medWhen = v; c.medAt = Math.round(S.now - (v === 'now' ? 0 : +v)); } else c[k] = v;
+      if (k === 'meds' && v === 'skipped'){ c.medWhen = null; c.medAt = null; }
+      render(); return; }
+    case 'cimeds': S.settings.meds = el.dataset.v === 'yes'; save(); render(); return;
+    case 'cidone': { const c = ci(); c.done = true; applyCheckin(); save(); render(); const w = medWindow(c);
+      toast('Thanks for checking in', w ? 'Your focus window today: ' + hm(w[0]) + ' to ' + hm(w[1]) + '. Heavy tasks go there.' : c.energy <= 2 ? 'Cueue will go easy on you today.' : 'Your plan is set.'); return; }
+    case 'ciedit': { const c = ci(); c.done = false; render(); return; }
+    case 'ciskip': ci().skipped = true; save(); render(); return;
+    case 'cilight': { const c = ci(); c.suggest = false; const r = lightenDay(S.day); render(); save(); toast('Light day', (r.moved ? r.moved + ' tasks moved to ' + DAYS[r.target] + '. ' : '') + 'Go easy on yourself.'); return; }
+    case 'cikeep': ci().suggest = false; render(); save(); return;
+    case 'cimid': { const c = ci(); c.mid = +el.dataset.v; $('#whenRoot').innerHTML = ''; save(); render();
+      toast(c.mid <= 2 ? 'Afternoon dip' : 'Got it', c.mid <= 2 ? 'Lighter tasks moved up. A short walk can help too.' : 'Keep going.'); return; }
     case 'lkjot': S._lockDone = null; S._lockJot = {text:'', first:60, tag:(captureContext().ctx) || laterTagNow()}; drawLock(true); setTimeout(() => $('#lkText') && $('#lkText').focus(), 60); return;
     case 'lkjtime': S._lockJot.text = $('#lkText').value; S._lockJot.first = +el.dataset.v; drawLock(true); return;
     case 'lkjtag': S._lockJot.text = $('#lkText').value; S._lockJot.tag = el.dataset.v; drawLock(true); return;
