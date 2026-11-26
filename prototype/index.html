@@ -816,6 +816,69 @@ html[data-weight="1"] .gw{font-weight:600}
 .reviewcard{border-radius:14px;padding:12px;background:color-mix(in srgb,var(--accent) 8%,var(--surface));border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--line));display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .reviewcard span{flex:1 1 180px;font-size:14px}
 
+/* ---------- Lock screen: Later pocket widget + quick jot ---------- */
+.lockwidgets{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.lwid{display:flex;align-items:center;gap:7px;border:0;border-radius:18px;padding:9px 13px;background:rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#fff;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;min-height:44px}
+.lwid svg{width:17px;height:17px}
+.lwid.jot{background:rgba(255,255,255,.92);color:#151830}
+.lwid small{font-weight:600;opacity:.75}
+.lockjot{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;border-radius:26px;padding:14px;background:rgba(24,27,48,.9);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;gap:10px;animation:up .25s ease}
+.lockjot h4{margin:0;font-size:16px;color:#fff}
+.lockjot textarea{width:100%;min-height:84px;resize:vertical;border-radius:14px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:16px;padding:10px 12px}
+.lockjot textarea::placeholder{color:rgba(255,255,255,.55)}
+.ljchips{display:flex;flex-wrap:wrap;gap:6px}
+.ljchips button{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:999px;padding:6px 11px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;min-height:36px}
+.ljchips button[aria-pressed=true]{background:#fff;color:#151830;border-color:#fff}
+.lockjot .lab2{font-size:12px;font-weight:700;opacity:.75;color:#fff}
+.lockjot .ctxline{font-size:12px;opacity:.7;color:#fff}
+.lockjot .row2{display:flex;gap:8px}
+.lockjot .row2 button{flex:1;border:0;border-radius:999px;padding:11px;font:inherit;font-weight:800;cursor:pointer;min-height:44px}
+.lockjot .save{background:#fff;color:#151830}
+.lockjot .cancel{background:rgba(255,255,255,.16);color:#fff}
+.lockdone{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:3;background:rgba(255,255,255,.92);color:#151830;border-radius:20px;padding:14px 18px;font-weight:700;text-align:center;width:min(300px,80%);animation:up .25s ease}
+.lockdone small{display:block;font-weight:500;opacity:.75;margin-top:2px}
+/* ---------- Focus rooms ---------- */
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:14px}
+.room{border-radius:16px;padding:14px;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.room h3{margin:0;font-size:17px}
+.room p{margin:0;font-size:13.5px;color:var(--muted)}
+.room .faces{display:flex}
+.room .faces span{width:28px;height:28px;border-radius:50%;margin-right:-6px;border:2px solid var(--surface);display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff}
+.livedot{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--ok)}
+.livedot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent)}
+.roomhead{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-top:12px}
+.roomring{--p:0;position:relative;width:128px;height:128px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*360deg),var(--pie-track) 0)}
+.roomring::after{content:"";position:absolute;inset:12px;border-radius:50%;background:var(--bg)}
+.roomring b{position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-size:26px;font-variant-numeric:tabular-nums}
+.roomring small{position:absolute;left:0;right:0;top:64%;text-align:center;z-index:1;font-size:11.5px;color:var(--muted)}
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.person{border-radius:14px;padding:10px;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:6px;min-height:96px;position:relative}
+.person .pav{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff}
+.person b{font-size:13.5px}
+.person small{font-size:12px;color:var(--muted);line-height:1.3}
+.person.me{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.person.flash{animation:flash 1.2s ease}
+@keyframes flash{30%{box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 45%,transparent)}}
+.person .react{position:absolute;right:8px;top:8px;font-size:12px;font-weight:800;color:var(--ok)}
+/* ---------- Distraction shield ---------- */
+.shieldchip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:700;border:1px solid color-mix(in srgb,var(--ok) 45%,var(--line));color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--surface));cursor:pointer}
+.shieldchip.off{color:var(--muted);border-color:var(--line);background:var(--surface)}
+.shieldchip svg{width:14px;height:14px}
+.appchips{display:flex;flex-wrap:wrap;gap:6px}
+.shieldwrap{position:fixed;inset:0;z-index:97;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#1B2140,#0E1222);color:#fff;text-align:center}
+.shieldbox{max-width:380px;display:flex;flex-direction:column;gap:14px;align-items:center}
+.shieldbox .big{width:84px;height:84px;border-radius:24px;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.shieldbox .big svg{width:42px;height:42px}
+.shieldbox h2{margin:0;font-size:26px;line-height:1.15}
+.shieldbox p{margin:0;font-size:16px;opacity:.85;line-height:1.45}
+.shieldbox .breath{width:110px;height:110px;border-radius:50%;border:3px solid rgba(255,255,255,.35);display:grid;place-items:center;font-size:30px;font-weight:700;animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.12);border-color:rgba(255,255,255,.8)}}
+.shieldbox .sbtn{width:100%;border:0;border-radius:999px;padding:13px;font:inherit;font-weight:800;cursor:pointer;min-height:48px}
+.shieldbox .sbtn.main{background:#fff;color:#151830}
+.shieldbox .sbtn.alt{background:rgba(255,255,255,.16);color:#fff}
+.shieldbox .sbtn:disabled{opacity:.45;cursor:default}
+.shieldbox small{opacity:.65;font-size:12.5px}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -849,6 +912,7 @@ html[data-weight="1"] .gw{font-weight:600}
       <button data-speed="1">1×</button><button data-speed="60">60×</button><button data-speed="300">300×</button>
     </div>
     <button class="btn small" id="lockBtn">Lock screen</button>
+    <button class="btn small" id="appBtn">Open an app</button>
     <button class="btn small" id="endDayBtn">End day ▸</button>
     <button class="btn small" id="clearBtn">Finish today (demo)</button>
     <div class="spacer"></div>
@@ -867,6 +931,7 @@ html[data-weight="1"] .gw{font-weight:600}
 <div id="surpriseRoot"></div>
 <div id="obRoot"></div>
 <div id="whenRoot"></div>
+<div id="shieldRoot"></div>
 
 <script>
 (() => {
@@ -1044,11 +1109,12 @@ function seed(){
   return {
     day:1, now:9*60+20, speed:60, running:true, focus:'all', view:'auto', viewDay:1, nextId:100,
     currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0,
-    settings:{textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
+    settings:{shield:{mode:'auto', strict:'gentle', apps:['Instagram', 'TikTok', 'YouTube', 'News', 'Games']}, textStyle:'key', textWeight:true, laterFirst:60, cue:2, edge:true, sound:true, haptics:true, pies:true, reduce:false, times:true, prepAll:true, autoNext:true, breakLock:true,
       tabbar:true, leaderboard:true, medTime:'',
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
     notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'effort',
+    shieldStats:{bounced:2, opened:1},
     rewards:{lifetime:41, jar:9, pack:'classic', stickers:['first', 'appreciated'], surprises:[], lastSurprise:-999, cleared:1, bundle:'my favorite podcast', taken:[],
       treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'New book', cost:120}]},
     later:[], light:{}, mantraUsed:{}, mantraStories:[
@@ -1140,6 +1206,7 @@ const STORE = 'cueue-proto-v10';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
 if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later || !S.rewards) S = seed();
+S.shieldStats = S.shieldStats || {bounced:0, opened:0};
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -1342,7 +1409,7 @@ function topPanel(){
     const e = estOf(t), r = (t.spent||0)/e, open = t.steps.map((s,i) => [s,i]).filter(([s]) => !s.done);
     const lvl = level(t, S.day);
     return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel" style="${edgeDelay()}">
-      <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
+      <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}<span style="margin-left:auto">${shieldChip()}</span></div>
       ${blockNoteHTML(t)}
       ${t.when ? `<div class="whensentence">${esc(whenSentence(t))}</div>` : ''}
       ${(t.rolled || 0) >= 1 && S.rewards.bundle ? `<div class="pairhint">You've put this off before. Pair it with ${esc(S.rewards.bundle)}.</div>` : ''}
@@ -1357,6 +1424,7 @@ function topPanel(){
       <div class="row"><button class="btn small" data-act="${S.paused?'resume':'pause'}">${S.paused?'Resume':'Pause'}</button>
         <button class="btn small rest" data-act="brkpick">Take a break</button>
         <button class="btn small" data-act="ltnew">Jot for later</button>
+        <button class="btn small" data-act="rooms">Focus room</button>
         ${t.roadblock ? '' : `<button class="btn small" data-act="blkopen" data-task="${t.id}" style="color:var(--hot)">Roadblock</button>`}
         <button class="btn small" data-open="${t.id}">Details</button>
         <button class="btn small ghost" data-act="switch">Switch task</button></div></div>`;
@@ -1481,7 +1549,7 @@ function tick(){
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
     if (!$('#laterPop').innerHTML && !$('#sheetRoot').innerHTML){ const n = laterDue(); if (n) showLaterPop(n); }
-    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); drawLock();
+    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); roomTick(); drawLock();
     live();
   }
   requestAnimationFrame(tick);
@@ -1931,6 +1999,7 @@ const UNLOCKS = [
   ['rewards', 'Rewards', 'Your treat jar, stickers and sound packs', s => s.log.some(l => l.kind === 'task')],
   ['goals', 'Goals', 'Group tasks under something bigger', s => s.log.some(l => l.kind === 'task')],
   ['mantras', 'Mantras', 'A short saying to practice each week', s => s.log.filter(l => l.kind === 'task').length >= 3],
+  ['rooms', 'Focus rooms', 'Work alongside others when starting is hard', s => s.log.filter(l => l.kind === 'task').length >= 3],
   ['templates', 'Templates & ideas', 'Ready-made routines for home and work', s => s.log.filter(l => l.kind === 'task').length >= 3],
   ['review', 'Weekly review', '10 minutes to look back and pick next week\'s top three', s => s.day >= s.ob.startDay + 2],
   ['light', 'Light days', 'Make any day lighter, no questions asked', s => s.day >= s.ob.startDay + 1],
@@ -2133,6 +2202,99 @@ function weekTopHTML(){
   return `<div class="weektop"><span class="ml">This week's top three</span>${ids.map(id => { const t = byId(id); return `<div class="${t.done ? 'done' : ''}"><i></i><span>${esc(t.title)}</span></div>`; }).join('')}</div>`;
 }
 
+/* ---------- Distraction shield ---------- */
+// In the real app: Apple's Screen Time API (FamilyControls / ManagedSettings) shields the apps you pick while a task runs.
+// Cueue never learns which apps you open; it only knows a shield was shown. Android: usage access + overlay. Computer: browser extension.
+const SHIELD_APPS = ['Instagram', 'TikTok', 'YouTube', 'Reddit', 'X', 'News', 'Games', 'Shopping', 'Email'];
+function shieldCfg(){ S.settings.shield = S.settings.shield || {mode:'auto', strict:'gentle', apps:SHIELD_APPS.slice(0, 5)}; return S.settings.shield; }
+function shieldActive(){ const c = shieldCfg(); if (c.mode === 'off' || S.brk) return false; return c.mode === 'auto' ? !!(S.currentId && !S.paused) : !!S.shieldOn; }
+function shieldChip(){
+  const c = shieldCfg(), on = shieldActive();
+  return `<button class="shieldchip ${on ? '' : 'off'}" data-act="shieldtoggle" title="Distraction shield">${ICON.lock}${on ? 'Shield on · ' + c.apps.length + ' apps' : c.mode === 'off' ? 'Shield off' : 'Shield ready'}</button>`;
+}
+function openShield(app){
+  const t = byId(S.currentId), c = shieldCfg(), left = t ? Math.max(0, Math.ceil(estOf(t) - (t.spent || 0))) : 0;
+  S._shield = {app, wait:c.strict === 'gentle' ? 5 : -1};
+  $('#shieldRoot').innerHTML = `<div class="shieldwrap" role="alertdialog" aria-label="${esc(app)} is shielded"><div class="shieldbox">
+    <span class="big">${ICON.lock}</span><h2>${esc(app)} is shielded</h2>
+    <p>${t ? `You're on "${esc(t.title)}"${left ? ', about ' + left + ' min left' : ''}.` : 'Your focus time is on.'} The urge will pass in a moment.</p>
+    <div class="breath" id="shBreath">${c.strict === 'gentle' ? 5 : ''}</div><small id="shTip">Breathe in… and out.</small>
+    <button class="sbtn main" data-act="shieldback">Back to my task</button>
+    <button class="sbtn alt" data-act="shieldjot">Jot it for later instead</button>
+    ${c.strict === 'gentle' ? `<button class="sbtn alt" data-act="shieldopen" id="shOpen" disabled>Open ${esc(app)} for 5 min</button>` : '<small>Firm shield: it opens at your next break.</small>'}
+  </div></div>`;
+  if (c.strict === 'gentle'){ let n = 5; const tick2 = () => { const b = $('#shBreath'); if (!b) return; n--; if (n > 0){ b.textContent = n; setTimeout(tick2, 1000); } else { b.textContent = '✓'; $('#shTip').textContent = 'Still want it? That\'s okay too.'; $('#shOpen').disabled = false; } }; setTimeout(tick2, 1000); }
+}
+
+/* ---------- Focus rooms (body doubling) ---------- */
+const ROOMS = [
+  {id:'quiet', name:'Quiet room', sub:'Work alongside people everywhere. No talking, cameras off.', count:24},
+  {id:'team', name:'Operations team', sub:'Coworkers focusing right now.', count:3},
+  {id:'family', name:'Family table', sub:'Homework, bills and chores, together.', count:2},
+  {id:'solo', name:'Just me', sub:'A quiet session timer and a soft background sound.', count:0}];
+const ROOM_PEOPLE = {
+  quiet:[['Sam', '#3B55F0', 'Writing a grant proposal'], ['Ana', '#D64575', 'Studying for an exam'], ['Kai', '#0F8B8D', 'Working'], ['Lee', '#E08A00', 'Clearing email'], ['Rui', '#8A4FD8', 'Working'], ['Jo', '#1E9E6A', 'Editing a video']],
+  team:[['Priya Shah', '#3B55F0', 'Month-end billing'], ['Casey Nguyen', '#D64575', 'Vendor follow-ups'], ['Riley Brooks', '#0F8B8D', 'Working']],
+  family:[['Maya', '#E08A00', 'Math homework'], ['Alex', '#1E9E6A', 'Paying bills']], solo:[]};
+function roomPeople(id){ return (ROOM_PEOPLE[id] || []).map(([n, c, w], i) => ({n, c, w, steps:(i * 7) % 3})); }
+function openRooms(){
+  if (S.room) return openRoom();
+  openPage('rooms', [['Board', 'board'], ['Focus rooms', 'rooms']], `<h1>Focus rooms</h1>
+    <p class="lede">Starting is easier when someone else is working too. Join a room, see who's focusing, and get to it. No talking needed.</p>
+    <div class="rooms">${ROOMS.map(r => { const ppl = roomPeople(r.id); return `<div class="room"><h3>${esc(r.name)}</h3><p>${esc(r.sub)}</p>
+      ${r.count ? `<div style="display:flex;align-items:center;gap:12px"><span class="faces">${ppl.slice(0, 5).map(x => `<span style="background:${x.c}">${esc(x.n.split(' ').map(w => w[0]).join('').slice(0, 2))}</span>`).join('')}</span><span class="livedot">${r.count} focusing</span></div>` : '<span class="note">Just you and the timer</span>'}
+      <div class="actions" style="margin-top:2px">${[25, 50, 90].map(m => `<button class="btn small ${m === 50 ? 'primary' : ''}" data-act="roomjoin" data-id="${r.id}" data-m="${m}">${m} min</button>`).join('')}</div></div>`; }).join('')}</div>
+    <p class="note" style="margin-top:14px">Research on working alongside others ("body doubling") is still early: people with ADHD often say it helps them start, and some find others distracting. Try it and see.</p>`, {refresh: openRooms});
+}
+function openRoom(){
+  const R = S.room, room = ROOMS.find(r => r.id === R.id), t = byId(S.currentId), el = Math.max(0, S.now - R.start), left = Math.max(0, R.len - el);
+  const ppl = roomPeople(R.id);
+  openPage('rooms', [['Board', 'board'], ['Focus rooms', 'rooms'], [room.name, 'rooms']], `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h1 style="margin:0">${esc(room.name)}</h1>${room.count ? `<span class="livedot">${room.count} focusing</span>` : ''}</div>
+    <div class="roomhead"><div class="roomring" id="roomRing" style="--p:${Math.min(1, el / R.len).toFixed(3)}"><b id="roomLeft">${Math.ceil(left)}</b><small>min left</small></div>
+      <div><p style="margin:0 0 6px;font-size:15px">${t ? `You're working on <b>${esc(t.title)}</b>` : 'Pick a task, or just get started on anything.'}</p>
+        <div class="actions" style="margin:0">${t ? '' : '<button class="btn small primary" data-act="startday">Start my day</button>'}
+          <button class="btn small" data-act="roomshare">${R.share ? 'Sharing my task title' : 'Showing "Working" only'}</button>
+          <div class="seg" role="group" aria-label="Background sound">${[['off', 'No sound'], ['brown', 'Brown noise'], ['rain', 'Rain']].map(([k, l]) => `<button data-act="roomsound" data-v="${k}" aria-pressed="${(R.sound || 'off') === k}">${l}</button>`).join('')}</div>
+          ${shieldChip()}</div></div></div>
+    <div class="people">
+      <div class="person me"><span class="pav" style="background:var(--accent)">ME</span><b>You</b><small>${R.share && t ? esc(t.title) : 'Working'}</small></div>
+      ${ppl.map((x, i) => `<div class="person" id="rp${i}"><span class="pav" style="background:${x.c}">${esc(x.n.split(' ').map(w => w[0]).join('').slice(0, 2))}</span><b>${esc(x.n)}</b><small>${esc(x.w)}</small></div>`).join('')}
+    </div>
+    <div class="actions" style="margin-top:16px">${ppl.length ? '<button class="btn small" data-act="roomwave">Wave to the room</button>' : ''}<div class="spacer"></div><button class="btn small ghost" data-act="roomleave">Leave room</button></div>`, {refresh: openRoom});
+}
+let roomBeat = 0;
+function roomTick(){
+  const R = S.room; if (!R) return;
+  const el = S.now - R.start, ring = $('#roomRing');
+  if (ring){ ring.style.setProperty('--p', Math.min(1, el / R.len).toFixed(3)); $('#roomLeft').textContent = Math.max(0, Math.ceil(R.len - el)); }
+  const beat = Math.floor(el / 6);
+  if (beat > roomBeat){ roomBeat = beat; const ppl = roomPeople(R.id); if (ppl.length && ring){ const i = Math.floor(Math.random() * ppl.length), card = $('#rp' + i);
+    if (card){ card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); card.querySelector('small').textContent = ['Checked off a step', 'Finished a task', 'Back from a break', ppl[i].w][Math.floor(Math.random() * 4)]; } } }
+  if (el >= R.len && !R.ended){ R.ended = true; endRoom(true); }
+}
+function endRoom(full){
+  const R = S.room, room = ROOMS.find(r => r.id === R.id), mins = Math.round(Math.min(R.len, S.now - R.start));
+  ambient(null); S.room = null; roomBeat = 0; S.rewards.jar += Math.round(mins / 10); S.rewards.focusMin = (S.rewards.focusMin || 0) + mins;
+  if (mins >= 20) addSticker('roommate');
+  if (page && page.kind === 'rooms') closePage();
+  openSheet(`<h2>${full ? 'Session done' : 'You left the room'}</h2><p class="note">${mins} minutes of focus${room.count ? ' alongside ' + room.count + ' others' : ''}. ${mins >= 10 ? Math.round(mins / 10) + ' points went into your treat jar.' : ''}</p>
+    <div class="field"><label>How did it go?</label><div class="timerchips">${['Great', 'Okay', 'Hard'].map(x => `<button class="chipbtn" data-act="roomrate" data-v="${x}">${x}</button>`).join('')}</div></div>
+    <div class="actions"><button class="btn ghost" data-close="1">Close</button></div>`, 'roomdone');
+  if (full){ confetti(innerWidth / 2, innerHeight / 3, 120, 8); chime(true); }
+}
+// soft background sound, made in the app: brown noise or rain
+let amb = null;
+function ambient(kind){
+  try { if (amb){ amb.forEach(n => { try { n.stop(); } catch(e) {} }); amb = null; } if (!kind) return;
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const len = actx.sampleRate * 2, buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0); let last = 0;
+    for (let i = 0; i < len; i++){ const w = Math.random() * 2 - 1; last = kind === 'brown' ? (last + .02 * w) / 1.02 : w; d[i] = kind === 'brown' ? last * 3.2 : w * (Math.random() < .002 ? 1 : .35); }
+    const src = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
+    src.buffer = buf; src.loop = true; f.type = kind === 'brown' ? 'lowpass' : 'bandpass'; f.frequency.value = kind === 'brown' ? 500 : 1800; g.gain.value = kind === 'brown' ? .18 : .06;
+    src.connect(f).connect(g).connect(actx.destination); src.start(); amb = [src];
+  } catch(e) {}
+}
+
 /* ---------- Layered rewards ---------- */
 const STICKERS = [
   ['first', 'First task', 'Finish your first task', '#3B55F0', 'done'],
@@ -2145,7 +2307,9 @@ const STICKERS = [
   ['steps10', 'Ten in a day', 'Check 10 steps in one day', '#3EC1D3', 'done'],
   ['treat', 'Treat yourself', 'Take a treat from your jar', '#F4A261', 'star'],
   ['unblocker', 'Unblocker', 'Clear a roadblock', '#E0434A', 'flow'],
-  ['reviewer', 'Week planner', 'Finish a weekly review', '#3B55F0', 'target']];
+  ['reviewer', 'Week planner', 'Finish a weekly review', '#3B55F0', 'target'],
+  ['roommate', 'Focus buddy', 'Finish 20+ minutes in a focus room', '#0F8B8D', 'user'],
+  ['bounce', 'Bounced back', 'Return to your task from a shield 3 times', '#1E9E6A', 'lock']];
 function addSticker(id){
   const R = S.rewards; if (R.stickers.includes(id)) return false;
   R.stickers.push(id); const st = STICKERS.find(x => x[0] === id);
@@ -2206,6 +2370,8 @@ function rewardsTop(){
         <div class="kv"><span>Roadblocks you cleared</span><span>${R.cleared || 0}</span></div>
         <div class="kv"><span>Kudos received</span><span>${kud}</span></div>
         <div class="kv"><span>Treats taken</span><span>${(R.taken || []).length}</span></div>
+        <div class="kv"><span>Times you came back from a distraction</span><span>${(S.shieldStats || {}).bounced || 0}</span></div>
+        <div class="kv"><span>Minutes in focus rooms</span><span>${R.focusMin || 0}</span></div>
         <p class="note" style="margin-top:8px">Your work moves other people's work forward. This is where you see it.</p></div>
       <div class="box"><h3>Surprises</h3>${R.surprises.length ? R.surprises.slice(0, 4).map(x => `<div class="kv"><span>${esc(x.title)}</span><span>${esc(x.when)}</span></div>`).join('') : '<p class="note">They show up now and then when you do something worth noticing. No schedule, no pressure.</p>'}
         <div class="actions" style="margin-top:10px"><button class="btn small" data-act="demosurprise">Preview a surprise</button><button class="btn small" data-act="democomeback">Preview a comeback</button></div></div>
@@ -2236,7 +2402,9 @@ function lockHTML(){
   return `<div class="lockwrap" role="dialog" aria-label="Lock screen preview">
     <div class="lockphone">${isl}
       <div class="locktime">${hh}:${String(m).padStart(2, '0')}</div><div class="lockdate">${dateOf(S.day).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'})}</div>
+      <div class="lockwidgets"><button class="lwid jot" data-act="lkjot">${ICON.tmpl} Jot for later</button><button class="lwid" data-act="lklater">${ICON.tmpl} Later <small>${(S.later || []).filter(n => n.status === 'open').length}</small></button>${shieldActive() ? `<span class="lwid" style="cursor:default">${ICON.lock} Shield on</span>` : ''}</div>
       <div class="lockstack">${warn}${live}</div>
+      ${S._lockJot ? lockJotHTML() : ''}${S._lockDone ? `<div class="lockdone">${esc(S._lockDone[0])}<small>${esc(S._lockDone[1])}</small></div>` : ''}
       <div class="lockbar"><span class="round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8l-1 6H9z"/><path d="M9 8h6v13H9z"/></svg></span><button class="unlock" data-act="lkclose">Back to the app</button><span class="round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></div>
     </div>
     <div class="lockside"><div class="watch"><span class="lring ${over ? 'over' : ''}" style="--p:${ring.toFixed(3)};${rc}"><b>${esc(big || '–')}</b></span><small>${esc(title ? title.slice(0, 34) : 'Nothing running')}</small></div>
@@ -2245,7 +2413,17 @@ function lockHTML(){
   </div>`;
 }
 let lockMin = -1;
-function drawLock(force){ const r = $('#lockRoot'); if (!r.innerHTML && !force) return; const mm = Math.floor(S.now); if (!force && mm === lockMin) return; lockMin = mm; r.innerHTML = lockHTML(); }
+const LJ_TIMES = [[15, '15 min'], [60, '1 hr'], [180, '3 hr'], [480, 'Tomorrow']];
+function lockJotHTML(){
+  const j = S._lockJot, c = captureContext();
+  return `<div class="lockjot" role="dialog" aria-label="Jot for later"><h4>Jot for later</h4>
+    <textarea id="lkText" placeholder="The thought, in a word or a paragraph">${esc(j.text || '')}</textarea>
+    <span class="lab2">Remind me in</span><div class="ljchips">${LJ_TIMES.map(([m, l]) => `<button data-act="lkjtime" data-v="${m}" aria-pressed="${j.first === m}">${l}</button>`).join('')}</div>
+    <span class="lab2">During</span><div class="ljchips">${[['work', 'Work hours'], ['home', 'Home hours'], ['any', 'Any time']].map(([k, l]) => `<button data-act="lkjtag" data-v="${k}" aria-pressed="${j.tag === k}">${l}</button>`).join('')}</div>
+    ${c.task ? `<span class="ctxline">Saved with it: while on "${esc(c.task)}" (${esc(c.state)})</span>` : ''}
+    <div class="row2"><button class="cancel" data-act="lkjcancel">Cancel</button><button class="save" data-act="lkjsave">Save</button></div></div>`;
+}
+function drawLock(force){ const r = $('#lockRoot'); if (!r.innerHTML && !force) return; if (!force && $('#lkText')) return; const mm = Math.floor(S.now); if (!force && mm === lockMin) return; lockMin = mm; r.innerHTML = lockHTML(); }
 const warned = {};
 function transitionWarnings(prev){
   const ev = nextEvent(); if (!ev) return;
@@ -2554,6 +2732,7 @@ function openDrawer(){
     ${has('flows') ? mi('flows', 'flow', 'Flows', review ? `<span class="cnt">${review} to review</span>` : '', ['flows','builder','flowview']) : ''}
     ${has('templates') ? mi('templates', 'idea', 'Templates & ideas') : ''}
     ${has('review') ? mi('review', 'target', 'Weekly review') : ''}
+    ${has('rooms') ? mi('rooms', 'user', 'Focus rooms', S.room ? '<span class="cnt">In a room</span>' : '') : ''}
     ${S.tasks.some(t => t.day === S.day && !t.done && isMine(t)) ? mi('resetday', 'leaf', 'Today isn\'t working') : ''}
     <div class="mgroup">${has('team') ? 'Team' : 'Updates'}</div>
     ${mi('inbox', 'bell', 'Notifications', n ? `<span class="cnt hot">${n} new</span>` : '')}
@@ -3630,6 +3809,11 @@ function openSettings(){
       <p class="note" style="margin:4px 0 6px">Verbs heavy bold, nouns underlined, describing words in italics. "Key words" marks just the action and what it's done to, which research suggests helps more than marking everything.</p>
       <div class="gpreview" id="gPreview"><span class="gtextp">Send the signed contract to Mara before the quick Friday review.</span></div></div>
     ${cb('sWeight', st.textWeight !== false, 'Variable weight: small linking words (the, to, of) are lighter so the important words stand out')}</div>
+  <div class="sec"><h4>Distraction shield</h4>
+    <p class="note" style="margin-top:0">Blocks the apps you pick while you work, with a short pause screen if you try to open one. On iPhone this uses Apple's Screen Time permission: Cueue never sees which apps you use, only that a shield was shown.</p>
+    <div class="field"><label>When</label><div class="seg" role="group" aria-label="When the shield is on">${[['auto', 'During tasks'], ['manual', 'When I turn it on'], ['off', 'Off']].map(([k, l]) => `<button data-act="shmode" data-v="${k}" aria-pressed="${shieldCfg().mode === k}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label>How strict</label><div class="seg" role="group" aria-label="Strictness">${[['gentle', 'Gentle: pause, then allow 5 min'], ['firm', 'Firm: wait for a break']].map(([k, l]) => `<button data-act="shstrict" data-v="${k}" aria-pressed="${shieldCfg().strict === k}">${l}</button>`).join('')}</div></div>
+    <div class="field"><label>Shield these</label><div class="appchips">${SHIELD_APPS.map(a => `<button class="chipbtn" data-act="shapp" data-v="${a}" aria-pressed="${shieldCfg().apps.includes(a)}">${a}</button>`).join('')}</div></div></div>
   <div class="sec"><h4>Day flow</h4>
     ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
     ${cb('sLock', st.breakLock, 'Break lock: pause check-offs until I take a due break')}</div>
@@ -3740,6 +3924,32 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'lkjot': S._lockDone = null; S._lockJot = {text:'', first:60, tag:(captureContext().ctx) || laterTagNow()}; drawLock(true); setTimeout(() => $('#lkText') && $('#lkText').focus(), 60); return;
+    case 'lkjtime': S._lockJot.text = $('#lkText').value; S._lockJot.first = +el.dataset.v; drawLock(true); return;
+    case 'lkjtag': S._lockJot.text = $('#lkText').value; S._lockJot.tag = el.dataset.v; drawLock(true); return;
+    case 'lkjcancel': S._lockJot = null; drawLock(true); return;
+    case 'lkjsave': { const text = $('#lkText').value.trim(); if (!text){ $('#lkText').focus(); return; }
+      const j = S._lockJot, due = dueWhen(S.day, S.now, j.first);
+      S.later.push({id:newId('lt'), text, tag:j.tag, first:j.first, media:'', ctx:{...captureContext(), where:'Lock screen'}, snoozes:0, dueDay:due.d, dueMin:due.m, status:'open'});
+      S._lockJot = null; S._lockDone = ['Saved to your Later pocket', 'Reminder ' + (j.first >= 480 ? 'tomorrow' : 'in ' + waitTxt(j.first)) + (j.tag === 'any' ? '' : ', during ' + j.tag + ' hours')];
+      updateLaterBadge(); save(); chime(false); cue(1); drawLock(true); setTimeout(() => { S._lockDone = null; drawLock(true); }, 2200); return; }
+    case 'lklater': $('#lockRoot').innerHTML = ''; S._lockJot = null; openLater(); return;
+    case 'rooms': closeDrawer(); openRooms(); return;
+    case 'roomjoin': { const r = ROOMS.find(x => x.id === el.dataset.id); S.room = {id:r.id, start:S.now, len:+el.dataset.m, share:true, sound:r.id === 'solo' ? 'brown' : 'off'}; roomBeat = 0;
+      if (S.room.sound !== 'off') ambient(S.room.sound); openRoom(); toast('Joined ' + r.name, (r.count ? r.count + ' people are focusing. ' : '') + el.dataset.m + '-minute session started.'); return; }
+    case 'roomshare': S.room.share = !S.room.share; openRoom(); return;
+    case 'roomsound': S.room.sound = el.dataset.v; ambient(el.dataset.v === 'off' ? null : el.dataset.v); openRoom(); return;
+    case 'roomwave': toast('You waved', 'Everyone in the room sees a little wave. No reply needed.'); document.querySelectorAll('.person:not(.me)').forEach((c, i) => setTimeout(() => { c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash'); }, 300 + i * 250)); return;
+    case 'roomleave': endRoom(false); return;
+    case 'roomrate': closeSheet(); toast('Thanks', el.dataset.v === 'Hard' ? 'Hard sessions still count. Maybe try a shorter one next time.' : 'Saved. Cueue learns which rooms work for you.'); return;
+    case 'shieldtoggle': { const c = shieldCfg(); if (c.mode === 'manual'){ S.shieldOn = !S.shieldOn; render(); toast(S.shieldOn ? 'Shield on' : 'Shield off', S.shieldOn ? c.apps.join(', ') + ' are blocked.' : ''); } else openSettings(); return; }
+    case 'shieldback': S.shieldStats.bounced++; $('#shieldRoot').innerHTML = ''; if (S.shieldStats.bounced >= 3) addSticker('bounce'); confetti(innerWidth / 2, innerHeight / 2, 40, 5); chime(false);
+      toast('Back on it', 'That\'s ' + S.shieldStats.bounced + ' times you\'ve come back from a distraction.'); save(); return;
+    case 'shieldjot': $('#shieldRoot').innerHTML = ''; S.shieldStats.bounced++; openLaterCapture(); return;
+    case 'shieldopen': S.shieldStats.opened++; $('#shieldRoot').innerHTML = ''; toast(S._shield.app + ' is open for 5 minutes', 'Cueue will bring you back to your task after.'); save(); return;
+    case 'shmode': shieldCfg().mode = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); save(); render(); return;
+    case 'shstrict': shieldCfg().strict = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); save(); return;
+    case 'shapp': { const c = shieldCfg(), a2 = el.dataset.v; c.apps = c.apps.includes(a2) ? c.apps.filter(x => x !== a2) : c.apps.concat([a2]); el.setAttribute('aria-pressed', c.apps.includes(a2)); save(); render(); return; }
     case 'whenopen': openWhen(byId(el.dataset.task)); return;
     case 'cue': S._when.type = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el));
       $('#cueAfter').hidden = el.dataset.v !== 'after'; $('#cueTime').hidden = el.dataset.v !== 'time'; $('#cueOwn').hidden = el.dataset.v !== 'own'; S._whenUpd(); return;
@@ -3954,6 +4164,8 @@ $('#menuBtn').onclick = openDrawer;
 $('#bellBtn').onclick = openInbox;
 $('#laterBtn').onclick = openLaterCapture;
 $('#lockBtn').onclick = () => drawLock(true);
+$('#appBtn').onclick = () => { const c = shieldCfg(), app = c.apps[0] || 'Instagram';
+  if (shieldActive()) openShield(app); else toast(app + ' opened (demo)', c.mode === 'off' ? 'The shield is off. Turn it on in Settings.' : 'The shield only works while a task is running. Start a task, then try again.'); };
 $('#newUserBtn').onclick = () => { S = seedFresh(); S.templates.forEach(ensureStageIds); initRuntime(); render.scrolled = false; closeSheet(true); closeDrawer(); if (page) closePage(); render(); openOnboarding(); };
 document.addEventListener('change', ev => { if (ev.target.id === 'bundleIn'){ S.rewards.bundle = ev.target.value.trim(); save(); render(); toast('Saved', S.rewards.bundle ? 'Shown on tasks you\'ve put off.' : 'Pairing turned off.'); } });
 $('#newBtn').onclick = ev => { ev.stopPropagation(); const m = $('#newMenu'); if (m.hidden) openNewMenu(); else closeNewMenu(); };
