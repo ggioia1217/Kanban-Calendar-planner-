@@ -783,6 +783,39 @@ html[data-weight="1"] .gw{font-weight:600}
 .keeplist span{flex:1;min-width:0}
 .keeplist small{display:block;color:var(--muted);font-size:12px}
 
+/* ---------- When-then plans ---------- */
+.whenline{grid-column:1/-1;font-size:12.5px;color:var(--violet);font-weight:600;display:flex;gap:5px;align-items:center;line-height:1.3}
+.whenline svg{width:13px;height:13px;flex:none}
+.whensentence{border-radius:12px;padding:9px 11px;background:color-mix(in srgb,var(--violet) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--violet) 30%,var(--line));font-size:14px;line-height:1.4}
+.whensentence b{color:var(--violet)}
+.plannudge{grid-column:1/-1;justify-self:start;background:none;border:0;padding:0;font:inherit;font-size:12.5px;font-weight:600;color:var(--violet);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:28px}
+.cueopts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.cueopts button{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;text-align:left;font:inherit;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;min-height:48px}
+.cueopts button small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.cueopts button[aria-pressed=true]{border-color:var(--violet);background:color-mix(in srgb,var(--violet) 8%,var(--surface))}
+.whenpop{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:72;width:min(420px,calc(100vw - 32px));border-radius:18px;padding:14px 16px;background:var(--surface);border:2px solid var(--violet);box-shadow:0 14px 34px rgba(0,0,0,.25);animation:up .3s ease}
+.whenpop .lab{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+.whenpop p{margin:4px 0 10px;font-size:15.5px;line-height:1.4}
+/* ---------- Weekly review ---------- */
+.rvlist{display:flex;flex-direction:column;gap:8px}
+.rvrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.rvrow > span{flex:1 1 180px;min-width:0;font-weight:600}
+.rvrow > span small{display:block;font-weight:500;color:var(--muted);font-size:12.5px}
+.rvrow.decided{opacity:.6}
+.toprow{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.toprow .num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800}
+.toprow input,.toprow select{font:inherit;font-size:15px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);width:100%}
+.toprow .whenrow{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.toprow .whenrow select{flex:1 1 120px;width:auto}
+.weektop{border-radius:14px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.weektop .ml{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.weektop div{display:flex;gap:8px;align-items:center;font-size:14px}
+.weektop div.done span{text-decoration:line-through;color:var(--muted)}
+.weektop i{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);flex:none}
+.weektop div.done i{background:var(--ok);border-color:var(--ok)}
+.reviewcard{border-radius:14px;padding:12px;background:color-mix(in srgb,var(--accent) 8%,var(--surface));border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--line));display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.reviewcard span{flex:1 1 180px;font-size:14px}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -833,6 +866,7 @@ html[data-weight="1"] .gw{font-weight:600}
 <div id="lockRoot"></div>
 <div id="surpriseRoot"></div>
 <div id="obRoot"></div>
+<div id="whenRoot"></div>
 
 <script>
 (() => {
@@ -1193,6 +1227,7 @@ function score(t, at){
   if (t.due != null){ const d = t.due - S.day; s += d < 0 ? 45 : d === 0 ? 30 : d === 1 ? 15 : Math.max(0, 8 - d*2); }
   if (t.cadence && t.missed) s += 12 * t.missed;
   if (t.spent > 0 && t.id !== S.currentId) s += 25; // paused work stays near the top
+  if (t.whenFired === S.day) s += 60; // its when-then moment came, so it goes next
   const fresh = at >= st.freshStart && at < st.freshEnd;
   if (t.diff === 3) s += fresh ? 35 : -15;
   if (t.diff === 2 && fresh) s += 8;
@@ -1276,6 +1311,7 @@ function cardHTML(t, start, dayIdx, chunk){
     <div class="top">${timeTxt}<span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span>${chunk?`<span>· part ${chunk}</span>`:''}<span class="diff" title="${DIFF[t.diff]}">${diff}</span></div>
     <div class="title">${esc(t.title)}</div>
     ${next}
+    ${t.when ? `<div class="whenline">${ICON.repeat.replace('<svg', '<svg aria-hidden="true"')}When ${esc(cuePhrase(t.when))}</div>` : (t.rolled || 0) >= 1 && isMine(t) && !t.done ? `<button class="plannudge" data-act="whenopen" data-task="${t.id}">Plan when to start</button>` : ''}
     ${!ns && t.status !== 'waiting' ? `<button class="verify" data-finish="${t.id}">Complete</button>` : ''}
     <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}${t.spent>0&&S.currentId!==t.id?`<span class="chip">Paused · ${fmtDur(t.spent)} in</span>`:''}${t.ahead!=null?'<span class="chip ahead">Getting ahead</span>':''}${t.roadblock?'<span class="chip block">Roadblock</span>':''}</div>
     <div class="prog" aria-label="${stepsDone(t)} of ${t.steps.length} steps"><i style="width:${Math.round(frac(t)*100)}%"></i></div>
@@ -1308,6 +1344,7 @@ function topPanel(){
     return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel" style="${edgeDelay()}">
       <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
       ${blockNoteHTML(t)}
+      ${t.when ? `<div class="whensentence">${esc(whenSentence(t))}</div>` : ''}
       ${(t.rolled || 0) >= 1 && S.rewards.bundle ? `<div class="pairhint">You've put this off before. Pair it with ${esc(S.rewards.bundle)}.</div>` : ''}
       <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
         <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
@@ -1352,6 +1389,8 @@ function columnHTML(day, single){
       const [mid, mtext] = thisMantra();
       if (has('mantras')) body += `<div class="mantra" data-act="mantras" role="button" tabindex="0"><span class="ml">This week's mantra</span><b>"${esc(mtext)}"</b>${S.mantraUsed[day] ? '<span class="chip okc">Used today</span>' : '<button class="btn small" data-act="mused">I used it</button>'}</div>`;
       if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>${S.light[day].reset ? 'Day reset.' : 'Light day.'}</b> ${S.light[day].reset ? 'Just your essentials now' : 'Only what\'s essential today'}${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
+      body += weekTopHTML();
+      if (has('review') && ((S.day === 4 && S.now >= 14 * 60) || S.day >= 5) && !(S.reviews || []).some(r => r.day >= 4)) body += '<div class="reviewcard"><span><b>Weekly review</b> · 10 minutes to look back and pick next week\'s top three.</span><button class="btn small primary" data-act="review">Start</button></div>';
       body += topPanel();
       if (!S.light[day] && S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length >= 2) body += '<button class="resetlink" data-act="resetday">Today isn\'t working?</button>';
     } else if (S.light[day]) body += `<div class="lightnote"><span><b>Light day planned.</b> Only essentials will be scheduled.</span></div>`;
@@ -1442,7 +1481,7 @@ function tick(){
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
     if (!$('#laterPop').innerHTML && !$('#sheetRoot').innerHTML){ const n = laterDue(); if (n) showLaterPop(n); }
-    transitionWarnings(S.now - dMin); drawLock();
+    transitionWarnings(S.now - dMin); whenTimeTriggers(S.now - dMin); drawLock();
     live();
   }
   requestAnimationFrame(tick);
@@ -1583,6 +1622,7 @@ function completeTask(t, note, files, handoffTask, handoffStage){
   if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for ' + fmtDur(S.workSince) + '. Time for a break.'};
   else if (worked >= LONG_TASK) S.breakDue = {reason:'You just finished a long task (' + fmtDur(worked) + '). Take a reward break.', reward:true};
   rewardTask(t, worked, ahead); checkUnlocks();
+  S.tasks.filter(x => x.when && x.when.type === 'after' && x.when.taskId === t.id && !x.done).forEach(x => setTimeout(() => fireWhen(x, 'you finished "' + t.title + '"'), 1300));
   closeSheet(); render();
   if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId && (firstUp() || !ahead)) setTimeout(startNext, 900);
 }
@@ -1892,6 +1932,7 @@ const UNLOCKS = [
   ['goals', 'Goals', 'Group tasks under something bigger', s => s.log.some(l => l.kind === 'task')],
   ['mantras', 'Mantras', 'A short saying to practice each week', s => s.log.filter(l => l.kind === 'task').length >= 3],
   ['templates', 'Templates & ideas', 'Ready-made routines for home and work', s => s.log.filter(l => l.kind === 'task').length >= 3],
+  ['review', 'Weekly review', '10 minutes to look back and pick next week\'s top three', s => s.day >= s.ob.startDay + 2],
   ['light', 'Light days', 'Make any day lighter, no questions asked', s => s.day >= s.ob.startDay + 1],
   ['insights', 'Insights', 'Patterns Cueue notices about your days', s => s.day >= s.ob.startDay + 1],
   ['flows', 'Flows', 'Processes shared with your team or family', s => s.day >= s.ob.startDay + 2],
@@ -1971,6 +2012,127 @@ function openResetDay(){
   document.querySelectorAll('.keepT').forEach(c => c.addEventListener('change', upd)); upd();
 }
 
+/* ---------- When-then plans (implementation intentions) ---------- */
+// "When [cue], I'll [first step]." Linking a task to a concrete moment makes starting far more likely (Gollwitzer).
+const CUES = [
+  ['after', 'After another task', 'When I finish a task'],
+  ['time', 'At a set time', 'Pick a clock time'],
+  ['work', 'When I start work', 'At your work start time'],
+  ['lunch', 'After lunch', 'Around 1:00 PM'],
+  ['home', 'When I get home', 'At the end of your workday'],
+  ['own', 'My own cue', 'e.g. When I sit down with coffee']];
+function cueMinute(w){ const st = S.settings; return w.type === 'time' ? w.time : w.type === 'work' ? st.workStart : w.type === 'lunch' ? 13 * 60 : w.type === 'home' ? st.workEnd : null; }
+function cuePhrase(w){
+  if (!w) return '';
+  if (w.type === 'after'){ const x = byId(w.taskId); return 'I finish ' + (x ? '"' + x.title + '"' : 'that task'); }
+  if (w.type === 'time') return 'it\'s ' + fmt(w.time);
+  if (w.type === 'work') return 'I start work';
+  if (w.type === 'lunch') return 'I\'m back from lunch';
+  if (w.type === 'home') return 'I get home';
+  return w.text || 'my cue happens';
+}
+function firstAction(t){ const ns = nextStep(t); return ns ? ns.t.charAt(0).toLowerCase() + ns.t.slice(1) : 'start "' + t.title + '"'; }
+const whenSentence = t => t.when ? 'When ' + cuePhrase(t.when) + ', I\'ll ' + firstAction(t) + '.' : '';
+function openWhen(t){
+  const w = t.when || {type:'after'}, others = S.tasks.filter(x => x.id !== t.id && !x.done && isMine(x) && x.day === S.day);
+  S._when = {task:t.id, type:w.type, taskId:w.taskId || (others[0] || {}).id, time:w.time || 14 * 60, text:w.text || ''};
+  const hh = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+  openSheet(`<h2>When will you start?</h2>
+    <p class="note">Tie "${esc(t.title)}" to a moment. Deciding when ahead of time makes starting a lot easier.</p>
+    <div class="cueopts" style="margin-top:10px">${CUES.map(([k, l, d]) => `<button data-act="cue" data-v="${k}" aria-pressed="${S._when.type === k}">${l}<small>${d}</small></button>`).join('')}</div>
+    <div class="field" id="cueAfter" style="margin-top:10px" ${S._when.type === 'after' ? '' : 'hidden'}><label for="cueTask">After</label><select id="cueTask">${others.map(x => `<option value="${x.id}" ${x.id === S._when.taskId ? 'selected' : ''}>${esc(x.title)}</option>`).join('') || '<option value="">No other tasks today</option>'}</select></div>
+    <div class="field" id="cueTime" style="margin-top:10px" ${S._when.type === 'time' ? '' : 'hidden'}><label for="cueClock">At</label><input id="cueClock" type="time" value="${hh(S._when.time)}" style="width:auto"></div>
+    <div class="field" id="cueOwn" style="margin-top:10px" ${S._when.type === 'own' ? '' : 'hidden'}><label for="cueText">When…</label><input id="cueText" value="${esc(S._when.text)}" placeholder="I sit down with my coffee"></div>
+    <div class="field"><label>Your plan</label><div class="whensentence" id="whenPrev"></div></div>
+    <p class="note">${S._when.type === 'own' ? 'Cueue can\'t detect your own cue, so it just shows the plan on the card.' : 'Cueue will nudge you when the moment comes.'}</p>
+    <div class="actions"><button class="btn primary" data-act="whensave">Save plan</button>${t.when ? '<button class="btn ghost" data-act="whenclear">Remove plan</button>' : ''}<button class="btn ghost" data-close="1">Cancel</button></div>`, 'when', t.id);
+  const upd = () => { const d = whenDraft(); $('#whenPrev').innerHTML = '<b>When ' + esc(cuePhrase(d)) + ',</b> I\'ll ' + esc(firstAction(t)) + '.'; };
+  S._whenUpd = upd; upd();
+  $('#cueTask').addEventListener('change', ev => { S._when.taskId = ev.target.value; upd(); });
+  $('#cueClock').addEventListener('input', ev => { const [a, b] = ev.target.value.split(':').map(Number); if (!isNaN(a)) S._when.time = a * 60 + (b || 0); upd(); });
+  $('#cueText').addEventListener('input', ev => { S._when.text = ev.target.value.trim().replace(/^when\s+/i, ''); upd(); });
+}
+function whenDraft(){ const w = S._when; return w.type === 'after' ? {type:'after', taskId:w.taskId} : w.type === 'time' ? {type:'time', time:w.time} : w.type === 'own' ? {type:'own', text:w.text} : {type:w.type}; }
+function fireWhen(t, why){
+  if (!t || t.done || t.whenFired === S.day) return;
+  t.whenFired = S.day; if (t.day == null || t.day > S.day) t.day = S.day;
+  cue(2); chime(false);
+  note('When-then: time for "' + t.title + '"', whenSentence(t), 'star', {task:t.id});
+  $('#whenRoot').innerHTML = `<div class="whenpop" role="alertdialog" aria-label="Your when-then plan"><div class="lab">Your plan · ${esc(why || 'now')}</div><p>${esc(whenSentence(t))}</p>
+    <div class="actions" style="margin:0"><button class="btn primary" data-act="whenstart" data-task="${t.id}">Start now</button><button class="btn" data-act="whenlater" data-task="${t.id}">In 15 min</button><button class="btn ghost" data-act="whenhide">Not today</button></div></div>`;
+  render(); save();
+}
+function whenTimeTriggers(prev){
+  S.tasks.forEach(t => { if (!t.when || t.done || t.whenFired === S.day) return;
+    if (t.day != null && t.day !== S.day) return;
+    const at = t.when.snoozeTo != null && t.when.snoozeDay === S.day ? t.when.snoozeTo : cueMinute(t.when);
+    if (at != null && prev < at && S.now >= at) fireWhen(t, fmt(at)); });
+}
+
+/* ---------- Weekly review ---------- */
+function moved(){ return S.tasks.filter(t => isMine(t) && !t.done && ((t.rolled || 0) >= 1 || (t.due != null && t.due < S.day))); }
+function openReview(){
+  const R = S.rv; if (!R) return;
+  const dots = `<div class="obdots" aria-hidden="true">${[0, 1, 2, 3, 4].map(i => `<i class="${i <= R.step ? 'on' : ''}"></i>`).join('')}</div>`;
+  const nav = (label, last) => `<div class="obfoot"><button class="btn primary" data-act="${last ? 'rvdone' : 'rvnext'}" style="min-height:48px;padding:0 22px">${label}</button>${R.step > 0 ? '<button class="btn ghost" data-act="rvback">Back</button>' : ''}<button class="skip" data-act="rvclose">Finish later</button></div>`;
+  let body = '';
+  if (R.step === 0){
+    const done = S.log.filter(l => l.kind === 'task'), steps = S.log.filter(l => l.kind === 'step').length, wk = weekCounts(), pts = S.log.filter(l => l.kind === 'task' || l.kind === 'other').reduce((a, l) => a + effortPts(l), 0);
+    body = `${dots}<h1>Your week, looking back</h1><p class="lede2">Ten minutes. Start with what went right.</p>
+      <div class="stats"><div class="stat"><b>${done.length}</b><span>Tasks finished</span></div><div class="stat"><b>${steps}</b><span>Steps checked</span></div><div class="stat"><b>${pts}</b><span>Effort points</span></div></div>
+      <div class="trail">${wk.map((n, i) => `<div class="tn ${n ? 'lit' : ''} ${i === S.day ? 'today' : ''}"><span class="dot2">${n || ''}</span>${DAYS[i]}</div>`).join('')}</div>
+      ${done.length ? `<div class="rvlist">${done.slice(-5).reverse().map(l => `<div class="rvrow"><span>${esc(l.title)}<small>${DAYS[l.day]}</small></span></div>`).join('')}</div>` : ''}
+      <div class="field"><label for="rvWin">What went well this week? (optional, only you see this)</label><input id="rvWin" value="${esc(R.win || '')}" placeholder="e.g. Finished the Riverside contract early"></div>${nav('Next')}`;
+  } else if (R.step === 1){
+    const list = moved();
+    body = `${dots}<h1>Things that moved</h1><p class="lede2">${list.length ? 'These got pushed. That\'s information, not failure. Pick what happens next.' : 'Nothing got pushed this week. Nice.'}</p>
+      <div class="rvlist">${list.map(t => { const d = R.decided[t.id]; return `<div class="rvrow ${d ? 'decided' : ''}"><span>${esc(t.title)}<small>${t.rolled ? 'Moved ' + t.rolled + ' time' + (t.rolled > 1 ? 's' : '') : 'Past due'}${d ? ' · ' + d : ''}</small></span>
+        ${d ? '' : `<button class="btn small" data-act="rvkeep" data-id="${t.id}">Next week</button><button class="btn small" data-act="rvsmall" data-id="${t.id}">Make it smaller</button><button class="btn small ghost" data-act="rvdrop" data-id="${t.id}">Drop it</button>`}</div>`; }).join('')}</div>${nav('Next')}`;
+  } else if (R.step === 2){
+    const open = (S.later || []).filter(n => n.status === 'open');
+    body = `${dots}<h1>Empty your Later pocket</h1><p class="lede2">${open.length ? 'Quick decisions. Keep what matters, toss the rest.' : 'Your pocket is already empty.'}</p>
+      <div class="rvlist">${open.map(n => `<div class="rvrow"><span>${esc(n.text)}<small>${esc(DAYS[n.ctx.day] + ' ' + fmt(n.ctx.min))}</small></span><button class="btn small" data-act="rvltask" data-id="${n.id}">Make it a task</button><button class="btn small ghost" data-act="rvltoss" data-id="${n.id}">Toss</button></div>`).join('')}</div>${nav('Next')}`;
+  } else if (R.step === 3){
+    const pool = S.tasks.filter(t => isMine(t) && !t.done && !t.cadence).sort((a, b) => b.prio - a.prio);
+    const opt = (i, sel) => `<option value="">Pick a task, or type below</option>${pool.map(t => `<option value="${t.id}" ${sel === t.id ? 'selected' : ''}>${esc(t.title)}</option>`).join('')}`;
+    body = `${dots}<h1>Next week's top three</h1><p class="lede2">If only three things got done, which would make the week a win? Give each a when-then plan so starting is already decided.</p>
+      ${R.top.map((x, i) => `<div class="toprow"><span class="num">${i + 1}</span><div><select id="rvPick${i}" aria-label="Top ${i + 1} task">${opt(i, x.taskId)}</select>
+        <input id="rvNew${i}" style="margin-top:6px" placeholder="or a new one, e.g. Finish the budget draft" value="${esc(x.title && !x.taskId ? x.title : '')}">
+        <div class="whenrow"><select id="rvDay${i}" aria-label="Day">${DAYS.map((d, k) => `<option value="${k}" ${x.day === k ? 'selected' : ''}>${d}</option>`).join('')}</select>
+          <select id="rvAt${i}" aria-label="Time">${[['work', 'When I start work'], ['540', '9:00 AM'], ['600', '10:00 AM'], ['lunch', 'After lunch'], ['900', '3:00 PM'], ['home', 'When I get home']].map(([v, l]) => `<option value="${v}" ${x.at === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div></div>`).join('')}
+      ${nav('Next')}`;
+  } else {
+    body = `${dots}<h1>Week planned.</h1><p class="lede2">Here's next week in three lines. They'll sit at the top of your board, and Cueue will nudge you at each start time.</p>
+      <div class="obplan">${R.top.filter(x => x.title).map((x, i) => `<div><span class="chip" style="color:var(--accent)">${i + 1}</span>${esc(x.title)}<small>${DAYS[x.day]} · ${esc(x.label)}</small></div>`).join('') || '<div>No top three picked. That\'s okay.</div>'}</div>
+      ${nav('Done', true)}`;
+  }
+  $('#obRoot').innerHTML = `<div class="obwrap" role="dialog" aria-label="Weekly review"><div class="obcard">${body}</div></div>`;
+}
+function rvSave(){
+  const R = S.rv;
+  if (R.step === 0 && $('#rvWin')) R.win = $('#rvWin').value.trim();
+  if (R.step === 3) R.top.forEach((x, i) => { const pick = $('#rvPick' + i).value, nw = $('#rvNew' + i).value.trim(), at = $('#rvAt' + i).value;
+    x.taskId = pick || null; x.title = pick ? byId(pick).title : nw; x.day = +$('#rvDay' + i).value; x.at = at;
+    x.label = $('#rvAt' + i).selectedOptions[0].textContent; });
+}
+function rvFinish(){
+  const R = S.rv, week = [];
+  R.top.filter(x => x.title).forEach(x => {
+    let t = x.taskId && byId(x.taskId);
+    if (!t){ t = quickTask(x.title, 'work'); S.tasks.push(t); }
+    t.day = x.day; t.prio = Math.max(t.prio, 3);
+    t.when = /^\d+$/.test(x.at) ? {type:'time', time:+x.at} : {type:x.at};
+    delete t.whenFired; week.push(t.id);
+  });
+  S.weekTop = week; S.reviews = (S.reviews || []).concat([{day:S.day, win:R.win || '', top:week.slice()}]);
+  S.rv = null; $('#obRoot').innerHTML = ''; save(); render();
+  addSticker('reviewer'); showSurprise('Week planned', 'You looked back, let go of a few things and picked what matters. That\'s the whole trick.');
+}
+function weekTopHTML(){
+  const ids = (S.weekTop || []).filter(id => byId(id)); if (!ids.length) return '';
+  return `<div class="weektop"><span class="ml">This week's top three</span>${ids.map(id => { const t = byId(id); return `<div class="${t.done ? 'done' : ''}"><i></i><span>${esc(t.title)}</span></div>`; }).join('')}</div>`;
+}
+
 /* ---------- Layered rewards ---------- */
 const STICKERS = [
   ['first', 'First task', 'Finish your first task', '#3B55F0', 'done'],
@@ -1982,7 +2144,8 @@ const STICKERS = [
   ['appreciated', 'Appreciated', 'Get kudos from a teammate', '#D64575', 'star'],
   ['steps10', 'Ten in a day', 'Check 10 steps in one day', '#3EC1D3', 'done'],
   ['treat', 'Treat yourself', 'Take a treat from your jar', '#F4A261', 'star'],
-  ['unblocker', 'Unblocker', 'Clear a roadblock', '#E0434A', 'flow']];
+  ['unblocker', 'Unblocker', 'Clear a roadblock', '#E0434A', 'flow'],
+  ['reviewer', 'Week planner', 'Finish a weekly review', '#3B55F0', 'target']];
 function addSticker(id){
   const R = S.rewards; if (R.stickers.includes(id)) return false;
   R.stickers.push(id); const st = STICKERS.find(x => x[0] === id);
@@ -2390,6 +2553,7 @@ function openDrawer(){
     ${has('goals') ? mi('goals', 'target', 'My goals', wait ? `<span class="cnt hot">${wait} waiting</span>` : '') : ''}
     ${has('flows') ? mi('flows', 'flow', 'Flows', review ? `<span class="cnt">${review} to review</span>` : '', ['flows','builder','flowview']) : ''}
     ${has('templates') ? mi('templates', 'idea', 'Templates & ideas') : ''}
+    ${has('review') ? mi('review', 'target', 'Weekly review') : ''}
     ${S.tasks.some(t => t.day === S.day && !t.done && isMine(t)) ? mi('resetday', 'leaf', 'Today isn\'t working') : ''}
     <div class="mgroup">${has('team') ? 'Team' : 'Updates'}</div>
     ${mi('inbox', 'bell', 'Notifications', n ? `<span class="cnt hot">${n} new</span>` : '')}
@@ -2465,6 +2629,7 @@ function openTask(t){
     ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
     ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}${t.proof?' · <i>proof required</i>':''}</div>
+    ${!t.done && isMine(t) ? `<div class="tsec"><h4 style="display:flex;align-items:center">When-then plan<button class="btn small ghost" data-act="whenopen" data-task="${t.id}" style="margin-left:auto">${t.when ? 'Change' : 'Plan when'}</button></h4>${t.when ? `<div class="whensentence">${esc(whenSentence(t))}</div>` : '<p class="note" style="margin:0">Pick a moment to start, like "after Inbox triage" or "at 2:00 PM".</p>'}</div>` : ''}
     ${stuck}
     <div class="tsec"><h4>Steps · ${stepsDone(t)} of ${t.steps.length}</h4>
       <ul class="steps">${openSteps.map(([s,i]) => stepLI(t,s,i)).join('') || '<li class="note">All steps are done.</li>'}</ul>
@@ -3575,6 +3740,25 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'whenopen': openWhen(byId(el.dataset.task)); return;
+    case 'cue': S._when.type = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el));
+      $('#cueAfter').hidden = el.dataset.v !== 'after'; $('#cueTime').hidden = el.dataset.v !== 'time'; $('#cueOwn').hidden = el.dataset.v !== 'own'; S._whenUpd(); return;
+    case 'whensave': { const t = byId(S._when.task), d = whenDraft(); if (d.type === 'after' && !d.taskId) return toast('Pick a task first', 'Or choose a different kind of moment.');
+      t.when = d; delete t.whenFired; save(); closeSheet(); render(); toast('Plan saved', whenSentence(t)); return; }
+    case 'whenclear': { const t = byId(S._when.task); delete t.when; save(); closeSheet(); render(); toast('Plan removed', ''); return; }
+    case 'whenstart': { const t = byId(el.dataset.task); $('#whenRoot').innerHTML = ''; S.dayMode = true; startTask(t); return; }
+    case 'whenlater': { const t = byId(el.dataset.task); $('#whenRoot').innerHTML = ''; t.whenFired = null; t.when.snoozeTo = Math.min(DAY_END - 1, S.now + 15); t.when.snoozeDay = S.day; save(); toast('Okay, in 15 minutes', 'Cueue will nudge you again.'); return; }
+    case 'whenhide': $('#whenRoot').innerHTML = ''; return;
+    case 'review': closeDrawer(); S.rv = S.rv || {step:0, decided:{}, win:'', top:[0, 1, 2].map(i => ({taskId:null, title:'', day:Math.min(6, S.day + 1 + i), at:'work', label:'When I start work'}))}; openReview(); return;
+    case 'rvnext': rvSave(); S.rv.step++; openReview(); return;
+    case 'rvback': rvSave(); S.rv.step = Math.max(0, S.rv.step - 1); openReview(); return;
+    case 'rvclose': rvSave(); $('#obRoot').innerHTML = ''; save(); toast('Saved for later', 'Pick up the review where you left off from the menu.'); return;
+    case 'rvdone': rvFinish(); return;
+    case 'rvkeep': { const t = byId(el.dataset.id); t.day = Math.min(6, S.day + 1); t.rolled = 0; S.rv.decided[t.id] = 'Next week'; openReview(); return; }
+    case 'rvsmall': { const t = byId(el.dataset.id); t.steps.unshift({t:'Spend 5 minutes getting started'}); t.rolled = 0; S.rv.decided[t.id] = 'Smaller first step added'; openReview(); return; }
+    case 'rvdrop': { const id = el.dataset.id; S.rv.decided[id] = 'Dropped'; S.tasks = S.tasks.filter(t => t.id !== id); openReview(); return; }
+    case 'rvltask': { const n = S.later.find(x => x.id === el.dataset.id); n.status = 'task'; const t = quickTask(n.text, n.tag === 'home' ? 'home' : 'work'); t.notes = 'From your Later pocket'; S.tasks.push(t); updateLaterBadge(); openReview(); return; }
+    case 'rvltoss': { const n = S.later.find(x => x.id === el.dataset.id); n.status = 'tossed'; updateLaterBadge(); openReview(); return; }
     case 'obnext': obSaveThings();
       if (S.ob.step === 1){ const [a2, b2] = FOCUS_HOURS[S.ob.focus]; S.settings.freshStart = a2; S.settings.freshEnd = b2; if (S.ob.area !== 'both') S.ob.things.forEach(x => x[1] = S.ob.area); }
       if (S.ob.step === 2){ S.tasks = S.tasks.filter(t => !t.obMade); S.ob.things.filter(x => x[0]).forEach(([ti, c]) => { const t = quickTask(ti, c); t.obMade = true; S.tasks.push(t); }); }
