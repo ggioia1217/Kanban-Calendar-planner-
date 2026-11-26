@@ -865,8 +865,8 @@ html[data-weight="1"] .gw{font-weight:600}
 .shieldchip.off{color:var(--muted);border-color:var(--line);background:var(--surface)}
 .shieldchip svg{width:14px;height:14px}
 .appchips{display:flex;flex-wrap:wrap;gap:6px}
-.shieldwrap{position:fixed;inset:0;z-index:97;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#1B2140,#0E1222);color:#fff;text-align:center}
-.shieldbox{max-width:380px;display:flex;flex-direction:column;gap:14px;align-items:center}
+.shieldwrap{position:fixed;inset:0;z-index:97;display:flex;overflow-y:auto;padding:max(20px,env(safe-area-inset-top,0px)) 20px max(20px,env(safe-area-inset-bottom,0px));background:linear-gradient(160deg,#1B2140,#0E1222);color:#fff;text-align:center}
+.shieldbox{max-width:380px;width:100%;margin:auto;display:flex;flex-direction:column;gap:12px;align-items:center}
 .shieldbox .big{width:84px;height:84px;border-radius:24px;background:rgba(255,255,255,.12);display:grid;place-items:center}
 .shieldbox .big svg{width:42px;height:42px}
 .shieldbox h2{margin:0;font-size:26px;line-height:1.15}
@@ -906,6 +906,18 @@ html[data-weight="1"] .gw{font-weight:600}
 .edots .bar3{width:100%;height:60px;border-radius:8px;background:var(--surface-2);display:flex;align-items:flex-end;overflow:hidden}
 .edots .bar3 i{display:block;width:100%;background:var(--ok);border-radius:8px 8px 0 0}
 .edots .pill2{font-size:10.5px;font-weight:700;color:var(--violet)}
+
+/* ---------- App time bank ---------- */
+.bankmeter{width:100%;max-width:300px;display:flex;flex-direction:column;gap:5px}
+.bankmeter .bm{height:10px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden}
+.bankmeter .bm i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#46D08F,#8FE3B8)}
+.bankmeter span{font-size:13.5px;font-weight:600}
+.bankbox .bm{height:12px;border-radius:999px;background:var(--pie-track);overflow:hidden;margin:8px 0 4px}
+.bankbox .bm i{display:block;height:100%;border-radius:999px;background:var(--ok)}
+.bankbox .big2{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.sbtn.through{background:linear-gradient(135deg,#46D08F,#2BB673);color:#06251a}
+
+@media (max-height:900px){.shieldbox .big{width:60px;height:60px;border-radius:18px}.shieldbox .big svg{width:30px;height:30px}.shieldbox h2{font-size:22px}.shieldbox p{font-size:15px}.breathe2{width:140px;height:140px}.breathe2 .orb{width:124px;height:124px}.shieldbox .sbtn{min-height:44px;padding:11px}}
 
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
@@ -979,7 +991,8 @@ const BREAKS = [
   {k:'yoga', label:'Yoga / stretch', min:15, tip:'Neck rolls, shoulder opener, forward fold.', link:'https://www.youtube.com/results?search_query=15+minute+desk+yoga'},
   {k:'walk', label:'Walk', min:10, tip:'Step outside if you can. Movement helps attention.'},
   {k:'social', label:'Social', min:15, tip:'Chat with a coworker or text a friend.'},
-  {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'}
+  {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'},
+  {k:'apps', label:'App time', min:15, tip:'Your earned 15 minutes. The shield is off, so enjoy it guilt-free.'}
 ];
 const ROLES = {
   me:{name:'You', c:'--accent', group:'Team'}, recruiter:{name:'Recruiting', c:'--home', group:'Team'}, cred:{name:'Compliance', c:'--warn', group:'Team'},
@@ -1143,6 +1156,7 @@ function seed(){
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
     notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'effort',
     shieldStats:{bounced:2, opened:1},
+    appBank:{min:9, log:[{why:'Finished "Inbox triage"', min:2, when:'Mon 4:10 PM'}, {why:'Banked a walk break', min:5, when:'Mon 2:30 PM'}, {why:'Finished "Laundry"', min:2, when:'Mon 6:05 PM'}]},
     checkin:{0:{energy:4, sleep:'good', meds:'taken', medAt:480, done:true, mid:3}},
     rewards:{lifetime:41, jar:9, pack:'classic', stickers:['first', 'appreciated'], surprises:[], lastSurprise:-999, cleared:1, bundle:'my favorite podcast', taken:[],
       treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'New book', cost:120}]},
@@ -1235,7 +1249,7 @@ const STORE = 'cueue-proto-v10';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
 if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later || !S.rewards) S = seed();
-S.shieldStats = S.shieldStats || {bounced:0, opened:0}; S.checkin = S.checkin || {};
+S.shieldStats = S.shieldStats || {bounced:0, opened:0}; S.appBank = S.appBank || {min:0, log:[]}; S.checkin = S.checkin || {};
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -1417,7 +1431,7 @@ function cardHTML(t, start, dayIdx, chunk){
 }
 function nowWords(r){ return r < .5 ? 'Plenty of time' : r < .8 ? 'About half left' : r < 1 ? 'Almost at your estimate' : r < 2 ? 'Past your estimate' : 'Running long'; }
 function breakOptions(star){
-  return `<div class="brkgrid">${BREAKS.map(b => `<button class="brkopt ${b.k===star?'star':''}" data-brk="${b.k}"><b>${b.label}</b><span>${b.min} min</span></button>`).join('')}</div>`;
+  return `<div class="brkgrid">${BREAKS.filter(b => b.k !== 'apps' || appBank() >= BANK_GOAL).map(b => `<button class="brkopt ${b.k===star?'star':''}" data-brk="${b.k}"><b>${b.label}</b><span>${b.min} min</span></button>`).join('')}</div>`;
 }
 function topPanel(){
   if (S.brk){
@@ -1433,7 +1447,8 @@ function topPanel(){
     return `<div class="panel restp" style="${edgeDelay()}"><div class="ph"><span class="tag">Break time</span>${S.settings.breakLock?`<span style="margin-left:auto;display:inline-flex;gap:4px;align-items:center">${ICON.lock.replace('<svg','<svg width="14" height="14"')} Check-offs paused</span>`:''}</div>
       <h3>${esc(S.breakDue.reason)}</h3><div class="sub">Pick a break. The timer starts right away.</div>
       ${breakOptions(S.breakDue.reward ? 'reward' : 'water')}
-      ${S.settings.breakLock ? '' : '<div class="row"><button class="btn small ghost" data-act="snooze">Remind me in 15 min</button></div>'}</div>`;
+      <div class="row"><button class="btn small" data-act="bankbreak">Bank it instead: +5 min app time</button>${S.settings.breakLock ? '' : '<button class="btn small ghost" data-act="snooze">Remind me in 15 min</button>'}</div>
+      <div class="sub">Banking saves this short break toward a full 15-minute one. Cueue checks back in 30 minutes, because your body still needs breaks.</div></div>`;
   }
   const t = byId(S.currentId);
   if (t){
@@ -1754,6 +1769,7 @@ function othersDone(t){
 }
 function startBreak(k){
   const b = BREAKS.find(x => x.k === k);
+  if (k === 'apps'){ if (appBank() < BANK_GOAL) return toast('Not enough banked yet', appBank() + ' of ' + BANK_GOAL + ' min. Finish a task to earn more.'); spendApp(BANK_GOAL, 'Broke through for 15 min'); $('#shieldRoot').innerHTML = ''; }
   S.brk = {k, min:b.min, spent:0}; S.breakDue = null;
   closeSheet(); toast('Break: ' + b.label, b.min + ' minutes. The timer is running.'); render();
 }
@@ -1772,7 +1788,7 @@ function endDay(){
     t.day = today + 1; t.rolled = (t.rolled||0) + 1; moved++;
     if (t.cadence) t.missed = (t.missed||0) + 1;
   });
-  closeLaterPop();
+  closeLaterPop(); S.appBank.min = Math.min(BANK_GOAL, S.appBank.min);
   Object.assign(S, {day:today+1, viewDay:today+1, now:8*60+45, currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0});
   toast('Good morning, ' + DAYS[S.day] + '!', moved ? moved + ' unfinished task' + (moved>1?'s':'') + ' rolled over. Missed routines got more urgent.' : 'Fresh start.');
   render();
@@ -2053,7 +2069,7 @@ function seedFresh(){
     notes:[{id:'nt-w', icon:'star', text:'Welcome to Cueue', sub:'Start small. More features unlock as you use it.', when:'Now', read:false}]});
   f.rewards = {lifetime:0, jar:0, pack:'classic', stickers:[], surprises:[], lastSurprise:-999, cleared:0, bundle:'', taken:[],
     treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'Something I\'ve wanted', cost:120}]};
-  f.settings.meds = null; f.checkin = {};
+  f.settings.meds = null; f.checkin = {}; f.appBank = {min:0, log:[]};
   f.ob = {step:0, startDay:f.day, unlocked:[], area:'both', focus:'morning', things:[['', 'work'], ['', 'home'], ['', 'work']]};
   return f;
 }
@@ -2243,7 +2259,7 @@ function shieldCfg(){ S.settings.shield = S.settings.shield || {mode:'auto', str
 function shieldActive(){ const c = shieldCfg(); if (c.mode === 'off' || S.brk) return false; return c.mode === 'auto' ? !!(S.currentId && !S.paused) : !!S.shieldOn; }
 function shieldChip(){
   const c = shieldCfg(), on = shieldActive();
-  return `<button class="shieldchip ${on ? '' : 'off'}" data-act="shieldtoggle" title="Distraction shield">${ICON.lock}${on ? 'Shield on · ' + c.apps.length + ' apps' : c.mode === 'off' ? 'Shield off' : 'Shield ready'}</button>`;
+  return `<button class="shieldchip ${on ? '' : 'off'}" data-act="shieldtoggle" title="Distraction shield">${ICON.lock}${on ? 'Shield on' : c.mode === 'off' ? 'Shield off' : 'Shield ready'} · ${appBank()}/${BANK_GOAL} min</button>`;
 }
 function openShield(app){
   const t = byId(S.currentId), c = shieldCfg(), left = t ? Math.max(0, Math.ceil(estOf(t) - (t.spent || 0))) : 0;
@@ -2255,9 +2271,11 @@ function openShield(app){
     <small id="shTip">Follow the circle. In through your nose, a little extra sip, then slowly out.</small>
     <button class="sbtn main" data-act="shieldback">Back to my task</button>
     <button class="sbtn alt" data-act="shieldjot">Jot it for later instead</button>
-    ${c.strict === 'gentle' ? `<button class="sbtn alt" data-act="shieldopen" id="shOpen" disabled>Open ${esc(app)} for 5 min</button>` : '<small>Firm shield: it opens at your next break.</small>'}
+    ${bankMeterHTML()}
+    ${appBank() >= BANK_GOAL ? `<button class="sbtn through" data-act="breakthrough">Break through: 15 min of app time</button>` : ''}
+    ${c.strict === 'gentle' ? `<button class="sbtn alt" data-act="shieldopen" id="shOpen" disabled data-ok="${appBank() >= 5 ? 1 : 0}">${appBank() >= 5 ? 'Use 5 banked min for ' + esc(app) : 'Open needs 5 banked min (you have ' + appBank() + ')'}</button>` : `<small>Firm shield: ${appBank() >= BANK_GOAL ? 'use your banked 15 minutes above, or wait for a break.' : 'it opens at your next break, or when you have 15 minutes banked.'}</small>`}
   </div></div>`;
-  breatheGuide(c.pause || 15, () => { const tip = $('#shTip'); if (!tip) return; tip.textContent = c.strict === 'gentle' ? 'Still want it? That\'s okay too. Or head back, the urge usually fades.' : 'Nice. The urge usually fades if you give it a minute.'; const o = $('#shOpen'); if (o) o.disabled = false; });
+  breatheGuide(c.pause || 15, () => { const tip = $('#shTip'); if (!tip) return; tip.textContent = c.strict === 'gentle' ? 'Still want it? That\'s okay too. Or head back, the urge usually fades.' : 'Nice. The urge usually fades if you give it a minute.'; const o = $('#shOpen'); if (o && o.dataset.ok === '1') o.disabled = false; });
 }
 
 // Breathing guide: exhale-focused "cyclic sighs" (in through the nose, a short extra sip, a long slow exhale).
@@ -2317,6 +2335,29 @@ function checkinTriggers(prev){
   if (c.mid == null && prev < 14 * 60 && S.now >= 14 * 60 && !$('#whenRoot').innerHTML){
     $('#whenRoot').innerHTML = `<div class="whenpop" role="dialog" aria-label="Afternoon check-in"><div class="lab">Quick check</div><p>How's your energy now?</p>
       <div class="actions" style="margin:0">${[[2, 'Low'], [3, 'Okay'], [4, 'Good']].map(([v, l]) => `<button class="btn" data-act="cimid" data-v="${v}">${l}</button>`).join('')}</div></div>`; }
+}
+
+/* ---------- App time bank: earn time for shielded apps ---------- */
+// Finishing tasks and banking a short break earn minutes. At 15 (a standard paid break), you can break through
+// the shield for 15 uninterrupted minutes. Gentle mode can also spend 5 at a time. Up to 15 carries to tomorrow.
+const BANK_GOAL = 15, BANK_MAX = 45, TASK_EARN = {1:2, 2:3, 3:5};
+const appBank = () => S.appBank.min;
+function earnApp(min, why, quiet){
+  const before = S.appBank.min; S.appBank.min = Math.min(BANK_MAX, before + min);
+  const got = S.appBank.min - before; if (!got) return;
+  S.appBank.log.unshift({why, min:got, when:DAYS[S.day] + ' ' + fmt(S.now)}); S.appBank.log = S.appBank.log.slice(0, 12);
+  if (before < BANK_GOAL && S.appBank.min >= BANK_GOAL) setTimeout(() => toast('15 minutes of app time earned', 'Break through the shield any time for 15 uninterrupted minutes.'), 1900);
+  else if (!quiet) setTimeout(() => toast('+' + got + ' min app time', S.appBank.min + ' of ' + BANK_GOAL + ' banked'), 2400);
+}
+function spendApp(min, why){ S.appBank.min = Math.max(0, S.appBank.min - min); S.appBank.log.unshift({why, min:-min, when:DAYS[S.day] + ' ' + fmt(S.now)}); }
+function bankMeterHTML(){ const m = appBank(); return `<div class="bankmeter"><span>${m >= BANK_GOAL ? 'App time banked: ' + m + ' min. 15 ready to use' : 'App time banked: ' + m + ' of ' + BANK_GOAL + ' min'}</span><div class="bm"><i style="width:${Math.min(100, Math.round(100 * m / BANK_GOAL))}%"></i></div></div>`; }
+function bankBoxHTML(){
+  const m = appBank();
+  return `<div class="box bankbox"><h3>App time bank</h3><p class="note">Time you earn for the apps your shield blocks. At 15 minutes, a standard break, you can break through for 15 uninterrupted minutes.</p>
+    <div class="big2">${m}<span class="note" style="font-size:15px;font-weight:600"> min banked${m >= BANK_GOAL ? ' · 15 ready to use' : ' · ' + (BANK_GOAL - m) + ' to go'}</span></div><div class="bm"><i style="width:${Math.min(100, Math.round(100 * m / BANK_GOAL))}%"></i></div>
+    <p class="note" style="margin:4px 0 8px">Earn: light task +2, medium +3, heavy +5, or bank a short break for its minutes. Up to 15 carries to tomorrow.</p>
+    ${m >= BANK_GOAL ? '<button class="btn small ok" data-act="breakthrough">Use 15 min now</button>' : ''}
+    ${S.appBank.log.slice(0, 4).map(l => `<div class="kv"><span>${esc(l.why)}</span><span>${l.min > 0 ? '+' : ''}${l.min} min</span></div>`).join('')}</div>`;
 }
 
 /* ---------- Focus rooms (body doubling) ---------- */
@@ -2422,6 +2463,7 @@ function stepSurprise(){
 // Layers 2, 5 and 7 run when a task is finished
 function rewardTask(t, worked, ahead){
   const R = S.rewards, last = S.log[S.log.length - 1], pts = effortPts(last), before = R.jar;
+  earnApp(TASK_EARN[t.diff] || 3, 'Finished "' + t.title + '"');
   R.lifetime++; R.jar += pts;
   addSticker('first');
   if (last && last.handoff) addSticker('handoff');
@@ -2466,6 +2508,7 @@ function rewardsTop(){
         <div class="kv"><span>Times you came back from a distraction</span><span>${(S.shieldStats || {}).bounced || 0}</span></div>
         <div class="kv"><span>Minutes in focus rooms</span><span>${R.focusMin || 0}</span></div>
         <p class="note" style="margin-top:8px">Your work moves other people's work forward. This is where you see it.</p></div>
+      ${bankBoxHTML()}
       <div class="box"><h3>Surprises</h3>${R.surprises.length ? R.surprises.slice(0, 4).map(x => `<div class="kv"><span>${esc(x.title)}</span><span>${esc(x.when)}</span></div>`).join('') : '<p class="note">They show up now and then when you do something worth noticing. No schedule, no pressure.</p>'}
         <div class="actions" style="margin-top:10px"><button class="btn small" data-act="demosurprise">Preview a surprise</button><button class="btn small" data-act="democomeback">Preview a comeback</button></div></div>
     </div>
@@ -2495,7 +2538,7 @@ function lockHTML(){
   return `<div class="lockwrap" role="dialog" aria-label="Lock screen preview">
     <div class="lockphone">${isl}
       <div class="locktime">${hh}:${String(m).padStart(2, '0')}</div><div class="lockdate">${dateOf(S.day).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'})}</div>
-      <div class="lockwidgets"><button class="lwid jot" data-act="lkjot">${ICON.tmpl} Jot for later</button><button class="lwid" data-act="lklater">${ICON.tmpl} Later <small>${(S.later || []).filter(n => n.status === 'open').length}</small></button>${shieldActive() ? `<span class="lwid" style="cursor:default">${ICON.lock} Shield on</span>` : ''}</div>
+      <div class="lockwidgets"><button class="lwid jot" data-act="lkjot">${ICON.tmpl} Jot for later</button><button class="lwid" data-act="lklater">${ICON.tmpl} Later <small>${(S.later || []).filter(n => n.status === 'open').length}</small></button>${shieldActive() ? `<span class="lwid" style="cursor:default">${ICON.lock} App time <small>${appBank()}/${BANK_GOAL}</small></span>` : ''}</div>
       <div class="lockstack">${warn}${live}</div>
       ${S._lockJot ? lockJotHTML() : ''}${S._lockDone ? `<div class="lockdone">${esc(S._lockDone[0])}<small>${esc(S._lockDone[1])}</small></div>` : ''}
       <div class="lockbar"><span class="round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8l-1 6H9z"/><path d="M9 8h6v13H9z"/></svg></span><button class="unlock" data-act="lkclose">Back to the app</button><span class="round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></div>
@@ -3916,6 +3959,7 @@ function openSettings(){
     <div class="field"><label>How strict</label><div class="seg" role="group" aria-label="Strictness">${[['gentle', 'Gentle: pause, then allow 5 min'], ['firm', 'Firm: wait for a break']].map(([k, l]) => `<button data-act="shstrict" data-v="${k}" aria-pressed="${shieldCfg().strict === k}">${l}</button>`).join('')}</div></div>
     <div class="field"><label>Breathing pause</label><div class="seg" role="group" aria-label="Pause length">${[[10, '10 sec'], [15, '15 sec'], [30, '30 sec']].map(([v, l]) => `<button data-act="shpause" data-v="${v}" aria-pressed="${(shieldCfg().pause || 15) === v}">${l}</button>`).join('')}</div>
       <p class="note" style="margin:4px 0 0">A 10-second pause before opening an app cut openings by more than half in a large study. "Back to my task" is always there right away.</p></div>
+    <div class="field"><label>App time bank</label><p class="note" style="margin:0">Finishing tasks earns time for shielded apps (light +2, medium +3, heavy +5 min), and you can bank a short break for its minutes. At 15 minutes, the length of a standard work break, you can break through the shield for 15 uninterrupted minutes. You have ${appBank()} min banked.</p></div>
     <div class="field"><label>Shield these</label><div class="appchips">${SHIELD_APPS.map(a => `<button class="chipbtn" data-act="shapp" data-v="${a}" aria-pressed="${shieldCfg().apps.includes(a)}">${a}</button>`).join('')}</div></div></div>
   <div class="sec"><h4>Day flow</h4>
     ${cb('sAuto', st.autoNext, 'Start the next task automatically when I finish one')}
@@ -4027,6 +4071,10 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'breakthrough': { if (appBank() < BANK_GOAL) return; $('#shieldRoot').innerHTML = ''; if (page) closePage(); startBreak('apps'); confetti(innerWidth / 2, innerHeight / 3, 80, 7); chime(true);
+      toast('15 minutes of app time', 'The shield is off and your task is paused. Cueue brings you back when it\'s up.'); return; }
+    case 'bankbreak': { earnApp(5, 'Banked a short break', true); S.breakDue = null; S.workSince = Math.max(0, S.settings.breakEvery - 30); save(); render();
+      toast('+5 min app time', appBank() + ' of ' + BANK_GOAL + ' banked. Cueue will check back on a break in 30 minutes.'); return; }
     case 'shpause': shieldCfg().pause = +el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); save(); return;
     case 'ciset': { const c = ci(), k = el.dataset.k, v = el.dataset.v;
       if (k === 'energy') c.energy = +v; else if (k === 'medWhen'){ c.meds = 'taken'; c.medWhen = v; c.medAt = Math.round(S.now - (v === 'now' ? 0 : +v)); } else c[k] = v;
@@ -4063,7 +4111,7 @@ document.addEventListener('click', ev => {
     case 'shieldback': S.shieldStats.bounced++; $('#shieldRoot').innerHTML = ''; if (S.shieldStats.bounced >= 3) addSticker('bounce'); confetti(innerWidth / 2, innerHeight / 2, 40, 5); chime(false);
       toast('Back on it', 'That\'s ' + S.shieldStats.bounced + ' times you\'ve come back from a distraction.'); save(); return;
     case 'shieldjot': $('#shieldRoot').innerHTML = ''; S.shieldStats.bounced++; openLaterCapture(); return;
-    case 'shieldopen': S.shieldStats.opened++; $('#shieldRoot').innerHTML = ''; toast(S._shield.app + ' is open for 5 minutes', 'Cueue will bring you back to your task after.'); save(); return;
+    case 'shieldopen': S.shieldStats.opened++; spendApp(5, 'Opened ' + S._shield.app + ' for 5 min'); $('#shieldRoot').innerHTML = ''; toast(S._shield.app + ' is open for 5 minutes', appBank() + ' min left in your bank. Cueue will bring you back to your task after.'); save(); render(); return;
     case 'shmode': shieldCfg().mode = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); save(); render(); return;
     case 'shstrict': shieldCfg().strict = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); save(); return;
     case 'shapp': { const c = shieldCfg(), a2 = el.dataset.v; c.apps = c.apps.includes(a2) ? c.apps.filter(x => x !== a2) : c.apps.concat([a2]); el.setAttribute('aria-pressed', c.apps.includes(a2)); save(); render(); return; }
@@ -4282,7 +4330,8 @@ $('#bellBtn').onclick = openInbox;
 $('#laterBtn').onclick = openLaterCapture;
 $('#lockBtn').onclick = () => drawLock(true);
 $('#appBtn').onclick = () => { const c = shieldCfg(), app = c.apps[0] || 'Instagram';
-  if (shieldActive()) openShield(app); else toast(app + ' opened (demo)', c.mode === 'off' ? 'The shield is off. Turn it on in Settings.' : 'The shield only works while a task is running. Start a task, then try again.'); };
+  if (S.brk && S.brk.k === 'apps') toast(app + ' opened (demo)', 'Enjoy, it\'s your earned app time. ' + Math.ceil(S.brk.min - S.brk.spent) + ' min left.');
+  else if (shieldActive()) openShield(app); else toast(app + ' opened (demo)', c.mode === 'off' ? 'The shield is off. Turn it on in Settings.' : 'The shield only works while a task is running. Start a task, then try again.'); };
 $('#newUserBtn').onclick = () => { S = seedFresh(); S.templates.forEach(ensureStageIds); initRuntime(); render.scrolled = false; closeSheet(true); closeDrawer(); if (page) closePage(); render(); openOnboarding(); };
 document.addEventListener('change', ev => { if (ev.target.id === 'bundleIn'){ S.rewards.bundle = ev.target.value.trim(); save(); render(); toast('Saved', S.rewards.bundle ? 'Shown on tasks you\'ve put off.' : 'Pairing turned off.'); } });
 $('#newBtn').onclick = ev => { ev.stopPropagation(); const m = $('#newMenu'); if (m.hidden) openNewMenu(); else closeNewMenu(); };
