@@ -673,6 +673,85 @@ html[data-weight="1"] .gw{font-weight:600}
 .blkwho{display:flex;flex-direction:column;gap:3px;margin-top:6px;font-size:13px}
 .blkwho span b{color:var(--ink)}
 
+/* ---------- Lock screen preview (Live Activity, Dynamic Island, Watch) ---------- */
+.lockwrap{position:fixed;inset:0;z-index:95;background:rgba(6,8,14,.9);display:flex;align-items:center;justify-content:center;gap:32px;overflow:auto;padding:16px}
+.lockphone{position:relative;flex:none;width:min(390px,100%);height:min(800px,calc(100dvh - 32px));border-radius:46px;overflow:hidden;color:#fff;
+  background:radial-gradient(circle at 20% 15%,#3B4FD8 0,transparent 45%),radial-gradient(circle at 85% 60%,#B04A8F 0,transparent 45%),radial-gradient(circle at 30% 95%,#1E9E8A 0,transparent 50%),#0F1226;
+  box-shadow:0 0 0 10px #0b0c10,0 20px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;padding:12px 16px 18px;font-family:var(--font-body)}
+.island{display:flex;align-items:center;gap:10px;background:#000;border-radius:999px;height:36px;padding:0 12px 0 6px;min-width:120px;justify-content:space-between;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.island .ring{width:26px;height:26px}
+.locktime{font-size:clamp(64px,19vw,84px);font-weight:600;letter-spacing:-.03em;line-height:1;margin-top:26px;font-variant-numeric:tabular-nums}
+.lockdate{font-size:17px;font-weight:600;opacity:.85;margin-top:6px}
+.lockstack{margin-top:auto;width:100%;display:flex;flex-direction:column;gap:10px}
+.glass{background:rgba(255,255,255,.14);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:12px 14px}
+.lnote{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.lnote .app{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.lnote b{display:block}
+.lnote.warnc{background:rgba(242,192,75,.22);border-color:rgba(242,192,75,.5)}
+.live{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.lring{--p:0;--rc:#8FA2FF;position:relative;width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--rc) calc(var(--p)*360deg),rgba(255,255,255,.16) 0);flex:none}
+.lring::after{content:"";position:absolute;inset:8px;border-radius:50%;background:#171a30}
+.lring b{position:absolute;inset:0;display:grid;place-items:center;z-index:1;font-size:17px;font-variant-numeric:tabular-nums}
+.lring.sm{width:26px;height:26px}.lring.sm::after{inset:4px;background:#000}
+.lring.over{--rc:#F2C04B}
+.live .lt{font-size:16px;font-weight:700;line-height:1.2}
+.live .ls{font-size:13px;opacity:.8;margin-top:3px}
+.live .lb{display:flex;gap:8px;margin-top:8px}
+.live .lb button{border:0;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;min-height:36px}
+.live .lb button.go{background:#fff;color:#151830}
+.lnext{font-size:13px;opacity:.85;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.14)}
+.lockbar{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:14px}
+.lockbar .round{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.lockbar .round svg{width:20px;height:20px}
+.unlock{border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:9px 18px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}
+.lockside{display:flex;flex-direction:column;gap:18px;align-items:center;color:#d8dcef;max-width:260px}
+.watch{width:168px;height:200px;border-radius:44px;background:#000;box-shadow:0 0 0 8px #24262d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff;text-align:center;padding:14px}
+.watch .lring{width:96px;height:96px}.watch .lring::after{background:#000;inset:9px}
+.watch small{font-size:12px;opacity:.8;line-height:1.2}
+.lockside p{font-size:13.5px;line-height:1.45;margin:0}
+@media (max-width:760px){.lockside{display:none}.lockwrap{padding:0}.lockphone{border-radius:0;height:100dvh;width:100%;box-shadow:none}}
+
+/* ---------- Rewards ---------- */
+.surprise{position:fixed;left:50%;bottom:calc(var(--tabh,0px) + 84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;width:min(380px,calc(100vw - 32px));
+  border-radius:18px;padding:14px 16px;color:#1d1a08;background:linear-gradient(135deg,#FFE9A8,#FFD166 55%,#FFB703);box-shadow:0 12px 30px rgba(0,0,0,.25);display:flex;gap:12px;align-items:center;animation:surpriseIn .5s cubic-bezier(.2,1.4,.4,1)}
+.surprise .sic{width:42px;height:42px;border-radius:50%;background:#fff8;display:grid;place-items:center;flex:none}
+.surprise .sic svg{width:24px;height:24px}
+.surprise b{display:block;font-size:16px}
+.surprise span{font-size:13.5px}
+.surprise.comeback{background:linear-gradient(135deg,#C8F2E2,#7FDDB8 60%,#3CCB8A);color:#08261a}
+.surprise.out{animation:surpriseOut .35s ease forwards}
+@keyframes surpriseIn{from{opacity:0;transform:translate(-50%,30px) scale(.9)}}
+@keyframes surpriseOut{to{opacity:0;transform:translate(-50%,20px)}}
+.trail{display:flex;align-items:flex-end;gap:0;margin:10px 0 4px;overflow-x:auto;padding:6px 2px}
+.trail .tn{flex:1 0 54px;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;font-size:12px;color:var(--muted)}
+.trail .tn::before{content:"";position:absolute;top:21px;left:-50%;width:100%;height:4px;background:var(--line);z-index:0}
+.trail .tn:first-child::before{display:none}
+.trail .tn.lit::before{background:var(--ok)}
+.trail .dot2{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:var(--surface-2);border:2px solid var(--line);color:var(--muted)}
+.trail .lit .dot2{background:var(--ok);border-color:var(--ok);color:#fff}
+.trail .today .dot2{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 30%,transparent);border-color:var(--accent)}
+.jarrow{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.jar{position:relative;width:74px;height:96px;border:3px solid color-mix(in srgb,var(--ink) 35%,transparent);border-top-width:8px;border-radius:12px 12px 22px 22px;overflow:hidden;background:var(--surface-2)}
+.jar i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#FFD166,#F4A261);transition:height .6s}
+.jar b{position:absolute;inset:0;display:grid;place-items:center;font-size:18px;z-index:1}
+.treat{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.treat:last-child{border-bottom:0}
+.treat span{flex:1;min-width:0}
+.treat small{color:var(--muted)}
+.packs{display:flex;flex-direction:column;gap:6px}
+.pack{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:14px;text-align:left;color:var(--ink);font:inherit;cursor:pointer;min-height:44px}
+.pack[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.pack:disabled{opacity:.55;cursor:default}
+.pack span{flex:1}
+.pack small{color:var(--muted)}
+.stickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.stk{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;font-size:12px;font-weight:600}
+.stk .disc{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.15),inset 0 2px 0 rgba(255,255,255,.35)}
+.stk .disc svg{width:26px;height:26px}
+.stk.locked .disc{background:var(--surface-2)!important;color:var(--muted);box-shadow:none;border:2px dashed var(--line)}
+.stk small{font-weight:500;color:var(--muted);line-height:1.25}
+.pairhint{font-size:13px;color:var(--violet);font-weight:600}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -705,6 +784,7 @@ html[data-weight="1"] .gw{font-weight:600}
     <div class="seg" role="group" aria-label="Clock speed">
       <button data-speed="1">1×</button><button data-speed="60">60×</button><button data-speed="300">300×</button>
     </div>
+    <button class="btn small" id="lockBtn">Lock screen</button>
     <button class="btn small" id="endDayBtn">End day ▸</button>
     <button class="btn small" id="clearBtn">Finish today (demo)</button>
     <div class="spacer"></div>
@@ -718,6 +798,8 @@ html[data-weight="1"] .gw{font-weight:600}
 <div id="sheetRoot"></div>
 <div id="drawerRoot"></div>
 <div id="laterPop"></div>
+<div id="lockRoot"></div>
+<div id="surpriseRoot"></div>
 
 <script>
 (() => {
@@ -900,6 +982,8 @@ function seed(){
       freshStart:9*60, freshEnd:13*60, workStart:9*60, workEnd:17*60, buffer:5, breakEvery:90},
     people:{dana:{name:'Dana Ortiz', org:'Acme Staffing'}, mara:{name:'Mara Chen', org:'Riverside Clinic'}, priya:{name:'Priya Shah', org:'Billing (AR)'}},
     notes:[], inited:false, goalTab:'own', flowTab:'active', ideaCat:'All', lbCat:'effort',
+    rewards:{lifetime:41, jar:9, pack:'classic', stickers:['first', 'appreciated'], surprises:[], lastSurprise:-999, cleared:1, bundle:'my favorite podcast', taken:[],
+      treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'New book', cost:120}]},
     later:[], light:{}, mantraUsed:{}, mantraStories:[
       {week:'Week of Nov 9', id:'m2', text:'I put the folders back in the cabinet as soon as I finished the audit instead of stacking them. My desk stayed clear all week.', sharedWith:[]},
       {week:'Week of Oct 26', id:'m4', text:'Told myself just five minutes on the payroll exceptions. Ended up finishing the whole report.', sharedWith:['Family']}],
@@ -985,10 +1069,10 @@ function seed(){
          {title:'Email Dana at Acme about the missing 6.5 hrs', day:0, taskId:'t1', kind:'step'}]
   };
 }
-const STORE = 'cueue-proto-v9';
+const STORE = 'cueue-proto-v10';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)) || seed(); } catch(e) { S = seed(); }
-if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later) S = seed();
+if (!S.tasks || !S.goals || !S.templates || !S.org || !S.kudos || !S.later || !S.rewards) S = seed();
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 const newSid = () => 's' + Math.random().toString(36).slice(2, 8);
 function ensureStageIds(tp){ // every stage has an id and a list of stages it waits for (default: the one before it)
@@ -1191,6 +1275,7 @@ function topPanel(){
     return `<div class="panel ${lvl>=3?'latep':''}" id="nowPanel" style="${edgeDelay()}">
       <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}</div>
       ${blockNoteHTML(t)}
+      ${(t.rolled || 0) >= 1 && S.rewards.bundle ? `<div class="pairhint">You've put this off before. Pair it with ${esc(S.rewards.bundle)}.</div>` : ''}
       <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
         <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
       ${t.warned1 && !S.paused ? `<div class="checkin">Still on this? <button class="btn small" data-act="more15">+15 min</button><button class="btn small" data-act="finish">I'm done</button><button class="btn small ghost" data-act="switch">Switch</button></div>`:''}
@@ -1322,6 +1407,7 @@ function tick(){
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
     if (!$('#laterPop').innerHTML && !$('#sheetRoot').innerHTML){ const n = laterDue(); if (n) showLaterPop(n); }
+    transitionWarnings(S.now - dMin); drawLock();
     live();
   }
   requestAnimationFrame(tick);
@@ -1329,13 +1415,27 @@ function tick(){
 
 /* ---------- feedback ---------- */
 let actx;
-function tone(freqs, gap, vol){
+function tone(freqs, gap, vol, type, sweep){
   try { actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    freqs.forEach((f,i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f;
+    freqs.forEach((f,i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = type || 'triangle'; o.frequency.value = f;
+      if (sweep) o.frequency.exponentialRampToValueAtTime(f * 1.6, actx.currentTime + i*gap + .12);
       const t0 = actx.currentTime + i*gap; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0+.02); g.gain.exponentialRampToValueAtTime(.001, t0+.35);
       o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0+.4); }); } catch(e) {}
 }
-function chime(big){ if (S.settings.sound) tone(big ? [523.25,659.25,783.99,1046.5] : [783.99,1046.5], .08, .12); }
+// Layer 1: instant feedback that varies. Each sound pack has several little melodies and picks one at random.
+const PACKS = {
+  classic:{name:'Classic chime', unlock:0, type:'triangle', small:[[783.99,1046.5],[659.25,987.77],[880,1174.66],[698.46,1046.5]], big:[523.25,659.25,783.99,1046.5]},
+  marimba:{name:'Marimba', unlock:25, type:'sine', small:[[523.25,659.25,783.99],[587.33,880],[659.25,783.99,1046.5],[440,659.25]], big:[392,523.25,659.25,783.99,1046.5]},
+  bubbles:{name:'Bubbles', unlock:50, type:'sine', sweep:true, small:[[440],[523.25,659.25],[392,587.33],[493.88]], big:[392,493.88,587.33,783.99]},
+  bells:{name:'Bright bells', unlock:100, type:'sine', small:[[1318.5,1760],[1174.66,1567.98],[1396.9,2093]], big:[1046.5,1318.5,1567.98,2093]}};
+function chime(big){
+  if (!S.settings.sound) return;
+  const pk = PACKS[(S.rewards && S.rewards.pack) || 'classic'] || PACKS.classic, set = big ? pk.big : pk.small[Math.floor(Math.random() * pk.small.length)];
+  tone(set, big ? .08 : .07, pk.type === 'sine' ? .16 : .12, pk.type, pk.sweep);
+}
+const PRAISE = ['Nice.', 'Got it.', 'Boom.', 'One more down.', 'Look at you go.', 'That counts.', 'Clean.', 'Done and done.', 'Momentum.'];
+const praise = () => PRAISE[Math.floor(Math.random() * PRAISE.length)];
+const PALETTES = [null, ['#FF6B6B', '#FFB86B', '#FFD93D', '#FF8FB1'], ['#4D96FF', '#6BCB77', '#3EC1D3', '#9AD0F5'], ['#B983FF', '#FF8FB1', '#94DAFF', '#FFD166']];
 function cue(lvl){
   if (S.settings.haptics && navigator.vibrate){ try { navigator.vibrate(lvl >= 4 ? [60,40,60,40,120] : lvl >= 3 ? [40,40,40] : 20); } catch(e) {} }
   if (S.settings.sound && lvl >= 3) tone([440, 440], .18, .08);
@@ -1352,7 +1452,7 @@ function confetti(x, y, n, spread){
   if (!motionOK()) return;
   sizeCanvas();
   const cs = getComputedStyle(document.documentElement);
-  const cols = ['--accent','--ok','--warn','--home','--work','--hot'].map(v => cs.getPropertyValue(v).trim());
+  const pal = PALETTES[Math.floor(Math.random() * PALETTES.length)], cols = pal || ['--accent','--ok','--warn','--home','--work','--hot'].map(v => cs.getPropertyValue(v).trim());
   for (let i=0;i<n;i++){ const a = Math.random()*Math.PI*2, v = (2 + Math.random()*spread);
     parts.push({x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v - spread*.6, r:3+Math.random()*4, c:cols[i%cols.length], life:60+Math.random()*40, rot:Math.random()*6}); }
   if (!animating){ animating = true; requestAnimationFrame(drawConfetti); }
@@ -1383,7 +1483,8 @@ function checkStep(t, i, originEl){
   S.log.push({title: s.t, day: S.day, taskId: t.id, kind:'step'});
   const r = originEl ? originEl.getBoundingClientRect() : {left:innerWidth/2, top:innerHeight/2, width:0, height:0};
   confetti(r.left + r.width/2, r.top + r.height/2, 22, 5); chime(false); cue(1);
-  toast('Nice. Step ' + stepsDone(t) + ' of ' + t.steps.length + ' done', s.type === 'contact' ? 'Contact logged at ' + s.at : nextStep(t) ? 'Next: ' + nextStep(t).t : 'All steps done. Tap Complete to confirm the task is finished.');
+  stepSurprise();
+  toast(praise() + ' Step ' + stepsDone(t) + ' of ' + t.steps.length + ' done', s.type === 'contact' ? 'Contact logged at ' + s.at : nextStep(t) ? 'Next: ' + nextStep(t).t : 'All steps done. Tap Complete to confirm the task is finished.');
   render();
   return true;
 }
@@ -1446,6 +1547,7 @@ function completeTask(t, note, files, handoffTask, handoffStage){
   // Suggest a break only after real effort: a long stretch on this task (60+ min), or 90 min of work since the last break
   if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for ' + fmtDur(S.workSince) + '. Time for a break.'};
   else if (worked >= LONG_TASK) S.breakDue = {reason:'You just finished a long task (' + fmtDur(worked) + '). Take a reward break.', reward:true};
+  rewardTask(t, worked, ahead);
   closeSheet(); render();
   if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId && (firstUp() || !ahead)) setTimeout(startNext, 900);
 }
@@ -1747,6 +1849,126 @@ function openBlockLog(t){
     <div class="field"><label for="blkLogNote">What came of it? (optional)</label><input id="blkLogNote" placeholder="e.g. She'll sign Thursday morning"></div>
     <div class="actions"><button class="btn primary" data-act="blklogsave" data-task="${t.id}">Save</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'blklog');
   S._blk = {task:t.id, reach:'call'};
+}
+
+/* ---------- Layered rewards ---------- */
+const STICKERS = [
+  ['first', 'First task', 'Finish your first task', '#3B55F0', 'done'],
+  ['early', 'Early bird', 'First task done by 9:45', '#E08A00', 'star'],
+  ['fast', 'Quick draw', 'Beat your own estimate', '#0F8B8D', 'clock'],
+  ['gold', 'Gold check', 'A rare surprise', '#D4A017', 'star'],
+  ['comeback', 'Welcome back', 'Start again after a rough day', '#1E9E6A', 'leaf'],
+  ['handoff', 'Hand-off', 'Finish a stage that starts others', '#8A4FD8', 'flow'],
+  ['appreciated', 'Appreciated', 'Get kudos from a teammate', '#D64575', 'star'],
+  ['steps10', 'Ten in a day', 'Check 10 steps in one day', '#3EC1D3', 'done'],
+  ['treat', 'Treat yourself', 'Take a treat from your jar', '#F4A261', 'star'],
+  ['unblocker', 'Unblocker', 'Clear a roadblock', '#E0434A', 'flow']];
+function addSticker(id){
+  const R = S.rewards; if (R.stickers.includes(id)) return false;
+  R.stickers.push(id); const st = STICKERS.find(x => x[0] === id);
+  setTimeout(() => toast('New sticker: ' + st[1], st[2] + '. See it in Rewards.'), 900); return true;
+}
+function showSurprise(title, sub, kind){
+  const R = S.rewards; R.lastSurprise = S.day * 1440 + S.now; R.surprises.unshift({title, sub, when:DAYS[S.day] + ' ' + fmt(S.now)}); R.surprises = R.surprises.slice(0, 8);
+  $('#surpriseRoot').innerHTML = `<div class="surprise ${kind || ''}" role="status"><span class="sic">${kind === 'comeback' ? ICON.leaf : ICON.star}</span><div><b>${esc(title)}</b><span>${esc(sub)}</span></div></div>`;
+  confetti(innerWidth / 2, innerHeight - 140, 90, 7); chime(true); cue(2);
+  clearTimeout(showSurprise.t); showSurprise.t = setTimeout(() => { const el = $('#surpriseRoot .surprise'); if (el){ el.classList.add('out'); setTimeout(() => $('#surpriseRoot').innerHTML = '', 400); } }, 4200);
+}
+const canSurprise = () => S.day * 1440 + S.now - S.rewards.lastSurprise >= 20;
+function stepSurprise(){
+  const n = S.log.filter(l => l.day === S.day && l.kind === 'step').length;
+  if (n === 10 && addSticker('steps10')) showSurprise('Ten steps today', 'Ten small wins. That\'s how big things get done.');
+}
+// Layers 2, 5 and 7 run when a task is finished
+function rewardTask(t, worked, ahead){
+  const R = S.rewards, last = S.log[S.log.length - 1], pts = effortPts(last), before = R.jar;
+  R.lifetime++; R.jar += pts;
+  addSticker('first');
+  if (last && last.handoff) addSticker('handoff');
+  const todayDone = S.log.filter(l => l.day === S.day && l.kind === 'task').length;
+  const prevRough = S.day > 0 && (S.light[S.day - 1] || !S.log.some(l => l.day === S.day - 1 && l.kind === 'task'));
+  // Layer 5: treats you chose become available as the jar fills
+  const newly = R.treats.filter(x => before < x.cost && R.jar >= x.cost);
+  if (newly.length) setTimeout(() => toast('Treat earned: ' + newly[0].name, 'It\'s in your jar whenever you want it. Rewards > Treat jar.'), 1600);
+  // Layer 7: welcome back after a rough day or a gap
+  if (todayDone === 1 && prevRough){ addSticker('comeback'); setTimeout(() => showSurprise('Welcome back', 'First task done. Starting again is the hardest part, and you just did it.', 'comeback'), 700); return; }
+  if (!canSurprise()) return;
+  // Layer 2: surprise moments, based on something real you did (or a rare gold check)
+  const est = estOf(t);
+  let sp = null;
+  if (todayDone === 1 && S.now <= 9 * 60 + 45){ addSticker('early'); sp = ['Early bird', 'First task done by ' + fmt(S.now) + '. Strong start.']; }
+  else if (worked >= 5 && worked < est * .8){ addSticker('fast'); sp = ['Faster than planned', 'Done in ' + fmtDur(worked) + ', planned ' + fmtDur(est) + '. Cueue will learn from this.']; }
+  else if (Math.random() < .12){ addSticker('gold'); sp = ['Gold check', 'A rare one. No reason, you just earned it.']; }
+  if (sp) setTimeout(() => showSurprise(sp[0], sp[1]), 700);
+}
+function weekCounts(){ return DAYS.map((d, i) => S.log.filter(l => l.day === i && l.kind === 'task').length); }
+function rewardsTop(){
+  const R = S.rewards, wk = weekCounts(), weekPts = S.log.filter(l => l.kind === 'task' || l.kind === 'other').reduce((a, l) => a + effortPts(l), 0);
+  const next = R.treats.filter(x => x.cost > R.jar).sort((a, b) => a.cost - b.cost)[0], target = next ? next.cost : Math.max(R.jar, 1);
+  const handoffs = S.log.filter(l => l.kind === 'task' && l.handoff).length, kud = S.kudos.filter(k => k.to === 'p-you').length;
+  return `<div class="stats" style="margin-top:14px"><div class="stat"><b>${R.lifetime}</b><span>Tasks finished, all time</span></div><div class="stat"><b>${weekPts}</b><span>Effort points this week</span></div><div class="stat"><b>${R.stickers.length}/${STICKERS.length}</b><span>Stickers</span></div></div>
+    <div class="sec"><h4>Your week</h4><div class="trail">${wk.map((n, i) => `<div class="tn ${n ? 'lit' : ''} ${i === S.day ? 'today' : ''}"><span class="dot2">${n || ''}</span>${DAYS[i]}${S.light[i] ? '<small>Light</small>' : ''}</div>`).join('')}</div>
+      <p class="note">Each lit stop is a day you finished something. Light days count as taking care of yourself.</p></div>
+    <div class="grid-cards" style="grid-template-columns:repeat(auto-fit,minmax(290px,1fr))">
+      <div class="box"><h3>Treat jar</h3><p class="note">Pick your own rewards. Finished work fills the jar (harder and longer work counts more). Only you see this.</p>
+        <div class="jarrow" style="margin-top:10px"><div class="jar" aria-label="${R.jar} points"><i style="height:${Math.min(100, Math.round(100 * R.jar / target))}%"></i><b>${R.jar}</b></div>
+          <div>${R.treats.map(x => `<div class="treat"><span>${esc(x.name)}<br><small>${x.cost} points</small></span>${R.jar >= x.cost ? `<button class="btn small ok" data-act="taketreat" data-id="${x.id}">Take it</button>` : `<small>${x.cost - R.jar} to go</small>`}<button class="btn small ghost" data-act="deltreat" data-id="${x.id}" aria-label="Remove ${esc(x.name)}">×</button></div>`).join('')}</div></div>
+        <div class="actions" style="margin-top:10px"><input id="treatName" class="inp" placeholder="Add a treat, e.g. 15 min of my game" style="flex:1;min-width:0;width:auto">
+          <select id="treatCost" class="inp" style="width:auto" aria-label="Size"><option value="15">Small</option><option value="30">Medium</option><option value="120">Big</option></select><button class="btn small" data-act="addtreat">Add</button></div>
+        <div class="field" style="margin-top:10px"><label for="bundleIn">Pair dull tasks with (only then)</label><input id="bundleIn" value="${esc(R.bundle || '')}" placeholder="e.g. my favorite podcast"><p class="hint" style="margin:4px 0 0">Shown on tasks you've put off, as a reason to start.</p></div></div>
+      <div class="box"><h3>Sound packs</h3><p class="note">Every check plays one of several little tunes from your pack. More unlock as you finish tasks.</p>
+        <div class="packs" style="margin-top:10px">${Object.entries(PACKS).map(([k, pk]) => { const open = R.lifetime >= pk.unlock; return `<button class="pack" data-act="pack" data-v="${k}" aria-pressed="${R.pack === k}" ${open ? '' : 'disabled'}><span>${pk.name}</span><small>${open ? (R.pack === k ? 'In use' : 'Tap to use and hear it') : 'Unlocks at ' + pk.unlock + ' tasks'}</small></button>`; }).join('')}</div></div>
+      <div class="box"><h3>Your impact this week</h3>
+        <div class="kv"><span>Hand-offs that started a teammate's work</span><span>${handoffs}</span></div>
+        <div class="kv"><span>Roadblocks you cleared</span><span>${R.cleared || 0}</span></div>
+        <div class="kv"><span>Kudos received</span><span>${kud}</span></div>
+        <div class="kv"><span>Treats taken</span><span>${(R.taken || []).length}</span></div>
+        <p class="note" style="margin-top:8px">Your work moves other people's work forward. This is where you see it.</p></div>
+      <div class="box"><h3>Surprises</h3>${R.surprises.length ? R.surprises.slice(0, 4).map(x => `<div class="kv"><span>${esc(x.title)}</span><span>${esc(x.when)}</span></div>`).join('') : '<p class="note">They show up now and then when you do something worth noticing. No schedule, no pressure.</p>'}
+        <div class="actions" style="margin-top:10px"><button class="btn small" data-act="demosurprise">Preview a surprise</button><button class="btn small" data-act="democomeback">Preview a comeback</button></div></div>
+    </div>
+    <div class="sec"><h4>Stickers</h4><div class="stickers">${STICKERS.map(([id, name, how, col, ic]) => { const has = R.stickers.includes(id); return `<div class="stk ${has ? '' : 'locked'}"><span class="disc" style="background:${col}">${ICON[ic] || ICON.star}</span>${esc(name)}<small>${esc(how)}</small></div>`; }).join('')}</div></div>`;
+}
+
+/* ---------- Lock screen preview: Live Activity, Dynamic Island and Watch ---------- */
+function nextEvent(){ return eventsFor(S.day).filter(e => e.kind === 'event' && e.start > S.now).sort((a, b) => a.start - b.start).map(e => ({start:e.start, title:e.ev.title}))[0]; }
+function lockHTML(){
+  const t = byId(S.currentId), h = Math.floor(S.now / 60), m = Math.floor(S.now % 60), hh = ((h + 11) % 12) + 1, ev = nextEvent(), soon = ev && ev.start - S.now <= 10;
+  let ring = 0, big = '', title = '', sub = '', rc = '', btns = '';
+  if (S.brk){ const b = BREAKS.find(x => x.k === S.brk.k), left = Math.max(0, S.brk.min - S.brk.spent);
+    ring = Math.min(1, S.brk.spent / S.brk.min); big = Math.ceil(left) + 'm'; title = b.label + ' break'; sub = left > 0 ? Math.ceil(left) + ' min left. Enjoy it.' : 'Break done. Welcome back.'; rc = '--rc:#46D08F';
+    btns = '<button class="go" data-act="lkopen">Open Cueue</button>';
+  } else if (t){ const e = estOf(t), sp = t.spent || 0, left = e - sp, ns = nextStep(t);
+    ring = Math.min(1, sp / e); big = left >= 0 ? Math.ceil(left) + 'm' : '+' + Math.ceil(-left); title = t.title;
+    sub = (left >= 0 ? Math.ceil(left) + ' min left' : 'Over by ' + Math.ceil(-left) + ' min') + (ns ? ' · Step ' + (stepsDone(t) + 1) + ' of ' + t.steps.length + ': ' + ns.t : ' · All steps done');
+    btns = `${ns ? '<button class="go" data-act="lkstep">Check step</button>' : '<button class="go" data-act="lkopen">Complete in app</button>'}<button data-act="lkpause">${S.paused ? 'Resume' : 'Pause'}</button>`;
+  }
+  const over = t && !S.brk && (t.spent || 0) > estOf(t);
+  const live = (S.brk || t) ? `<div class="glass"><div class="live"><span class="lring ${over ? 'over' : ''}" style="--p:${ring.toFixed(3)};${rc}"><b>${esc(big)}</b></span>
+      <div style="min-width:0"><div class="lt">${esc(title)}</div><div class="ls">${esc(sub)}</div><div class="lb">${btns}</div></div></div>
+      ${ev ? `<div class="lnext">Next: ${esc(ev.title)} at ${fmt(ev.start)}</div>` : ''}</div>`
+    : `<div class="glass"><div class="live"><span class="lring"><b>–</b></span><div><div class="lt">Nothing running</div><div class="ls">Start your day and the clock shows up here.</div><div class="lb"><button class="go" data-act="lkstart">Start my day</button></div></div></div></div>`;
+  const warn = soon ? `<div class="glass lnote warnc"><span class="app">C</span><div><b>In ${Math.max(1, Math.ceil(ev.start - S.now))} min: ${esc(ev.title)}</b>Start wrapping up. Anything unfinished can go in your Later pocket.</div></div>` : '';
+  const isl = (S.brk || t) ? `<div class="island"><span class="lring sm ${over ? 'over' : ''}" style="--p:${ring.toFixed(3)};${rc}"></span><span>${esc(big)}</span></div>` : '<div class="island" style="min-width:110px"></div>';
+  return `<div class="lockwrap" role="dialog" aria-label="Lock screen preview">
+    <div class="lockphone">${isl}
+      <div class="locktime">${hh}:${String(m).padStart(2, '0')}</div><div class="lockdate">${dateOf(S.day).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'})}</div>
+      <div class="lockstack">${warn}${live}</div>
+      <div class="lockbar"><span class="round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8l-1 6H9z"/><path d="M9 8h6v13H9z"/></svg></span><button class="unlock" data-act="lkclose">Back to the app</button><span class="round" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></div>
+    </div>
+    <div class="lockside"><div class="watch"><span class="lring ${over ? 'over' : ''}" style="--p:${ring.toFixed(3)};${rc}"><b>${esc(big || '–')}</b></span><small>${esc(title ? title.slice(0, 34) : 'Nothing running')}</small></div>
+      <p><b>Lock screen preview.</b> In the real app this is a Live Activity: the visual clock stays on your lock screen, in the Dynamic Island at the top, and on your Apple Watch, so time stays visible without opening Cueue. You can check a step or pause right from here.</p>
+      <p>10 and 2 minutes before your next event, a gentle heads-up appears so switching isn't a surprise.</p></div>
+  </div>`;
+}
+let lockMin = -1;
+function drawLock(force){ const r = $('#lockRoot'); if (!r.innerHTML && !force) return; const mm = Math.floor(S.now); if (!force && mm === lockMin) return; lockMin = mm; r.innerHTML = lockHTML(); }
+const warned = {};
+function transitionWarnings(prev){
+  const ev = nextEvent(); if (!ev) return;
+  [10, 2].forEach(m => { const at = ev.start - m, k = S.day + ':' + ev.start + ':' + m;
+    if (prev < at && S.now >= at && !warned[k]){ warned[k] = true; cue(m === 10 ? 1 : 2);
+      toast('In ' + m + ' min: ' + ev.title, m === 10 ? 'Start wrapping up. Jot anything unfinished in your Later pocket.' : 'Time to head over.'); } });
 }
 
 /* ---------- Later pocket ---------- */
@@ -2056,7 +2278,7 @@ function openDrawer(){
     <div class="mgroup">Me</div>
     ${mi('later', 'tmpl', 'Later pocket', (S.later || []).filter(n => n.status === 'open').length ? `<span class="cnt">${(S.later || []).filter(n => n.status === 'open').length}</span>` : '')}
     ${mi('mantras', 'idea', 'Mantras')}
-    ${mi('achievements', 'star', 'Achievements')}
+    ${mi('achievements', 'star', 'Rewards')}
     ${mi('insights', 'chart', 'Insights')}
     ${mi('profile', 'user', 'Profile & my day')}
     <div style="flex:1;min-height:12px"></div>
@@ -2966,7 +3188,7 @@ function openAchievements(){
   const routines = S.tasks.filter(t => t.cadence && t.completions && isMine(t));
   const badges = [['First get-ahead', 'Finish a task before its planned day', (S.aheadCount || 0) >= 1], ['Appreciated', 'Receive kudos from a teammate', kud >= 1], ['Step by step', 'Check off 25 steps', steps >= 25],
     ['Routine builder', 'Reach 10 on any routine', routines.some(t => t.completions >= 10)], ['Hand-off pro', 'Finish a stage that starts others', S.log.some(l => l.kind === 'task' && l.handoff)], ['Week cleared', 'Clear a whole day', S.log.some(l => l.cleared)]];
-  openPage('achievements', [['Board', 'board'], ['Achievements', 'achievements']], `<h1>Achievements</h1><p class="lede">Your progress, just for you.</p>
+  openPage('achievements', [['Board', 'board'], ['Rewards', 'achievements']], `<h1>Rewards</h1><p class="lede">Your progress, your treats and the surprises along the way. Just for you.</p>${rewardsTop()}<h2 style="margin-top:26px;font-size:20px">Badges and routines</h2>
     <div class="stats" style="margin-top:14px"><div class="stat"><b>${tasks}</b><span>Tasks this week</span></div><div class="stat"><b>${steps}</b><span>Steps checked</span></div><div class="stat"><b>${other}</b><span>Other work logged</span></div><div class="stat"><b>${kud}</b><span>Kudos received</span></div><div class="stat"><b>${S.aheadCount || 0}</b><span>Done early</span></div></div>
     <div class="sec"><h4>Routine milestones</h4><div class="list">${routines.map(t => { const m = MILESTONES.find(x => x > t.completions); return `<div class="box" style="padding:10px 14px"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(t.title)}</b><span class="note">${t.completions} of ${m}</span></div><div class="bar" style="margin-top:6px"><i style="width:${Math.round(100 * t.completions / m)}%"></i></div></div>`; }).join('')}</div></div>
     <div class="sec"><h4>Badges</h4><div class="grid-cards">${badges.map(b => `<div class="box" style="display:flex;gap:12px;align-items:center;${b[2] ? '' : 'opacity:.55'}"><span class="ring sm" style="--p:${b[2] ? 1 : 0};--rc:var(--violet)"></span><div><b>${b[0]}</b><div class="note">${b[2] ? 'Earned' : b[1]}</div></div></div>`).join('')}</div></div>`, {refresh: openAchievements});
@@ -3230,6 +3452,18 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'lkclose': $('#lockRoot').innerHTML = ''; render(); return;
+    case 'lkopen': $('#lockRoot').innerHTML = ''; render(); return;
+    case 'lkpause': S.paused = !S.paused; drawLock(true); render(); return;
+    case 'lkstart': $('#lockRoot').innerHTML = ''; runAct('startday'); setTimeout(() => drawLock(true), 300); return;
+    case 'lkstep': { const t = byId(S.currentId), i = t.steps.findIndex(x => !x.done); if (i > -1) checkStep(t, i, null); render(); drawLock(true); return; }
+    case 'taketreat': { const R = S.rewards, x = R.treats.find(y => y.id === el.dataset.id); R.jar -= x.cost; R.taken.push({name:x.name, when:DAYS[S.day]}); addSticker('treat');
+      confetti(innerWidth / 2, innerHeight / 2, 120, 8); chime(true); toast('Enjoy: ' + x.name, 'You earned it. No guilt, it was the plan.'); save(); openAchievements(); return; }
+    case 'deltreat': S.rewards.treats = S.rewards.treats.filter(y => y.id !== el.dataset.id); save(); openAchievements(); return;
+    case 'addtreat': { const n = $('#treatName').value.trim(); if (!n){ $('#treatName').focus(); return; } S.rewards.treats.push({id:newId('tr'), name:n, cost:+$('#treatCost').value}); S.rewards.treats.sort((a, b) => a.cost - b.cost); save(); openAchievements(); return; }
+    case 'pack': S.rewards.pack = el.dataset.v; save(); chime(false); openAchievements(); return;
+    case 'demosurprise': showSurprise('Gold check', 'A rare one. No reason, you just earned it.'); return;
+    case 'democomeback': showSurprise('Welcome back', 'First task done. Starting again is the hardest part, and you just did it.', 'comeback'); return;
     case 'tedit': { const t = byId($('#sheetRoot').dataset.task); S.editTask = t.id; openTask(t); return; }
     case 'tdone': { const t = byId($('#sheetRoot').dataset.task); S.editTask = null; save(); render(); openTask(t); toast('Saved', '"' + t.title + '"'); return; }
     case 'tdelstep': { const t = byId($('#sheetRoot').dataset.task); t.steps.splice(+el.dataset.i, 1); save(); render(); openTask(t); return; }
@@ -3263,6 +3497,7 @@ document.addEventListener('click', ev => {
       const g = t.goalId && goalById(t.goalId), root = g && rootOf(g);
       if (root){ root.updates = root.updates || []; root.updates.unshift({who:'You', when, clear:true, text:'"' + t.title + '" is moving again.'}); }
       if (b.sentTo.length) note('You told ' + b.sentTo.length + ' people "' + t.title + '" is moving again', b.sentTo.join(', '), 'ok', {task:t.id});
+      S.rewards.cleared = (S.rewards.cleared || 0) + 1; addSticker('unblocker');
       delete t.roadblock; save(); render(); if ($('#sheetRoot').dataset.kind === 'task') openTask(t);
       toast('Back on track', b.sentTo.length ? 'Everyone you told about the roadblock got the update.' : 'Roadblock cleared.'); break; }
     case 'tstyle': S.settings.textStyle = el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === el)); gPreview(); save(); applyGram(); return;
@@ -3390,6 +3625,8 @@ document.addEventListener('keydown', ev => {
 $('#menuBtn').onclick = openDrawer;
 $('#bellBtn').onclick = openInbox;
 $('#laterBtn').onclick = openLaterCapture;
+$('#lockBtn').onclick = () => drawLock(true);
+document.addEventListener('change', ev => { if (ev.target.id === 'bundleIn'){ S.rewards.bundle = ev.target.value.trim(); save(); render(); toast('Saved', S.rewards.bundle ? 'Shown on tasks you\'ve put off.' : 'Pairing turned off.'); } });
 $('#newBtn').onclick = ev => { ev.stopPropagation(); const m = $('#newMenu'); if (m.hidden) openNewMenu(); else closeNewMenu(); };
 $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned today so "Get ahead" appears
   S.tasks.filter(t => t.day === S.day && isMine(t) && !t.done && t.status !== 'waiting').forEach(t => {
