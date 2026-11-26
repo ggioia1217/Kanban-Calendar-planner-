@@ -752,6 +752,37 @@ html[data-weight="1"] .gw{font-weight:600}
 .stk small{font-weight:500;color:var(--muted);line-height:1.25}
 .pairhint{font-size:13px;color:var(--violet);font-weight:600}
 
+/* ---------- First-week onboarding ---------- */
+.obwrap{position:fixed;inset:0;z-index:96;background:var(--bg);overflow:auto;display:flex;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.obcard{width:100%;max-width:520px;display:flex;flex-direction:column;gap:14px;margin:auto 0}
+.obdots{display:flex;gap:6px}
+.obdots i{height:6px;flex:1;border-radius:999px;background:var(--line)}
+.obdots i.on{background:var(--accent)}
+.obcard h1{font-family:var(--font-display);font-size:clamp(28px,7vw,38px);line-height:1.08;letter-spacing:-.02em;margin:6px 0 0}
+.obcard .lede2{font-size:17px;color:var(--muted);margin:0}
+.obopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.obopt{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;text-align:left;font:inherit;color:var(--ink);cursor:pointer;min-height:56px}
+.obopt b{display:block;font-size:15px}
+.obopt small{color:var(--muted)}
+.obopt[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.obthing{display:flex;gap:8px;align-items:center}
+.obthing input{flex:1;min-width:0;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.obthing .seg button{padding:6px 10px}
+.obfoot{display:flex;gap:10px;align-items:center;margin-top:6px}
+.obfoot .skip{margin-left:auto;background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;text-decoration:underline;min-height:44px}
+.obplan{display:flex;flex-direction:column;gap:6px}
+.obplan div{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-weight:600}
+.obplan div small{margin-left:auto;color:var(--muted);font-weight:500}
+.unlocknote{font-size:13px;color:var(--muted)}
+/* ---------- Today isn't working ---------- */
+.resetlink{align-self:flex-start;background:none;border:0;padding:2px 0;font:inherit;font-size:13px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:32px}
+.keeplist{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.keeplist label{display:flex;gap:10px;align-items:center;padding:9px 11px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font-weight:500;font-size:14.5px}
+.keeplist label:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
+.keeplist input{width:20px;height:20px;flex:none;margin:0}
+.keeplist span{flex:1;min-width:0}
+.keeplist small{display:block;color:var(--muted);font-size:12px}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -788,6 +819,7 @@ html[data-weight="1"] .gw{font-weight:600}
     <button class="btn small" id="endDayBtn">End day ▸</button>
     <button class="btn small" id="clearBtn">Finish today (demo)</button>
     <div class="spacer"></div>
+    <button class="btn small" id="newUserBtn">New user (demo)</button>
     <button class="btn small ghost" id="resetBtn">Reset demo</button>
   </div>
   <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
@@ -800,6 +832,7 @@ html[data-weight="1"] .gw{font-weight:600}
 <div id="laterPop"></div>
 <div id="lockRoot"></div>
 <div id="surpriseRoot"></div>
+<div id="obRoot"></div>
 
 <script>
 (() => {
@@ -1317,9 +1350,10 @@ function columnHTML(day, single){
     const {items, overflow} = schedule(day);
     if (isToday){
       const [mid, mtext] = thisMantra();
-      body += `<div class="mantra" data-act="mantras" role="button" tabindex="0"><span class="ml">This week's mantra</span><b>"${esc(mtext)}"</b>${S.mantraUsed[day] ? '<span class="chip okc">Used today</span>' : '<button class="btn small" data-act="mused">I used it</button>'}</div>`;
-      if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>Light day.</b> Only what's essential today${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
+      if (has('mantras')) body += `<div class="mantra" data-act="mantras" role="button" tabindex="0"><span class="ml">This week's mantra</span><b>"${esc(mtext)}"</b>${S.mantraUsed[day] ? '<span class="chip okc">Used today</span>' : '<button class="btn small" data-act="mused">I used it</button>'}</div>`;
+      if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>${S.light[day].reset ? 'Day reset.' : 'Light day.'}</b> ${S.light[day].reset ? 'Just your essentials now' : 'Only what\'s essential today'}${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
       body += topPanel();
+      if (!S.light[day] && S.tasks.filter(t => t.day === day && !t.done && isMine(t)).length >= 2) body += '<button class="resetlink" data-act="resetday">Today isn\'t working?</button>';
     } else if (S.light[day]) body += `<div class="lightnote"><span><b>Light day planned.</b> Only essentials will be scheduled.</span></div>`;
     body += items.map(it => {
       if (it.kind === 'task') return (isToday && it.task.id === S.currentId) ? '' : cardHTML(it.task, it.start, day, it.chunk);
@@ -1342,11 +1376,12 @@ function columnHTML(day, single){
     body += `<button class="dayprog" data-donelist="${day}"><div class="row"><span><b>${doneTasks}</b> tasks · <b>${doneSteps}</b> steps${doneOther ? ` · <b>${doneOther}</b> other` : ''}</span><span>View done ›</span></div><div class="bar"><i style="width:${total?Math.round(100*doneTasks/total):0}%"></i></div></button>`;
   }
   const nav = single ? `<div class="nav"><button class="iconbtn" data-nav="-1" aria-label="Previous day">${ICON.left}</button><button class="iconbtn" data-nav="1" aria-label="Next day">${ICON.right}</button></div>` : '';
-  const lightBtn = past ? '' : `<button class="lightbtn ${S.light[day] ? 'on' : ''}" data-act="lighttoggle" data-day="${day}" title="${S.light[day] ? 'Undo the light day' : 'Make this a lighter day: only essentials, longer breaks, softer reminders'}">${S.light[day] ? 'Light day' : 'Lighten'}</button>`;
+  const lightBtn = past || !has('light') ? '' : `<button class="lightbtn ${S.light[day] ? 'on' : ''}" data-act="lighttoggle" data-day="${day}" title="${S.light[day] ? 'Undo the light day' : 'Make this a lighter day: only essentials, longer breaks, softer reminders'}">${S.light[day] ? 'Light day' : 'Lighten'}</button>`;
   return `<section class="col ${isToday?'today':''} ${past?'past':''} ${S.light[day] ? 'lightday' : ''}"><div class="colhead">${nav}<h2>${isToday?'Today':L.name}</h2><span class="date">${L.name} ${L.mon} ${L.num}</span><span class="count">${count}</span>${lightBtn}</div><div class="colbody">${body}</div></section>`;
 }
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('inview', e.isIntersecting)), {threshold:.15}) : null;
 function render(){
+  if (S.ob && S.ob.step == null && !S.ob.all && render.obDay !== S.day){ render.obDay = S.day; setTimeout(checkUnlocks, 600); }
   const root = document.documentElement;
   root.classList.toggle('motion', motionOK() && S.settings.cue > 0);
   root.classList.toggle('edge-on', motionOK() && S.settings.edge);
@@ -1365,7 +1400,7 @@ function render(){
   if (io){ io.disconnect(); board.querySelectorAll('.card,.panel').forEach(el => io.observe(el)); }
   else board.querySelectorAll('.card,.panel').forEach(el => el.classList.add('inview'));
   const {overflow} = schedule(S.day), ban = $('#banner');
-  if (overflow.length){ ban.hidden = false; ban.innerHTML = `<strong>Today is overbooked.</strong> ${overflow.length} task${overflow.length>1?'s don\'t':' doesn\'t'} fit. <button class="btn small" data-act="pushlater">Move later-due tasks to tomorrow</button>`; }
+  if (overflow.length){ ban.hidden = false; ban.innerHTML = `<strong>Today is overbooked.</strong> ${overflow.length} task${overflow.length>1?'s don\'t':' doesn\'t'} fit. <button class="btn small" data-act="pushlater">Move later-due tasks to tomorrow</button> <button class="btn small ghost" data-act="resetday">Today isn't working</button>`; }
   else ban.hidden = true;
   live(); updateTabs(); save();
 }
@@ -1547,7 +1582,7 @@ function completeTask(t, note, files, handoffTask, handoffStage){
   // Suggest a break only after real effort: a long stretch on this task (60+ min), or 90 min of work since the last break
   if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for ' + fmtDur(S.workSince) + '. Time for a break.'};
   else if (worked >= LONG_TASK) S.breakDue = {reason:'You just finished a long task (' + fmtDur(worked) + '). Take a reward break.', reward:true};
-  rewardTask(t, worked, ahead);
+  rewardTask(t, worked, ahead); checkUnlocks();
   closeSheet(); render();
   if (S.dayMode && S.settings.autoNext && !S.breakDue && !S.currentId && (firstUp() || !ahead)) setTimeout(startNext, 900);
 }
@@ -1849,6 +1884,91 @@ function openBlockLog(t){
     <div class="field"><label for="blkLogNote">What came of it? (optional)</label><input id="blkLogNote" placeholder="e.g. She'll sign Thursday morning"></div>
     <div class="actions"><button class="btn primary" data-act="blklogsave" data-task="${t.id}">Save</button><button class="btn ghost" data-close="1">Cancel</button></div>`, 'blklog');
   S._blk = {task:t.id, reach:'call'};
+}
+
+/* ---------- First week: start small, unlock the rest as it's used ---------- */
+const UNLOCKS = [
+  ['rewards', 'Rewards', 'Your treat jar, stickers and sound packs', s => s.log.some(l => l.kind === 'task')],
+  ['goals', 'Goals', 'Group tasks under something bigger', s => s.log.some(l => l.kind === 'task')],
+  ['mantras', 'Mantras', 'A short saying to practice each week', s => s.log.filter(l => l.kind === 'task').length >= 3],
+  ['templates', 'Templates & ideas', 'Ready-made routines for home and work', s => s.log.filter(l => l.kind === 'task').length >= 3],
+  ['light', 'Light days', 'Make any day lighter, no questions asked', s => s.day >= s.ob.startDay + 1],
+  ['insights', 'Insights', 'Patterns Cueue notices about your days', s => s.day >= s.ob.startDay + 1],
+  ['flows', 'Flows', 'Processes shared with your team or family', s => s.day >= s.ob.startDay + 2],
+  ['team', 'Team', 'Team activity, org chart and CRM', s => s.day >= s.ob.startDay + 2]];
+const has = f => !S.ob || S.ob.all || (S.ob.unlocked || []).includes(f);
+function checkUnlocks(){
+  if (!S.ob || S.ob.all || S.ob.step != null) return;
+  const fresh = UNLOCKS.filter(([k, , , test]) => !S.ob.unlocked.includes(k) && test(S));
+  if (!fresh.length) return;
+  fresh.forEach(([k]) => S.ob.unlocked.push(k));
+  fresh.forEach(([k, name, what], i) => setTimeout(() => { if (!S.ob) return; toast('New in Cueue: ' + name, what + '. It\'s in the menu.'); note('Unlocked: ' + name, what + '.', 'star', null); }, 1400 + i * 1800));
+  save();
+}
+function seedFresh(){
+  const f = seed();
+  Object.assign(f, {inited:true, tasks:[], goals:[], log:[], later:[], events:[], kudos:[], light:{}, mantraUsed:{}, mantraHist:[], mantraStories:[], aheadCount:0, now:9 * 60 + 5,
+    notes:[{id:'nt-w', icon:'star', text:'Welcome to Cueue', sub:'Start small. More features unlock as you use it.', when:'Now', read:false}]});
+  f.rewards = {lifetime:0, jar:0, pack:'classic', stickers:[], surprises:[], lastSurprise:-999, cleared:0, bundle:'', taken:[],
+    treats:[{id:'tr1', name:'Coffee walk', cost:15}, {id:'tr2', name:'One episode of my show', cost:30}, {id:'tr3', name:'Something I\'ve wanted', cost:120}]};
+  f.ob = {step:0, startDay:f.day, unlocked:[], area:'both', focus:'morning', things:[['', 'work'], ['', 'home'], ['', 'work']]};
+  return f;
+}
+function quickTask(title, ctx){
+  const est = title.length > 40 ? 45 : 30;
+  return {id:newId('n'), title, ctx, diff:2, span:spanFor(est), est:null, aiEst:est, aiRuns:0, prio:2, due:null, cadence:null, day:S.day, goalId:null,
+    source:'manual', doneWhen:aiDone(title), proof:false, split:false, steps:aiSteps(title).map(([t, type]) => ({t, type})), notes:''};
+}
+function openOnboarding(){
+  const o = S.ob; if (!o || o.step == null) { $('#obRoot').innerHTML = ''; return; }
+  const dots = `<div class="obdots" aria-hidden="true">${[0, 1, 2, 3].map(i => `<i class="${i <= o.step ? 'on' : ''}"></i>`).join('')}</div>`;
+  const foot = (next, label) => `<div class="obfoot"><button class="btn primary" data-act="${next}" style="min-height:48px;padding:0 22px">${label}</button>${o.step > 0 ? '<button class="btn ghost" data-act="obback">Back</button>' : ''}<button class="skip" data-act="obskip">Skip setup</button></div>`;
+  let body = '';
+  if (o.step === 0) body = `${dots}<h1>Let's set up your day. Two minutes.</h1>
+    <p class="lede2">Cueue plans your day around your energy, breaks big things into small steps, and cheers every one you finish.</p>
+    <p class="lede2">You'll start with just the basics. Goals, flows, mantras and more show up as you use it, so nothing piles on at once.</p>${foot('obnext', 'Let\'s go')}`;
+  else if (o.step === 1){
+    const opt = (grp, k, b, sm) => `<button class="obopt" data-act="obpick" data-g="${grp}" data-v="${k}" aria-pressed="${o[grp] === k}"><b>${b}</b><small>${sm}</small></button>`;
+    body = `${dots}<h1>What should Cueue help with?</h1>
+      <div class="obopts">${opt('area', 'work', 'Work', 'Tasks, meetings, hand-offs')}${opt('area', 'home', 'Home', 'Chores, errands, family')}${opt('area', 'both', 'Both', 'One board for everything')}</div>
+      <h2 style="margin:10px 0 0;font-size:20px">When do you focus best?</h2><p class="lede2" style="font-size:15px">Cueue puts your hardest tasks there.</p>
+      <div class="obopts">${opt('focus', 'morning', 'Morning', '9 AM to 1 PM')}${opt('focus', 'midday', 'Midday', '11 AM to 3 PM')}${opt('focus', 'afternoon', 'Afternoon', '1 PM to 5 PM')}</div>
+      ${foot('obnext', 'Next')}`;
+  } else if (o.step === 2){
+    const seg = i => `<div class="seg" role="group" aria-label="Work or home">${['work', 'home'].map(c => `<button data-act="obctx" data-i="${i}" data-v="${c}" aria-pressed="${o.things[i][1] === c}">${c === 'work' ? 'Work' : 'Home'}</button>`).join('')}</div>`;
+    const ph = ['e.g. Send the Q4 report to Priya', 'e.g. Schedule the dentist', 'e.g. Reply to Dana about the invoice'];
+    body = `${dots}<h1>What's on your mind today?</h1><p class="lede2">Add up to three things. Rough is fine. Cueue breaks each into steps and estimates the time.</p>
+      ${o.things.map((x, i) => `<div class="obthing"><input id="obT${i}" value="${esc(x[0])}" placeholder="${ph[i]}" aria-label="Thing ${i + 1}">${o.area === 'both' ? seg(i) : ''}</div>`).join('')}
+      ${foot('obnext', 'Plan my day')}`;
+  } else {
+    const mine = S.tasks.filter(t => t.day === S.day && !t.done);
+    body = `${dots}<h1>${mine.length ? 'Your day is ready.' : 'You\'re all set.'}</h1>
+      ${mine.length ? `<div class="obplan">${mine.map((t, i) => `<div>${i === 0 ? '<span class="chip" style="color:var(--accent)">First up</span>' : ''}${esc(t.title)}<small>${t.steps.length} steps · ~${fmtDur(estOf(t))}</small></div>`).join('')}</div>` : '<p class="lede2">Add a task any time with + New.</p>'}
+      <p class="lede2" style="font-size:15px">Press Start and the first task's timer begins. When you finish one, the next starts on its own. Check off steps as you go.</p>
+      <p class="unlocknote">Coming as you go: Rewards and Goals after your first task, Mantras after three, Light days tomorrow, Flows and Team on day 3.</p>
+      <div class="obfoot"><button class="btn primary" data-act="obstart" style="min-height:48px;padding:0 22px">${mine.length ? 'Start my day' : 'Go to my board'}</button><button class="btn ghost" data-act="obback">Back</button></div>`;
+  }
+  $('#obRoot').innerHTML = `<div class="obwrap" role="dialog" aria-label="Set up Cueue"><div class="obcard">${body}</div></div>`;
+  const first = $('#obRoot input'); if (first) setTimeout(() => first.focus(), 50);
+}
+function obSaveThings(){ if (S.ob.step === 2) S.ob.things.forEach((x, i) => { const el = $('#obT' + i); if (el) x[0] = el.value.trim(); }); }
+const FOCUS_HOURS = {morning:[9 * 60, 13 * 60], midday:[11 * 60, 15 * 60], afternoon:[13 * 60, 17 * 60]};
+
+/* ---------- "Today isn't working": keep the essentials, move the rest, no guilt ---------- */
+function openResetDay(){
+  const left = S.tasks.filter(t => t.day === S.day && !t.done && isMine(t) && t.status !== 'waiting');
+  const score2 = t => (t.id === S.currentId ? 100 : 0) + (t.due != null && t.due <= S.day ? 50 : 0) + t.prio * 5 + (t.cadence && t.missed ? 4 : 0);
+  const keep = new Set(left.slice().sort((a, b) => score2(b) - score2(a)).slice(0, Math.min(3, left.length)).filter(t => score2(t) >= 15 || left.length <= 3).map(t => t.id));
+  openSheet(`<h2>Today isn't working?</h2>
+    <p class="note">That happens. Let's shrink today to what matters. Moving things is planning, not failing.</p>
+    <div class="field" style="margin-top:10px"><label>Keep up to three things today</label>
+      <div class="keeplist">${left.map(t => `<label><input type="checkbox" class="keepT" value="${t.id}" ${keep.has(t.id) ? 'checked' : ''}><span>${esc(t.title)}<small>${[t.due != null && t.due <= S.day ? 'Due today' : t.due != null ? 'Due ' + DAYS[t.due] : '', t.prio >= 4 ? 'Urgent' : t.prio >= 3 ? 'High priority' : '', t.id === S.currentId ? 'Working on it now' : '', '~' + fmtDur(estOf(t))].filter(Boolean).join(' · ')}</small></span></label>`).join('') || '<p class="note">Nothing left today.</p>'}</div>
+      <p class="note" id="keepNote" style="margin:6px 0 0"></p></div>
+    <p class="note">Everything else moves to your next regular day. The rest of today also becomes a light day: longer breaks, softer reminders, no shaking.</p>
+    <div class="actions"><button class="btn primary" data-act="resetgo">Reset my day</button><button class="btn ghost" data-close="1">Not now</button></div>`, 'resetday');
+  const upd = () => { const n = document.querySelectorAll('.keepT:checked').length, tot = left.length;
+    $('#keepNote').textContent = n > 3 ? n + ' picked. Three or fewer gives you the best shot.' : 'Keeping ' + n + ', moving ' + (tot - n) + '.'; };
+  document.querySelectorAll('.keepT').forEach(c => c.addEventListener('change', upd)); upd();
 }
 
 /* ---------- Layered rewards ---------- */
@@ -2267,19 +2387,21 @@ function openDrawer(){
     <button class="profile" data-act="profile"><span class="bigav">ME</span><span><b>You</b><small>Account Manager · Operations</small><small>${LEVEL_NAMES[S.viewAs]} · reports to Morgan Blake</small></span><span class="ring sm" style="--p:${((todayDone / Math.max(1, todayDone + todayLeft))).toFixed(3)}" title="Today's progress"></span></button>
     <div class="mgroup">Plan</div>
     ${mi('board', 'board', 'Today & week')}
-    ${mi('goals', 'target', 'My goals', wait ? `<span class="cnt hot">${wait} waiting</span>` : '')}
-    ${mi('flows', 'flow', 'Flows', review ? `<span class="cnt">${review} to review</span>` : '', ['flows','builder','flowview'])}
-    ${mi('templates', 'idea', 'Templates & ideas')}
-    <div class="mgroup">Team</div>
+    ${has('goals') ? mi('goals', 'target', 'My goals', wait ? `<span class="cnt hot">${wait} waiting</span>` : '') : ''}
+    ${has('flows') ? mi('flows', 'flow', 'Flows', review ? `<span class="cnt">${review} to review</span>` : '', ['flows','builder','flowview']) : ''}
+    ${has('templates') ? mi('templates', 'idea', 'Templates & ideas') : ''}
+    ${S.tasks.some(t => t.day === S.day && !t.done && isMine(t)) ? mi('resetday', 'leaf', 'Today isn\'t working') : ''}
+    <div class="mgroup">${has('team') ? 'Team' : 'Updates'}</div>
     ${mi('inbox', 'bell', 'Notifications', n ? `<span class="cnt hot">${n} new</span>` : '')}
-    ${mi('leaderboard', 'trophy', 'Team activity')}
-    ${mi('org', 'org', 'Org chart & permissions')}
-    ${LV[S.viewAs] >= 1 ? mi('crm', 'link', 'CRM connection') : ''}
+    ${has('team') ? mi('leaderboard', 'trophy', 'Team activity') : ''}
+    ${has('team') ? mi('org', 'org', 'Org chart & permissions') : ''}
+    ${has('team') && LV[S.viewAs] >= 1 ? mi('crm', 'link', 'CRM connection') : ''}
     <div class="mgroup">Me</div>
     ${mi('later', 'tmpl', 'Later pocket', (S.later || []).filter(n => n.status === 'open').length ? `<span class="cnt">${(S.later || []).filter(n => n.status === 'open').length}</span>` : '')}
-    ${mi('mantras', 'idea', 'Mantras')}
-    ${mi('achievements', 'star', 'Rewards')}
-    ${mi('insights', 'chart', 'Insights')}
+    ${has('mantras') ? mi('mantras', 'idea', 'Mantras') : ''}
+    ${has('rewards') ? mi('achievements', 'star', 'Rewards') : ''}
+    ${has('insights') ? mi('insights', 'chart', 'Insights') : ''}
+    ${S.ob && !S.ob.all ? `<p class="unlocknote" style="padding:6px 12px">${UNLOCKS.filter(u => !has(u[0])).length} more features unlock as you use Cueue.</p>` : ''}
     ${mi('profile', 'user', 'Profile & my day')}
     <div style="flex:1;min-height:12px"></div>
     ${mi('settings', 'gear', 'Settings')}
@@ -2289,8 +2411,8 @@ function openDrawer(){
 function closeDrawer(){ $('#drawerRoot').innerHTML = ''; }
 function openNewMenu(){
   const m = $('#newMenu'), item = (act, icon, label, sub) => `<button role="menuitem" data-act="${act}">${ICON[icon]}<b>${label}</b><span>${sub}</span></button>`;
-  m.innerHTML = item('newtask', 'plus', 'Task', 'One-off or routine, with steps') + item('newgoal', 'target', 'Goal', 'Days, weeks or months, broken into routines')
-    + item('newflow', 'flow', canCreateFlows() ? 'Flow' : 'Suggest a flow', canCreateFlows() ? 'A process across people or family' : 'Build it, your manager reviews it') + item('templates', 'idea', 'From a template', 'Home, family and work ideas');
+  m.innerHTML = item('newtask', 'plus', 'Task', 'One-off or routine, with steps') + (has('goals') ? item('newgoal', 'target', 'Goal', 'Days, weeks or months, broken into routines') : '');
+  if (has('flows')) m.innerHTML += item('newflow', 'flow', canCreateFlows() ? 'Flow' : 'Suggest a flow', canCreateFlows() ? 'A process across people or family' : 'Build it, your manager reviews it') + item('templates', 'idea', 'From a template', 'Home, family and work ideas');
   m.innerHTML += item('ltnew', 'tmpl', 'Jot a thought', 'Into your Later pocket, with the moment saved') + item('otherwork', 'chart', 'Other work', 'Log work that isn\'t a task so it still counts');
   m.style.left = '0px'; m.hidden = false; $('#newBtn').setAttribute('aria-expanded', 'true');
   const r = m.getBoundingClientRect(); if (r.right > innerWidth - 8) m.style.left = (-(r.right - innerWidth + 8)) + 'px';
@@ -2302,7 +2424,7 @@ function updateTabs(){
   bar.classList.toggle('on', on);
   const cur = page ? (['builder','flowview'].includes(page.kind) ? 'flows' : page.kind) : 'board';
   const tab = (k, icon, label, extra) => `<button data-tab="${k}" ${cur === k ? 'aria-current="page"' : ''}>${ICON[icon]}<span>${label}</span>${extra || ''}</button>`;
-  bar.innerHTML = tab('board', 'board', 'Today') + tab('goals', 'target', 'Goals') + tab('flows', 'flow', 'Flows') + tab('inbox', 'bell', 'Inbox', '<i class="badge" id="tabBadge" hidden></i>') + tab('menu', 'menu', 'Menu');
+  bar.innerHTML = tab('board', 'board', 'Today') + (has('goals') ? tab('goals', 'target', 'Goals') : '') + (has('flows') ? tab('flows', 'flow', 'Flows') : '') + (!has('goals') ? tab('later', 'tmpl', 'Later') : '') + tab('inbox', 'bell', 'Inbox', '<i class="badge" id="tabBadge" hidden></i>') + tab('menu', 'menu', 'Menu');
   document.documentElement.style.setProperty('--tabh', on ? bar.offsetHeight + 'px' : '0px');
   updateBadges();
 }
@@ -3332,6 +3454,7 @@ function openSettings(){
   const st = S.settings, hh = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
   const cb = (id, on, text) => `<label style="display:flex;gap:8px;margin-bottom:6px"><input type="checkbox" id="${id}" ${on?'checked':''}> ${text}</label>`;
   openSheet(`<h2>Settings</h2>
+  ${S.ob && !S.ob.all ? `<div class="sec" style="border:0;margin:0 0 12px;padding:0"><h4>Features</h4><p class="note">Cueue is showing the basics first. ${UNLOCKS.filter(u => !has(u[0])).length} features will unlock as you use it.</p><button class="btn small" data-act="obunlockall">Show everything now</button></div>` : ''}
   <div class="sec" style="border:0;margin:0;padding:0"><h4>Display</h4>
     <div class="field"><label>Board view</label><div class="seg" role="group" aria-label="Board view"><button data-view="auto" aria-pressed="${S.view === 'auto'}">Auto</button><button data-view="week" aria-pressed="${S.view === 'week'}">Week</button><button data-view="day" aria-pressed="${S.view === 'day'}">Today</button></div>
       <p class="note" style="margin:4px 0 0">Auto shows the week when your screen is wide or sideways, and today when it's upright.</p></div>
@@ -3452,6 +3575,27 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'obnext': obSaveThings();
+      if (S.ob.step === 1){ const [a2, b2] = FOCUS_HOURS[S.ob.focus]; S.settings.freshStart = a2; S.settings.freshEnd = b2; if (S.ob.area !== 'both') S.ob.things.forEach(x => x[1] = S.ob.area); }
+      if (S.ob.step === 2){ S.tasks = S.tasks.filter(t => !t.obMade); S.ob.things.filter(x => x[0]).forEach(([ti, c]) => { const t = quickTask(ti, c); t.obMade = true; S.tasks.push(t); }); }
+      S.ob.step++; save(); render(); openOnboarding(); return;
+    case 'obback': obSaveThings(); S.ob.step = Math.max(0, S.ob.step - 1); openOnboarding(); return;
+    case 'obpick': S.ob[el.dataset.g] = el.dataset.v; openOnboarding(); return;
+    case 'obctx': obSaveThings(); S.ob.things[+el.dataset.i][1] = el.dataset.v; openOnboarding(); return;
+    case 'obskip': S.ob.step = null; $('#obRoot').innerHTML = ''; save(); render(); toast('Welcome to Cueue', 'Tap + New to add your first task.'); return;
+    case 'obstart': { const any = S.tasks.some(t => t.day === S.day && !t.done); S.ob.step = null; $('#obRoot').innerHTML = ''; S.tasks.forEach(t => delete t.obMade); save(); render();
+      if (any) runAct('startday'); else toast('Welcome to Cueue', 'Tap + New to add your first task.'); return; }
+    case 'obunlockall': S.ob.all = true; save(); closeSheet(); render(); toast('Everything is on', 'All features are in the menu now.'); return;
+    case 'resetday': closeDrawer(); openResetDay(); return;
+    case 'resetgo': { const keep = new Set([...document.querySelectorAll('.keepT:checked')].map(x => x.value));
+      let target = S.day + 1; while (target <= 6 && S.light[target]) target++;
+      let moved = 0;
+      S.tasks.forEach(t => { if (t.day !== S.day || t.done || !isMine(t) || t.status === 'waiting' || keep.has(t.id)) return;
+        if (target <= 6){ t.lightFrom = S.day; t.day = target; moved++; } });
+      if (S.currentId && !keep.has(S.currentId)){ S.currentId = null; S.paused = false; }
+      S.breakDue = null; S.light[S.day] = {moved, target, reset:true};
+      closeSheet(); render(); save(); cue(1);
+      toast('Fresh start', 'Kept ' + keep.size + (moved ? ', moved ' + moved + ' to ' + DAYS[target] : '') + '. Longer breaks and softer reminders for the rest of today.'); return; }
     case 'lkclose': $('#lockRoot').innerHTML = ''; render(); return;
     case 'lkopen': $('#lockRoot').innerHTML = ''; render(); return;
     case 'lkpause': S.paused = !S.paused; drawLock(true); render(); return;
@@ -3626,6 +3770,7 @@ $('#menuBtn').onclick = openDrawer;
 $('#bellBtn').onclick = openInbox;
 $('#laterBtn').onclick = openLaterCapture;
 $('#lockBtn').onclick = () => drawLock(true);
+$('#newUserBtn').onclick = () => { S = seedFresh(); S.templates.forEach(ensureStageIds); initRuntime(); render.scrolled = false; closeSheet(true); closeDrawer(); if (page) closePage(); render(); openOnboarding(); };
 document.addEventListener('change', ev => { if (ev.target.id === 'bundleIn'){ S.rewards.bundle = ev.target.value.trim(); save(); render(); toast('Saved', S.rewards.bundle ? 'Shown on tasks you\'ve put off.' : 'Pairing turned off.'); } });
 $('#newBtn').onclick = ev => { ev.stopPropagation(); const m = $('#newMenu'); if (m.hidden) openNewMenu(); else closeNewMenu(); };
 $('#clearBtn').onclick = () => { // demo shortcut: finish everything planned today so "Get ahead" appears
