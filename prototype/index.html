@@ -2275,18 +2275,16 @@ function openShield(app){
   const pitch = shieldPitch(t, app);
   $('#shieldRoot').innerHTML = `<div class="shieldwrap" role="alertdialog" aria-label="${esc(app)} is shielded"><div class="shieldbox">
     <span class="applabel">${ICON.lock} ${esc(app)} is shielded</span>
-    <h2>${esc(pitch.head)}</h2><p class="pitchsub">${esc(pitch.sub)}</p>
-    ${t ? `<div class="tprog" aria-label="${pitch.pct}% done"><i style="width:${pitch.pct}%"></i></div>` : ''}
-    ${pitch.next ? `<div class="nextstep"><b>${pitch.last ? 'Your last step' : 'Your next step is small'}</b>${esc(pitch.next)}</div>` : ''}
+
     <div class="breathe2"><span class="orb" id="shOrb"></span><span class="ring2" id="shRing"></span><b id="shPhase">Get ready<small>${c.pause || 15} seconds</small></b></div>
-    <small id="shTip">Follow the circle. In through your nose, a little extra sip, then slowly out.</small>
+    <small id="shTip"></small>
     <button class="sbtn main" data-act="shieldback">${esc(pitch.cta)}</button>
     <button class="sbtn alt" data-act="shieldjot">Jot it for later instead</button>
     ${bankMeterHTML()}
     ${appBank() >= BANK_GOAL ? `<button class="sbtn through" data-act="breakthrough">Break through: 15 min of app time</button>` : ''}
     ${c.strict === 'gentle' ? `<button class="sbtn alt" data-act="shieldopen" id="shOpen" disabled data-ok="${appBank() >= 5 ? 1 : 0}">${appBank() >= 5 ? 'Use 5 banked min for ' + esc(app) : 'Open needs 5 banked min (you have ' + appBank() + ')'}</button>` : `<small>Firm shield: ${appBank() >= BANK_GOAL ? 'use your banked 15 minutes above, or wait for a break.' : 'it opens at your next break, or when you have 15 minutes banked.'}</small>`}
   </div></div>`;
-  breatheGuide(c.pause || 15, () => { const tip = $('#shTip'); if (!tip) return; tip.textContent = c.strict === 'gentle' ? 'Still want it? That\'s okay too. Or head back, the urge usually fades.' : 'Nice. The urge usually fades if you give it a minute.'; const o = $('#shOpen'); if (o && o.dataset.ok === '1') o.disabled = false; });
+  breatheGuide(c.pause || 15, () => { const tip = $('#shTip'); if (!tip) return;  const o = $('#shOpen'); if (o && o.dataset.ok === '1') o.disabled = false; });
 }
 
 // Breathing guide: exhale-focused "cyclic sighs" (in through the nose, a short extra sip, a long slow exhale).
@@ -2373,22 +2371,20 @@ function bankBoxHTML(){
 
 // Shield pitch: lead with the strongest true reason to go back, based on where the person is in the task.
 function shieldPitch(t, app){
-  if (!t) return {head:'Your focus time is on', sub:'The urge usually fades within a minute. Breathe with the circle.', cta:'Back to my task', pct:0, next:''};
-  const e = estOf(t), sp = t.spent || 0, left = Math.max(0, Math.ceil(e - sp)), done = stepsDone(t), total = t.steps.length, ns = nextStep(t);
-  const stepPct = total ? done / total : 0, timePct = Math.min(1, sp / e), pct = Math.round(100 * Math.max(stepPct, total ? 0 : timePct));
-  const earn = TASK_EARN[t.diff] || 3, bank = appBank(), dueToday = t.due != null && t.due <= S.day, ns2 = ns ? ns.t : '';
-  const cta = left > 0 && left <= 30 ? 'Back to it: ' + left + ' min to go' : ns ? 'Back to it: next step' : 'Back to it: finish up';
-  let head, sub;
-  if (total && done === total){ head = 'You\'re done. Just tap Complete.'; sub = 'Every step is checked. One tap and "' + t.title + '" is off your plate.'; }
-  else if (total && total - done === 1){ head = 'One step left.'; sub = 'Finish it and "' + t.title + '" is done.'; }
-  else if (bank < BANK_GOAL && bank + earn >= BANK_GOAL){ head = 'Finish this and ' + app + ' is yours for 15 minutes.'; sub = 'This task tops your app-time bank up to 15 minutes, guilt-free, no shield.'; }
-  else if (pct >= 60){ head = pct >= 80 || (left && left <= 15) ? 'You\'re ' + pct + '% there. So close.' : 'More than halfway there.'; sub = (total ? done + ' of ' + total + ' steps done' : fmtDur(sp) + ' in') + (left ? ', about ' + left + ' min left.' : '.'); }
-  else if (sp < 4){ head = 'You just started. That was the hardest part.'; sub = 'Starting is where most of the effort goes, and you already did it. Give it five more minutes.'; }
-  else if (sp >= 10){ head = Math.round(sp) + ' minutes in. Don\'t lose that momentum.'; sub = 'Switching away now means warming back up later. Keep it rolling.'; }
-  else { head = 'You\'re already rolling on this.'; sub = left ? 'About ' + left + ' min left on your estimate.' : 'Stay with it a little longer.'; }
-  if (dueToday && !/done/.test(head)) sub += ' It\'s due today, so finishing now takes it off your mind.';
-  else if (bank < BANK_GOAL && !/15 minutes/.test(head)) sub += ' Finishing adds ' + earn + ' min to your app time.';
-  return {head, sub, cta, pct, last:total - done === 1, next:total && done < total && total - done > 1 ? ns2 : (total - done === 1 ? ns2 : '')};
+  // One short, true line that becomes the "go back" button
+  if (!t) return {cta:'Back to my task'};
+  const e = estOf(t), sp = t.spent || 0, left = Math.max(0, Math.ceil(e - sp)), done = stepsDone(t), total = t.steps.length;
+  const pct = total ? done / total : Math.min(1, sp / e), bank = appBank(), earn = TASK_EARN[t.diff] || 3;
+  let cta;
+  if (total && done === total) cta = 'Done! Just tap Complete';
+  else if (total && total - done === 1) cta = 'One step left. Go finish';
+  else if (bank < BANK_GOAL && bank + earn >= BANK_GOAL) cta = 'Finish this: earn 15 min of ' + app;
+  else if (pct >= .8 || (left && left <= 15)) cta = 'So close. Go finish';
+  else if (pct >= .6) cta = 'Past halfway. Keep going';
+  else if (sp < 4) cta = 'You started. That was the hard part';
+  else if (sp >= 10) cta = Math.round(sp) + ' min in. Keep it rolling';
+  else cta = 'You\'re rolling. Back to it';
+  return {cta};
 }
 
 /* ---------- Focus rooms (body doubling) ---------- */
