@@ -2,7 +2,7 @@
 
 What Cueue is missing, where research points for better focus, how to make rewards something
 people love, and an honest check of the evidence for and against the design so far.
-(Builds on docs 02 and 06. Sources at the end.)
+(Builds on docs 02, 05 and 06. Sources at the end.)
 
 ## The short version
 1. **The biggest risk isn't a missing feature, it's people quitting.** Popular mental-health apps
@@ -159,4 +159,4 @@ people love, and an honest check of the evidence for and against the design so f
   students (Prevatt 2013): https://pubmed.ncbi.nlm.nih.gov/23509112/
 - Moussaoui et al. (2025), reading without eye movements in ADHD: https://pubmed.ncbi.nlm.nih.gov/41277242/
 - Earlier sources (Barkley, Safren, Solanto, Gollwitzer, Lally, Sonuga-Barke, Beheshti, Seli,
-  Nigg, Milkman temptation bundling) are cited in docs 02 and 06.
+  Nigg, Milkman temptation bundling) are cited in docs 02, 05 and 06.
