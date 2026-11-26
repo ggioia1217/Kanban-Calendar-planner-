@@ -13,5 +13,6 @@ progress.
 6. [ADHD research update: newest and overlooked findings](docs/06-adhd-research-update.md)
 7. [Idea backlog: ideas parked for later](docs/07-idea-backlog.md)
 8. [Text styling research: variable text, grammar cues and focus reading](docs/08-text-styling-research.md)
+9. [Gaps, rewards and evidence check](docs/09-gaps-rewards-and-evidence.md)
 
 Status: Phase 0 — clickable prototype in [`prototype/index.html`](prototype/index.html).
