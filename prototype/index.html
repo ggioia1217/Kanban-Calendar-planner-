@@ -99,9 +99,12 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding-bloc
 .panel .row{display:flex;gap:6px;flex-wrap:wrap}
 .panel .steps li.nextup{background:var(--surface);border-radius:8px;font-weight:600}
 .checkin{background:color-mix(in srgb,var(--warn) 18%,var(--surface));border-radius:10px;padding:8px 10px;font-size:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.brkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.brkgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.brkopt.apps{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;border-color:var(--ok)}
+.brkopt i{font-style:normal;font-size:12px;color:var(--muted)}
+.brkidea{font-size:15px;line-height:1.4}
 .brkopt{border:1px solid color-mix(in srgb,var(--rest) 40%,var(--line));background:var(--surface);border-radius:12px;padding:9px 10px;text-align:left;display:flex;flex-direction:column;gap:2px}
-.brkopt b{font-size:14px} .brkopt span{font-size:12px;color:var(--muted)}
+.brkopt b{font-size:16px} .brkopt span{font-size:12.5px;color:var(--muted);line-height:1.3}
 .brkopt.star{border-color:var(--rest);box-shadow:0 0 0 2px color-mix(in srgb,var(--rest) 30%,transparent)}
 
 /* Cards */
@@ -993,15 +996,13 @@ const MILESTONES = [10, 25, 50, 100, 250, 500, 1000];
 const UNIT_DAYS = {days:1, weeks:7, months:30};
 const DAY_START = 8*60, DAY_END = 21*60;
 const BREAKS = [
-  {k:'water', label:'Water', min:3, tip:'Drink a full glass and refill your bottle.'},
-  {k:'bathroom', label:'Bathroom', min:5, tip:'Go now so it doesn\'t pull you out of a task later.'},
-  {k:'meditation', label:'Meditation', min:10, tip:'Breathe in for 4, hold for 4, out for 6. Repeat.', link:'https://www.youtube.com/results?search_query=10+minute+guided+meditation'},
-  {k:'yoga', label:'Yoga / stretch', min:15, tip:'Neck rolls, shoulder opener, forward fold.', link:'https://www.youtube.com/results?search_query=15+minute+desk+yoga'},
-  {k:'walk', label:'Walk', min:10, tip:'Step outside if you can. Movement helps attention.'},
-  {k:'social', label:'Social', min:15, tip:'Chat with a coworker or text a friend.'},
-  {k:'reward', label:'Reward', min:15, tip:'You earned it: a favorite snack, a song, a quick game.'},
-  {k:'apps', label:'App time', min:15, tip:'Your earned 15 minutes. The shield is off, so enjoy it guilt-free.'}
+  // Three kinds of break. Water and bathroom are yours any time; Cueue never asks about or tracks them.
+  {k:'mind', label:'Mind', min:5, sub:'Rest your brain', ideas:['Close your eyes and take ten slow breaths.', 'Look out a window at something far away.', 'Try a short guided meditation.', 'Sit quietly with no screen for a few minutes.'], link:'https://www.youtube.com/results?search_query=5+minute+guided+meditation'},
+  {k:'body', label:'Body', min:10, sub:'Nourish and move', ideas:['Refill your water and have a snack.', 'Stand up and stretch your neck, shoulders and back.', 'Take a short walk, even just down the hall.', 'Shake out your hands and roll your shoulders.']},
+  {k:'soul', label:'Soul', min:10, sub:'Connect and recharge', ideas:['Step outside and notice something green.', 'Text or chat with someone you like.', 'Play one song you love, all the way through.', 'Write down one good thing from today.', 'Spend a few minutes with your pet.']},
+  {k:'apps', label:'App time', min:15, sub:'Earned, no shield', ideas:['Your earned 15 minutes. The shield is off, so enjoy it guilt-free.']}
 ];
+const brkOf = k => BREAKS.find(x => x.k === k) || BREAKS[1];
 const ROLES = {
   me:{name:'You', c:'--accent', group:'Team'}, recruiter:{name:'Recruiting', c:'--home', group:'Team'}, cred:{name:'Compliance', c:'--warn', group:'Team'},
   hr:{name:'HR', c:'--work', group:'Team'}, payroll:{name:'Payroll', c:'--hot', group:'Team'}, ar:{name:'Billing (AR)', c:'--rest', group:'Team'},
@@ -1379,7 +1380,7 @@ function schedule(day){
     const gapEnd = nextEv ? nextEv.start : DAY_END, gap = gapEnd - t;
     if (gap < 10){ t = nextEv ? nextEv.end : DAY_END; continue; }
     if (sinceBreak >= brkEvery && gap >= 20){
-      const b = BREAKS[[0,4,3,2][breakN++ % 4]];
+      const b = BREAKS[[1,0,2][breakN++ % 3]];
       blocks.push({kind:'break', start:t, dur:b.min, b}); t += b.min; sinceBreak = 0; continue;
     }
     const inWork = t >= st.workStart && t < st.workEnd;
@@ -1439,24 +1440,23 @@ function cardHTML(t, start, dayIdx, chunk){
 }
 function nowWords(r){ return r < .5 ? 'Plenty of time' : r < .8 ? 'About half left' : r < 1 ? 'Almost at your estimate' : r < 2 ? 'Past your estimate' : 'Running long'; }
 function breakOptions(star){
-  return `<div class="brkgrid">${BREAKS.filter(b => b.k !== 'apps' || appBank() >= BANK_GOAL).map(b => `<button class="brkopt ${b.k===star?'star':''}" data-brk="${b.k}"><b>${b.label}</b><span>${b.min} min</span></button>`).join('')}</div>`;
+  return `<div class="brkgrid">${BREAKS.filter(b => b.k !== 'apps' || appBank() >= BANK_GOAL).map(b => `<button class="brkopt ${b.k} ${b.k===star?'star':''}" data-brk="${b.k}"><b>${b.label}</b><span>${b.sub}</span><i>${b.min} min</i></button>`).join('')}</div>`;
 }
 function topPanel(){
   if (S.brk){
-    const b = BREAKS.find(x => x.k === S.brk.k), p = Math.min(1, S.brk.spent / S.brk.min), ready = S.brk.spent >= S.brk.min;
+    const b = brkOf(S.brk.k), p = Math.min(1, S.brk.spent / S.brk.min), ready = S.brk.spent >= S.brk.min;
     return `<div class="panel restp" id="brkPanel" style="${edgeDelay()}"><div class="ph"><span class="tag">On a break</span></div>
-      <div class="main"><span class="pie big rest" id="brkPie" style="--p:${p.toFixed(3)}"></span><div style="min-width:0"><h3>${b.label}</h3>
-      <div class="sub">${esc(b.tip)}</div>${b.link?`<div class="sub"><a href="${b.link}" target="_blank" rel="noopener">Find a ${b.min}-minute video</a></div>`:''}
+      <div class="main"><span class="pie big rest" id="brkPie" style="--p:${p.toFixed(3)}"></span><div style="min-width:0"><h3>${b.label} break</h3>
+      <div class="brkidea">${esc(b.ideas[(S.brk.idea || 0) % b.ideas.length])}</div>${b.ideas.length > 1 ? '<button class="plannudge" data-act="brkidea" style="grid-column:auto">Another idea</button>' : ''}${b.link?`<div class="sub"><a href="${b.link}" target="_blank" rel="noopener">Find a ${b.min}-minute video</a></div>`:''}
       <div class="words" style="margin-top:6px">${ready ? 'Break complete. Welcome back.' : 'Enjoy it. The timer is running.'}</div></div></div>
       <div class="row"><button class="btn rest" data-act="endbrk" ${!ready && S.settings.breakLock ? 'disabled' : ''}>I'm back</button><button class="btn small" data-act="brkmore">+5 min</button></div>
       ${!ready && S.settings.breakLock ? '<div class="sub">Break lock is on, so "I\'m back" unlocks when the timer finishes.</div>' : ''}</div>`;
   }
   if (S.breakDue){
     return `<div class="panel restp" style="${edgeDelay()}"><div class="ph"><span class="tag">Break time</span>${S.settings.breakLock?`<span style="margin-left:auto;display:inline-flex;gap:4px;align-items:center">${ICON.lock.replace('<svg','<svg width="14" height="14"')} Check-offs paused</span>`:''}</div>
-      <h3>${esc(S.breakDue.reason)}</h3><div class="sub">Pick a break. The timer starts right away.</div>
-      ${breakOptions(S.breakDue.reward ? 'reward' : 'water')}
-      <div class="row"><button class="btn small" data-act="bankbreak">Bank it instead: +5 min app time</button>${S.settings.breakLock ? '' : '<button class="btn small ghost" data-act="snooze">Remind me in 15 min</button>'}</div>
-      <div class="sub">Banking saves this short break toward a full 15-minute one. Cueue checks back in 30 minutes, because your body still needs breaks.</div></div>`;
+      <h3>${esc(S.breakDue.reason)}</h3>
+      ${breakOptions(S.breakDue.reward ? 'soul' : S.workSince >= S.settings.breakEvery ? 'body' : 'mind')}
+      <div class="row"><button class="btn small" data-act="bankbreak">Bank it (+5 min app time)</button>${S.settings.breakLock ? '' : '<button class="btn small ghost" data-act="snooze">Remind me in 15 min</button>'}</div></div>`;
   }
   const t = byId(S.currentId);
   if (t){
@@ -1599,7 +1599,7 @@ function tick(){
         t.spent = (t.spent||0) + dMin; S.workSince += dMin; const e = estOf(t);
         if (t.spent >= e && !t.warned1){ t.warned1 = true; cue(3); toast('Still on "' + t.title + '"?', 'You\'ve reached your estimate.'); render(); }
         if (t.spent >= 2*e && !t.warned2){ t.warned2 = true; cue(4); toast('Re-planned the rest of today', 'This task hit twice its estimate, so later tasks moved.'); render(); }
-        if (S.workSince >= st.breakEvery && !S.breakDue){ S.breakDue = {reason:'You\'ve been working for ' + Math.round(st.breakEvery) + ' minutes'}; cue(3); toast('Break time', st.breakLock ? 'Check-offs are paused until you take it.' : 'Pick a break when you reach a stopping point.'); render(); }
+        if (S.workSince >= st.breakEvery && !S.breakDue){ S.breakDue = {reason:fmtDur(st.breakEvery) + ' of focus. Time for a break.'}; cue(3); toast('Break time', st.breakLock ? 'Check-offs are paused until you take it.' : 'Pick a break when you reach a stopping point.'); render(); }
       }
     }
     [st.workStart, st.workEnd, st.freshEnd].forEach(b => { if (S.now - dMin < b && S.now >= b) render(); });
@@ -1742,8 +1742,8 @@ function completeTask(t, note, files, handoffTask, handoffStage){
     announceFreed(unblockAfter(t), 700);
   }
   // Suggest a break only after real effort: a long stretch on this task (60+ min), or 90 min of work since the last break
-  if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:'You\'ve been working for ' + fmtDur(S.workSince) + '. Time for a break.'};
-  else if (worked >= LONG_TASK) S.breakDue = {reason:'You just finished a long task (' + fmtDur(worked) + '). Take a reward break.', reward:true};
+  if (S.workSince >= S.settings.breakEvery) S.breakDue = {reason:fmtDur(S.workSince) + ' of focus. Time for a break.'};
+  else if (worked >= LONG_TASK) S.breakDue = {reason:'Long task done. You earned a break.', reward:true};
   rewardTask(t, worked, ahead); checkUnlocks();
   S.tasks.filter(x => x.when && x.when.type === 'after' && x.when.taskId === t.id && !x.done).forEach(x => setTimeout(() => fireWhen(x, 'you finished "' + t.title + '"'), 1300));
   closeSheet(); render();
@@ -1776,13 +1776,13 @@ function othersDone(t){
   render();
 }
 function startBreak(k){
-  const b = BREAKS.find(x => x.k === k);
+  const b = brkOf(k);
   if (k === 'apps'){ if (appBank() < BANK_GOAL) return toast('Not enough banked yet', appBank() + ' of ' + BANK_GOAL + ' min. Finish a task to earn more.'); spendApp(BANK_GOAL, 'Broke through for 15 min'); $('#shieldRoot').innerHTML = ''; }
   S.brk = {k, min:b.min, spent:0}; S.breakDue = null;
   closeSheet(); toast('Break: ' + b.label, b.min + ' minutes. The timer is running.'); render();
 }
 function endBreak(){
-  const b = BREAKS.find(x => x.k === S.brk.k);
+  const b = brkOf(S.brk.k);
   S.brk = null; S.workSince = 0;
   confetti(innerWidth/2, innerHeight/3, 50, 6); chime(false);
   toast('Welcome back', 'Breaks count as wins too.'); render();
@@ -2547,7 +2547,7 @@ function nextEvent(){ return eventsFor(S.day).filter(e => e.kind === 'event' && 
 function lockHTML(){
   const t = byId(S.currentId), h = Math.floor(S.now / 60), m = Math.floor(S.now % 60), hh = ((h + 11) % 12) + 1, ev = nextEvent(), soon = ev && ev.start - S.now <= 10;
   let ring = 0, big = '', title = '', sub = '', rc = '', btns = '';
-  if (S.brk){ const b = BREAKS.find(x => x.k === S.brk.k), left = Math.max(0, S.brk.min - S.brk.spent);
+  if (S.brk){ const b = brkOf(S.brk.k), left = Math.max(0, S.brk.min - S.brk.spent);
     ring = Math.min(1, S.brk.spent / S.brk.min); big = Math.ceil(left) + 'm'; title = b.label + ' break'; sub = left > 0 ? Math.ceil(left) + ' min left. Enjoy it.' : 'Break done. Welcome back.'; rc = '--rc:#46D08F';
     btns = '<button class="go" data-act="lkopen">Open Cueue</button>';
   } else if (t){ const e = estOf(t), sp = t.spent || 0, left = e - sp, ns = nextStep(t);
@@ -2612,7 +2612,7 @@ function captureContext(){
     ctx.step = ns ? 'step ' + (stepsDone(t) + 1) + ' of ' + t.steps.length + ': ' + ns.t : 'all steps done'; }
   const done = [...S.log].reverse().find(l => l.day === S.day && l.kind === 'task' && l.at != null && S.now - l.at <= 45);
   if (done){ ctx.justDone = done.title; ctx.justDoneAgo = Math.max(1, Math.round(S.now - done.at)); }
-  if (S.brk) ctx.onBreak = (BREAKS.find(b => b.k === S.brk.k) || {}).label;
+  if (S.brk) ctx.onBreak = brkOf(S.brk.k).label;
   return ctx;
 }
 function ctxChips(c, media){
@@ -3884,8 +3884,8 @@ function openEvent(e){
   const pt = $('#prepToggle'); if (pt) pt.addEventListener('change', ev => { e.prep = ev.target.checked; render(); });
 }
 function openBreakPicker(){
-  openSheet(`<h2>Take a break</h2><p class="note">Short movement breaks are linked with better attention in ADHD research. The timer starts when you pick one.</p>
-    <div class="sec" style="border:0">${breakOptions(S.breakDue && S.breakDue.reward ? 'reward' : '')}</div>
+  openSheet(`<h2>Take a break</h2><p class="note">Water and bathroom breaks are yours any time. Cueue never tracks them.</p>
+    <div class="sec" style="border:0">${breakOptions(S.breakDue && S.breakDue.reward ? 'soul' : '')}</div>
     <div class="actions"><div class="spacer"></div><button class="btn ghost" data-close="1">Cancel</button></div>`, 'break');
 }
 const TEMPLATES = {
@@ -4098,6 +4098,7 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'brkidea': if (S.brk){ S.brk.idea = (S.brk.idea || 0) + 1; render(); } return;
     case 'breakthrough': { if (appBank() < BANK_GOAL) return; $('#shieldRoot').innerHTML = ''; if (page) closePage(); startBreak('apps'); confetti(innerWidth / 2, innerHeight / 3, 80, 7); chime(true);
       toast('15 minutes of app time', 'The shield is off and your task is paused. Cueue brings you back when it\'s up.'); return; }
     case 'bankbreak': { earnApp(5, 'Banked a short break', true); S.breakDue = null; S.workSince = Math.max(0, S.settings.breakEvery - 30); save(); render();
