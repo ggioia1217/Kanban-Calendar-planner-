@@ -960,6 +960,23 @@ html[data-weight="1"] .gw{font-weight:600}
 .movebox .row3 button.main{background:#fff;color:#0B2A22}
 .movebox .nextm{font-size:14px;opacity:.75}
 
+/* ---------- PACE rough-day plans ---------- */
+.paceline{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--rest);line-height:1.3;flex-wrap:wrap}
+.pacebadge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:6px;font-size:11.5px;font-weight:800;color:#fff;background:var(--rest)}
+.pacebadge.l0{background:var(--accent)}.pacebadge.l1{background:var(--work)}.pacebadge.l2{background:var(--rest)}.pacebadge.l3{background:var(--violet)}
+.stepdown{grid-column:1/-1;justify-self:start;background:none;border:0;padding:0;font:inherit;font-size:12.5px;font-weight:700;color:var(--rest);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:28px}
+.pacelist{display:flex;flex-direction:column;gap:6px}
+.pacelist button{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 11px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;min-height:44px}
+.pacelist button[aria-pressed=true]{border-color:var(--rest);background:color-mix(in srgb,var(--rest) 8%,var(--surface))}
+.pacelist button span:not(.pacebadge){flex:1;min-width:0}
+.pacelist .pacebadge{flex:none;width:26px;height:26px;font-size:13px}
+.pacelist button small{display:block;color:var(--muted);font-size:12px}
+.pacechain{display:flex;gap:6px;margin:6px 0 2px}
+.pacechain div{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted)}
+.pacechain .pacebadge.miss{background:var(--surface-2);color:var(--muted);border:1px dashed var(--line)}
+.paceedit{display:grid;grid-template-columns:auto minmax(0,1fr) 72px;gap:6px 8px;align-items:center}
+.paceedit input{min-width:0}
+
 /* Toasts + confetti */
 .toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;z-index:60;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2);animation:down .25s ease;transition:opacity .3s}
@@ -1249,8 +1266,11 @@ function seed(){
       {id:'t6', title:'Pick up prescription', ctx:'home', diff:1, span:'quick', est:20, prio:3, due:1, day:1, source:'manual',
         doneWhen:'Prescription picked up', proof:false, steps:[{t:'Check the pharmacy app says ready'},{t:'Pick up on the way home'}]},
       {id:'t7', title:'Laundry', ctx:'home', diff:1, span:'short', est:null, aiEst:35, aiRuns:18, prio:2, cadence:{every:3,label:'Every 3 days'}, day:1, missed:2, rolled:2, source:'manual',
+        pace:[{text:'Full load: wash, dry, put away', min:35}, {text:'Wash and dry, fold later', min:20}, {text:'Start one load', min:5}, {text:'Sort one basket', min:2}],
         doneWhen:'Washed, dried and put away', proof:false, steps:[{t:'Start a load'},{t:'Move it to the dryer'},{t:'Fold and put away'}], completions:18},
       {id:'t8', title:'20-minute walk', ctx:'home', diff:1, span:'short', est:20, prio:2, cadence:{every:1,label:'Daily'}, day:1, source:'manual',
+        pace:[{text:'20-minute walk', min:20}, {text:'10-minute walk', min:10}, {text:'Walk around the block', min:5}, {text:'Step outside for 2 minutes', min:2}],
+        history:[{day:0, lvl:0, steps:[]}],
         goalId:'g9', doneWhen:'Walked for 20 minutes', proof:false, evidence:true,
         steps:[{t:'Shoes on, step outside'},{t:'Walk for 20 minutes'}], completions:19},
       {id:'t10', title:'Follow up: Riverside timesheets', ctx:'work', diff:1, span:'quick', est:null, aiEst:15, aiRuns:6, prio:3, due:3, day:2, source:'email',
@@ -1308,7 +1328,18 @@ function fmtDur(m){ m = Math.round(m); if (m < 60) return m + ' min'; const h = 
 function dateOf(i){ const d = new Date(WEEK_START); d.setDate(d.getDate()+i); return d; }
 function dayLabel(i){ const d = dateOf(i); return {name:DAYS[((i%7)+7)%7], num:d.getDate(), mon:d.toLocaleString('en-US',{month:'short'})}; }
 function stamp(){ return DAYS[S.day]+' '+fmt(S.now); }
-function estOf(t){ return t.est ?? t.aiEst ?? SPANS[t.span][1]; }
+function estOf(t){ if (t.pace && t.paceLvl) return t.pace[t.paceLvl].min; return t.est ?? t.aiEst ?? SPANS[t.span][1]; }
+/* ---------- PACE rough-day plans: Primary, Alternate, Contingency, Emergency ----------
+   Every routine can have four sizes. On a rough day it steps down instead of being skipped, so the habit keeps going. */
+const PACE_NAMES = ['Primary', 'Alternate', 'Contingency', 'Emergency'], PACE_L = ['P', 'A', 'C', 'E'];
+const roughToday = () => !!(S.light[S.day] || (S.checkin && S.checkin[S.day] && S.checkin[S.day].done && (S.checkin[S.day].energy <= 2 || S.checkin[S.day].sleep === 'rough')));
+const paceNow = t => t.pace ? t.pace[t.paceLvl || 0] : null;
+function suggestPace(t){
+  const e = Math.max(5, t.est ?? t.aiEst ?? 30), first = (t.steps[0] || {t:'Get set up'}).t;
+  return [{text:t.title, min:e}, {text:'Shorter version: ' + t.title.replace(/^\d+-minute\s*/i, ''), min:Math.max(5, Math.round(e / 2))},
+    {text:'Just the first part: ' + first.charAt(0).toLowerCase() + first.slice(1), min:Math.max(3, Math.min(10, Math.round(e / 4)))}, {text:'Two minutes: set it up so tomorrow is easy', min:2}];
+}
+function stepDown(t, to){ const was = t.paceLvl || 0; t.paceLvl = Math.min(3, to == null ? was + 1 : to); t.warned1 = t.warned2 = false; return t.paceLvl; }
 function spanFor(m){ return m <= 15 ? 'quick' : m <= 30 ? 'short' : m <= 60 ? 'standard' : m <= 120 ? 'long' : 'marathon'; }
 function nextStep(t){ return t.steps.find(s => !s.done); }
 function stepsDone(t){ return t.steps.filter(s => s.done).length; }
@@ -1463,6 +1494,8 @@ function cardHTML(t, start, dayIdx, chunk){
     <div class="top">${timeTxt}<span class="ctx ${t.ctx}">${t.ctx==='work'?'Work':'Home'}</span>${chunk?`<span>· part ${chunk}</span>`:''}<span class="diff" title="${DIFF[t.diff]}">${diff}</span></div>
     <div class="title">${esc(t.title)}</div>
     ${next}
+    ${t.pace && t.paceLvl ? `<div class="paceline"><span class="pacebadge l${t.paceLvl}">${PACE_L[t.paceLvl]}</span>${PACE_NAMES[t.paceLvl]}: ${esc(paceNow(t).text)} · ${paceNow(t).min} min</div>` : ''}
+    ${t.pace && (t.paceLvl || 0) < 3 && isMine(t) && !t.done && t.day === S.day && roughToday() ? `<button class="stepdown" data-act="pacedown" data-task="${t.id}">Rough day? Step down to ${PACE_NAMES[(t.paceLvl || 0) + 1]}</button>` : ''}
     ${t.when ? `<div class="whenline">${ICON.repeat.replace('<svg', '<svg aria-hidden="true"')}When ${esc(cuePhrase(t.when))}</div>` : (t.rolled || 0) >= 1 && isMine(t) && !t.done ? `<button class="plannudge" data-act="whenopen" data-task="${t.id}">Plan when to start</button>` : ''}
     ${!ns && t.status !== 'waiting' ? `<button class="verify" data-finish="${t.id}">Complete</button>` : ''}
     <div class="meta">${pieHTML(t)}${dueChip(t)}${t.cadence?`<span title="${esc(t.cadence.label)}">${ICON.repeat}</span>`:''}${src}${t.status==='waiting'?`<span>${ICON.pause}</span>`:''}${t.cadence&&t.missed?`<span class="chip warn">Missed ${t.missed}×</span>`:''}${t.spent>0&&S.currentId!==t.id?`<span class="chip">Paused · ${fmtDur(t.spent)} in</span>`:''}${t.ahead!=null?'<span class="chip ahead">Getting ahead</span>':''}${t.roadblock?'<span class="chip block">Roadblock</span>':''}</div>
@@ -1497,6 +1530,7 @@ function topPanel(){
       <div class="ph"><span class="tag">${S.paused?'Paused':'Now'}</span>${t.goalId?`<span>${esc(goalPath(t.goalId))}</span>`:''}<span style="margin-left:auto">${soundChip()}${shieldChip()}</span></div>
       ${blockNoteHTML(t)}
       ${t.when ? `<div class="whensentence">${esc(whenSentence(t))}</div>` : ''}
+      ${t.pace ? `<div class="paceline" style="font-size:13.5px"><span class="pacebadge l${t.paceLvl || 0}">${PACE_L[t.paceLvl || 0]}</span>${PACE_NAMES[t.paceLvl || 0]}: ${esc(paceNow(t).text)} · ${paceNow(t).min} min${(t.paceLvl || 0) < 3 ? `<button class="stepdown" data-act="pacedown" data-task="${t.id}" style="margin-left:4px">Step down</button>` : ''}</div>` : ''}
       ${(t.rolled || 0) >= 1 && S.rewards.bundle ? `<div class="pairhint">You've put this off before. Pair it with ${esc(S.rewards.bundle)}.</div>` : ''}
       <div class="main">${pieHTML(t,true)}<div style="min-width:0"><h3>${esc(t.title)}</h3><div class="words" id="nowWords">${nowWords(r)}</div>
         <div class="sub"><b>Done when:</b> ${esc(t.doneWhen)}</div></div></div>
@@ -1542,7 +1576,7 @@ function columnHTML(day, single){
       const [mid, mtext] = thisMantra();
       if (!(S.checkin[day] && S.checkin[day].skipped)) body += checkinHTML();
       if (has('mantras')) body += `<div class="mantra" data-act="mantras" role="button" tabindex="0"><span class="ml">This week's mantra</span><b>"${esc(mtext)}"</b>${S.mantraUsed[day] ? '<span class="chip okc">Used today</span>' : '<button class="btn small" data-act="mused">I used it</button>'}</div>`;
-      if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>${S.light[day].reset ? 'Day reset.' : 'Light day.'}</b> ${S.light[day].reset ? 'Just your essentials now' : 'Only what\'s essential today'}${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
+      if (S.light[day]) body += `<div class="lightnote"><span style="flex:1;min-width:150px"><b>${S.light[day].reset ? 'Day reset.' : 'Light day.'}</b> ${S.light[day].reset ? 'Just your essentials now' : 'Only what\'s essential today'}${S.light[day].moved ? ', ' + S.light[day].moved + ' task' + (S.light[day].moved > 1 ? 's' : '') + ' moved to ' + DAYS[S.light[day].target] : ''}${S.light[day].stepped ? ', ' + S.light[day].stepped + ' routine' + (S.light[day].stepped > 1 ? 's' : '') + ' stepped down' : ''}. Longer breaks, softer reminders.</span><button class="btn small" data-act="lighttoggle" data-day="${day}">Undo</button></div>`;
       body += weekTopHTML();
       if (has('review') && ((S.day === 4 && S.now >= 14 * 60) || S.day >= 5) && !(S.reviews || []).some(r => r.day >= 4)) body += '<div class="reviewcard"><span><b>Weekly review</b> · 10 minutes to look back and pick next week\'s top three.</span><button class="btn small primary" data-act="review">Start</button></div>';
       body += topPanel();
@@ -1761,10 +1795,11 @@ function completeTask(t, note, files, handoffTask, handoffStage){
       notes:'Added by You when completing "' + t.title + '".'}); }
   if (t.cadence){
     let nd = t.day + t.cadence.every; if (t.cadence.label === 'Weekdays') while (nd % 7 >= 5) nd++;
-    t.history = (t.history||[]).concat([{day:S.day, note, steps:t.steps.map(s => ({...s}))}]);
+    const lvlDone = t.paceLvl || 0; t.history = (t.history||[]).concat([{day:S.day, note, lvl:lvlDone, steps:t.steps.map(s => ({...s}))}]); t.paceLvl = 0; delete t.paceFrom;
+    if (lvlDone) S.paceKept = (S.paceKept || 0) + 1;
     t.day = nd; t.steps.forEach(s => { s.done = false; delete s.at; }); t.spent = 0; t.missed = 0; t.rolled = 0; t.warned1 = t.warned2 = false; t.status = null;
     if (t.due != null) t.due = nd;
-    toast(m ? 'Milestone: ' + m + ' times!' : 'Done! Completed ' + t.completions + ' times', nd <= 6 ? 'Comes back ' + DAYS[nd] + '. Next badge at ' + MILESTONES.find(x => x > t.completions) + '.' : 'Comes back next week.');
+    if (lvlDone) toast('Kept it going: ' + PACE_NAMES[lvlDone] + ' plan', 'Smaller, but it counts. ' + t.completions + ' times now.'); else toast(m ? 'Milestone: ' + m + ' times!' : 'Done! Completed ' + t.completions + ' times', nd <= 6 ? 'Comes back ' + DAYS[nd] + '. Next badge at ' + MILESTONES.find(x => x > t.completions) + '.' : 'Comes back next week.');
   } else {
     t.done = true; t.doneDay = S.day; t.status = null;
     if (ahead){ S.aheadCount = (S.aheadCount||0) + 1;
@@ -1827,7 +1862,7 @@ function endDay(){
     t.day = today + 1; t.rolled = (t.rolled||0) + 1; moved++;
     if (t.cadence) t.missed = (t.missed||0) + 1;
   });
-  closeLaterPop(); S.appBank.min = Math.min(BANK_GOAL, S.appBank.min);
+  closeLaterPop(); S.appBank.min = Math.min(BANK_GOAL, S.appBank.min); S.tasks.forEach(x => { if (x.paceLvl){ x.paceLvl = 0; delete x.paceFrom; } });
   Object.assign(S, {day:today+1, viewDay:today+1, now:8*60+45, currentId:null, paused:false, dayMode:false, brk:null, breakDue:null, workSince:0});
   toast('Good morning, ' + DAYS[S.day] + '!', moved ? moved + ' unfinished task' + (moved>1?'s':'') + ' rolled over. Missed routines got more urgent.' : 'Fresh start.');
   render();
@@ -2162,7 +2197,7 @@ function openResetDay(){
     <div class="field" style="margin-top:10px"><label>Keep up to three things today</label>
       <div class="keeplist">${left.map(t => `<label><input type="checkbox" class="keepT" value="${t.id}" ${keep.has(t.id) ? 'checked' : ''}><span>${esc(t.title)}<small>${[t.due != null && t.due <= S.day ? 'Due today' : t.due != null ? 'Due ' + DAYS[t.due] : '', t.prio >= 4 ? 'Urgent' : t.prio >= 3 ? 'High priority' : '', t.id === S.currentId ? 'Working on it now' : '', '~' + fmtDur(estOf(t))].filter(Boolean).join(' · ')}</small></span></label>`).join('') || '<p class="note">Nothing left today.</p>'}</div>
       <p class="note" id="keepNote" style="margin:6px 0 0"></p></div>
-    <p class="note">Everything else moves to your next regular day. The rest of today also becomes a light day: longer breaks, softer reminders, no shaking.</p>
+    <p class="note">Everything else moves to your next regular day, except routines with a rough-day plan: they shrink to a smaller version so the habit keeps going. The rest of today becomes a light day.</p>
     <div class="actions"><button class="btn primary" data-act="resetgo">Reset my day</button><button class="btn ghost" data-close="1">Not now</button></div>`, 'resetday');
   const upd = () => { const n = document.querySelectorAll('.keepT:checked').length, tot = left.length;
     $('#keepNote').textContent = n > 3 ? n + ' picked. Three or fewer gives you the best shot.' : 'Keeping ' + n + ', moving ' + (tot - n) + '.'; };
@@ -2630,6 +2665,7 @@ function rewardsTop(){
         <div class="kv"><span>Roadblocks you cleared</span><span>${R.cleared || 0}</span></div>
         <div class="kv"><span>Kudos received</span><span>${kud}</span></div>
         <div class="kv"><span>Treats taken</span><span>${(R.taken || []).length}</span></div>
+        <div class="kv"><span>Rough days you kept a routine going</span><span>${S.paceKept || 0}</span></div>
         <div class="kv"><span>Times you came back from a distraction</span><span>${(S.shieldStats || {}).bounced || 0}</span></div>
         <div class="kv"><span>Minutes in focus rooms</span><span>${R.focusMin || 0}</span></div>
         <p class="note" style="margin-top:8px">Your work moves other people's work forward. This is where you see it.</p></div>
@@ -2789,13 +2825,15 @@ function updateLaterBadge(){ const b = $('#laterBadge'); if (!b) return; const n
 /* ---------- Light days ---------- */
 function lightenDay(day){
   let moved = 0, target = day + 1; while (target <= 6 && S.light[target]) target++;
+  let stepped = 0;
   S.tasks.forEach(t => { if (t.day !== day || t.done || !isMine(t) || t.status === 'waiting' || t.id === S.currentId) return;
+    if (t.pace){ if ((t.paceLvl || 0) < 1){ t.paceFrom = day; t.paceLvl = 1; stepped++; } return; } // routines with a PACE plan shrink instead of moving
     const essential = (t.due != null && t.due <= day) || t.prio >= 4;
     if (!essential && target <= 6){ t.lightFrom = day; t.day = target; moved++; } });
-  S.light[day] = {moved, target};
-  return {moved, target};
+  S.light[day] = {moved, target, stepped};
+  return {moved, target, stepped};
 }
-function unlightenDay(day){ S.tasks.forEach(t => { if (t.lightFrom === day && !t.done){ t.day = day; delete t.lightFrom; } }); delete S.light[day]; }
+function unlightenDay(day){ S.tasks.forEach(t => { if (t.lightFrom === day && !t.done){ t.day = day; delete t.lightFrom; } if (t.paceFrom === day){ t.paceLvl = 0; delete t.paceFrom; } }); delete S.light[day]; }
 
 /* ---------- Weekly mantras ---------- */
 const MANTRAS = [
@@ -3069,6 +3107,10 @@ function openTask(t){
     ${t.status==='waiting' ? `<div class="quote" style="margin-bottom:10px"><b>Waiting on:</b> ${esc(t.waitingOn)}</div>` : ''}
     ${t.done && t.resolution ? `<div class="quote" style="margin-bottom:10px"><b>Resolution:</b> ${esc(t.resolution)}${t.proofFiles&&t.proofFiles.length?' · '+t.proofFiles.map(esc).join(', '):''}</div>` : ''}
     <div class="quote"><b>Done when:</b> ${esc(t.doneWhen)}${t.proof?' · <i>proof required</i>':''}</div>
+    ${t.pace ? `<div class="tsec"><h4>Rough-day plan (PACE)</h4><p class="note" style="margin:0 0 6px">Pick today's size. Any level keeps the habit going.</p>
+      <div class="pacelist">${t.pace.map((x, i) => `<button data-act="paceset" data-task="${t.id}" data-v="${i}" aria-pressed="${(t.paceLvl || 0) === i}"><span class="pacebadge l${i}">${PACE_L[i]}</span><span>${esc(x.text)}<small>${PACE_NAMES[i]} · ${x.min} min</small></span></button>`).join('')}</div>
+      ${(t.history || []).length ? `<div class="pacechain" aria-label="Recent days">${t.history.slice(-7).map(h => `<div><span class="pacebadge l${h.lvl || 0}">${PACE_L[h.lvl || 0]}</span>${DAYS[h.day]}</div>`).join('')}</div><p class="note" style="margin:0">Every letter is a day you kept it going.</p>` : ''}</div>`
+      : t.cadence && isMine(t) && !t.done ? `<div class="tsec"><h4>Rough-day plan (PACE)</h4><p class="note" style="margin:0 0 6px">Give this routine smaller versions for hard days, so you never have to skip it.</p><button class="btn small" data-act="pacesuggest" data-task="${t.id}">Make a PACE plan</button></div>` : ''}
     ${!t.done && isMine(t) ? `<div class="tsec"><h4 style="display:flex;align-items:center">When-then plan<button class="btn small ghost" data-act="whenopen" data-task="${t.id}" style="margin-left:auto">${t.when ? 'Change' : 'Plan when'}</button></h4>${t.when ? `<div class="whensentence">${esc(whenSentence(t))}</div>` : '<p class="note" style="margin:0">Pick a moment to start, like "after Inbox triage" or "at 2:00 PM".</p>'}</div>` : ''}
     ${stuck}
     <div class="tsec"><h4>Steps · ${stepsDone(t)} of ${t.steps.length}</h4>
@@ -3107,6 +3149,10 @@ function openTaskEdit(t){
     <div class="sec"><h4>Steps</h4>
       <ul class="steps">${t.steps.map((s, i) => `<li style="display:flex;gap:8px;align-items:center"><span style="flex:1;min-width:0">${esc(s.t)}${s.done ? ' <span class="note">· done</span>' : ''}</span><button class="btn small ghost" data-act="tdelstep" data-i="${i}" aria-label="Remove step: ${esc(s.t)}">Remove</button></li>`).join('')}</ul>
       <div class="actions"><input id="newStep" class="inp" placeholder="Add a step" style="flex:1;min-width:0;width:auto"><button class="btn small" data-act="addstep">Add</button><button class="btn small ghost" data-act="aisteps">Suggest steps</button></div></div>
+    <div class="sec"><h4>Rough-day plan (PACE)</h4><p class="note" style="margin:0 0 8px">Four sizes of this task, from full to tiny. On a rough day Cueue steps down instead of skipping it.</p>
+      ${t.pace ? `<div class="paceedit">${t.pace.map((x, i) => `<span class="pacebadge l${i}" title="${PACE_NAMES[i]}">${PACE_L[i]}</span><input class="inp paceT" data-i="${i}" value="${esc(x.text)}" aria-label="${PACE_NAMES[i]} plan"><input class="inp paceM" data-i="${i}" type="number" min="1" value="${x.min}" aria-label="${PACE_NAMES[i]} minutes">`).join('')}</div>
+        <div class="actions"><button class="btn small ghost" data-act="paceremove" style="color:var(--hot)">Remove plan</button></div>`
+      : `<button class="btn small" data-act="pacesuggest" data-task="${t.id}">Suggest a PACE plan</button>`}</div>
     <div class="sec"><h4>Notes</h4><textarea id="notesInput" class="inp" rows="3">${esc(t.notes||'')}</textarea></div>
     <div class="sec"><h4>Files</h4><input type="file" id="attachInput" multiple><p class="note" id="attachList">${(t.files||[]).map(esc).join(', ') || 'No files yet.'}</p></div>
     <div class="actions"><button class="btn primary" data-act="tdone">Done</button><div class="spacer"></div>${isMine(t) && !t.done ? '<button class="btn ghost" data-act="drop" style="color:var(--hot)">Delete task</button>' : ''}</div>`, 'task', t.id);
@@ -3120,6 +3166,8 @@ function openTaskEdit(t){
   $('#eCtx').addEventListener('change', ev => { t.ctx = ev.target.value; render(); });
   $('#eProof').addEventListener('change', ev => { t.proof = ev.target.value === '1'; });
   $('#notesInput').addEventListener('input', ev => { t.notes = ev.target.value; save(); });
+  document.querySelectorAll('.paceT').forEach(el => el.addEventListener('input', () => { t.pace[+el.dataset.i].text = el.value; save(); }));
+  document.querySelectorAll('.paceM').forEach(el => el.addEventListener('change', () => { t.pace[+el.dataset.i].min = Math.max(1, +el.value || 1); save(); render(); }));
   $('#attachInput').addEventListener('change', ev => { t.files = (t.files||[]).concat([...ev.target.files].map(f => f.name)); $('#attachList').textContent = t.files.join(', '); save(); });
 }
 function openComplete(t){
@@ -4204,6 +4252,11 @@ document.addEventListener('click', ev => {
     case 'newtask': closeNewMenu(); openAdd(null); break;
     case 'newgoal': closeNewMenu(); openNewGoal(); break;
     case 'ltnew': closeNewMenu(); openLaterCapture(); break;
+    case 'pacedown': { const t = byId(el.dataset.task), l = stepDown(t); save(); render(); if ($('#sheetRoot').dataset.kind === 'task' && $('#sheetRoot').dataset.task === t.id) openTask(t);
+      toast('Stepped down to ' + PACE_NAMES[l], paceNow(t).text + ' · ' + paceNow(t).min + ' min. It still counts.'); return; }
+    case 'paceset': { const t = byId(el.dataset.task); t.paceLvl = +el.dataset.v; t.warned1 = t.warned2 = false; save(); render(); openTask(t); return; }
+    case 'pacesuggest': { const t = byId(el.dataset.task); t.pace = suggestPace(t); t.paceLvl = 0; save(); render(); openTask(t); toast('PACE plan added', 'Edit any level to fit you.'); return; }
+    case 'paceremove': { const t = byId($('#sheetRoot').dataset.task); delete t.pace; delete t.paceLvl; save(); render(); openTask(t); return; }
     case 'soundtoggle': { const f = S.settings.fsound; if (f.kind === 'off'){ openSettings(); return; }
       if (soundWanted()){ S.soundOn = false; if (f.auto){ f.auto = false; } } else { S.soundOn = true; }
       syncSound(); save(); render(); toast(soundWanted() ? (SOUNDS.find(x => x[0] === f.kind) || [, ''])[1] + ' on' : 'Sound off', soundWanted() ? 'It stops on breaks and when you pause.' : ''); return; }
@@ -4293,12 +4346,14 @@ document.addEventListener('click', ev => {
     case 'resetgo': { const keep = new Set([...document.querySelectorAll('.keepT:checked')].map(x => x.value));
       let target = S.day + 1; while (target <= 6 && S.light[target]) target++;
       let moved = 0;
+      let stepped = 0;
       S.tasks.forEach(t => { if (t.day !== S.day || t.done || !isMine(t) || t.status === 'waiting' || keep.has(t.id)) return;
+        if (t.pace){ t.paceFrom = S.day; t.paceLvl = Math.max(t.paceLvl || 0, 2); stepped++; return; } // shrink to Contingency instead of dropping it
         if (target <= 6){ t.lightFrom = S.day; t.day = target; moved++; } });
       if (S.currentId && !keep.has(S.currentId)){ S.currentId = null; S.paused = false; }
       S.breakDue = null; S.light[S.day] = {moved, target, reset:true};
       closeSheet(); render(); save(); cue(1);
-      toast('Fresh start', 'Kept ' + keep.size + (moved ? ', moved ' + moved + ' to ' + DAYS[target] : '') + '. Longer breaks and softer reminders for the rest of today.'); return; }
+      toast('Fresh start', 'Kept ' + keep.size + (moved ? ', moved ' + moved + ' to ' + DAYS[target] : '') + (stepped ? ', shrank ' + stepped + ' routine' + (stepped > 1 ? 's' : '') + ' to a smaller plan' : '') + '. Longer breaks and softer reminders for the rest of today.'); return; }
     case 'lkclose': $('#lockRoot').innerHTML = ''; render(); return;
     case 'lkopen': $('#lockRoot').innerHTML = ''; render(); return;
     case 'lkpause': S.paused = !S.paused; drawLock(true); render(); return;
